@@ -4,7 +4,7 @@
 import { sb, state, YEAR, update, insert, remove, upsert, flash, signOut } from "./db.js";
 import {
   CATS, money, money0, num, crewNames, budgetByCat, spentByCat, sum,
-  settlement, yieldPlan, seriesData, grappaRecord, daysToGo, readiness
+  settlement, yieldPlan, seriesData, grappaRecord, readiness
 } from "./calc.js";
 import { h, frag, field, select, check, personSelect, delButton, card, stat,
          sectionBar, empty, addRow, nextSort, me } from "./ui.js";
@@ -16,32 +16,20 @@ import { mountStack } from "./stack.js";
 const SERIES_COLORS = ["var(--series-1)", "var(--series-2)", "var(--series-3)"];
 
 // ============================================================ TODAY
+/**
+ * Today used to be the dashboard. The readout rail took that job — days out,
+ * your position, the even share, jars to buy, the grappa record and the buy
+ * count now sit beside every screen, so a tile row here was the same six
+ * numbers a second time, one of them word for word.
+ *
+ * What is left is what the rail cannot carry: the money in full, and the three
+ * counters side by side so they can be compared. The quick-action buttons went
+ * with the tiles — they pointed at Spend, Buy and Run, all three of which are
+ * in the nav rule directly above and always visible.
+ */
 export function viewToday() {
   const b = budgetByCat(), s = spentByCat();
-  const st = settlement(), y = yieldPlan(), r = readiness();
-  const g = state.grappa.find(x => x.year === YEAR);
-  const record = grappaRecord();
-  const days = daysToGo();
-  const mine = st.net.find(p => p.name === me());
-
-  const tiles = h("div", { class: "tiles" },
-    stat("Sauce day", state.settings
-      ? new Date(state.settings.sauce_date + "T00:00:00")
-          .toLocaleDateString("en-CA", { weekday: "short", day: "numeric", month: "short" })
-      : "—", days === null ? "" : days === 0 ? "today" : days + " days to go"),
-    stat("Spent so far", money0(sum(s)), "budget " + money0(sum(b))),
-    stat("Even share", money0(st.share), state.members.length + " on the crew"),
-    mine ? stat(mine.net >= 0 ? "You're owed" : "You owe", money0(Math.abs(mine.net)),
-      "you've paid " + money0(mine.paid), mine.net >= 0 ? "good" : "warn") : null,
-    stat("Jars needed", num(y.jarsRequired), y.jarsToBuy ? num(y.jarsToBuy) + " still to buy" : "all in hand"),
-    stat("Grappa to beat", money0(record), g?.price ? "this year " + money0(g.price) : "not bought yet")
-  );
-
-  const quick = card("Quick actions", null,
-    h("div", { class: "btnrow" },
-      h("button", { class: "btn primary", onClick: () => location.hash = "#/spend" }, "Log what I paid"),
-      h("button", { class: "btn", onClick: () => location.hash = "#/buy" }, "Buy list"),
-      h("button", { class: "btn", onClick: () => location.hash = "#/run" }, "Run sheet")));
+  const r = readiness();
 
   const prog = card("Where we're at", null,
     progress("Buy list", r.buy), progress("Run sheet", r.run), progress("Menu confirmed", r.menu));
@@ -60,7 +48,7 @@ export function viewToday() {
         h("tr", { class: "tot" }, h("td", {}, "Total"), h("td", {}, money(sum(b))),
           h("td", {}, money(sum(s))), h("td", {}, money(sum(s) - sum(b)))))));
 
-  return frag(tiles, quick, prog, budget);
+  return frag(prog, budget);
 }
 
 function progress(label, p) {
@@ -208,8 +196,10 @@ export function viewSpend() {
       value: new Date().toISOString().slice(0, 10) })),
     h("button", { class: "btn primary wide", type: "submit" }, "Log it"));
 
+  // No Share column: an even split means it is the same number in every row,
+  // so it was five identical cells. It is stated once in the card subtitle.
   const netRows = st.net.map(p => h("tr", { class: p.name === me() ? "mine" : "" },
-    h("td", {}, p.name), h("td", {}, money(p.paid)), h("td", {}, money(p.share)),
+    h("td", {}, p.name), h("td", {}, money(p.paid)),
     h("td", { class: p.net >= 0 ? "good" : "warn" },
       (p.net >= 0 ? "gets back " : "owes ") + money(Math.abs(p.net)))));
 
@@ -231,10 +221,10 @@ export function viewSpend() {
 
   return frag(
     card("Log what you paid", "Only your own receipts. The split updates for everyone the moment you hit the button.", form),
-    card("The split", `Total ${money(st.total)} · even share ${money(st.share)} across ${st.net.length}`,
+    card("The split", `${money(st.total)} in, split ${st.net.length} ways — ${money(st.share)} each`,
       h("table", { class: "grid" },
         h("thead", {}, h("tr", {}, h("th", {}, "Person"), h("th", {}, "Paid"),
-          h("th", {}, "Share"), h("th", {}, "Standing"))),
+          h("th", {}, "Standing"))),
         h("tbody", {}, ...netRows))),
     card("Who pays whom", "Settle up at the end of the night.", transfers),
     card("Receipts", state.expenses.length + " logged", ...log));
@@ -268,11 +258,13 @@ export function viewSauce() {
     strays.length ? h("p", { class: "note" },
       `Also counted: ${strays.map(s => `${s.person} ${s.count}`).join(", ")}. ` +
       `Zero these out on the old rows if they are no longer separate.`) : null,
-    h("div", { class: "tiles small" },
-      stat("Bushels", num(y.bushels)),
-      stat("Litres forecast", num(y.litres, 1)),
-      stat("Jars required", num(y.jarsRequired)),
-      stat("Bushel budget", money0(y.bushelBudget))),
+    // Was a row of four tiles. Two of them only ever restated something already
+    // on screen: Bushels is the field directly above, and Jars required is the
+    // Required row of the buy table below. The other two are the only place
+    // litres and the tomato spend appear at all, so they stay — as one line.
+    h("div", { class: "bigline" },
+      "Forecast ", h("b", {}, num(y.litres, 1) + " L"),
+      h("span", { class: "sep" }, "tomatoes"), h("b", {}, money0(y.bushelBudget))),
     h("p", { class: "note" },
       "Your 2025 sheet carried a low/mid/high of 10 / 14 / 18 litres per bushel, and a separate two-year " +
       "average of 9.9. 14 is the midpoint. Tomatoes vary — buy a few spare jars."));

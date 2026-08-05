@@ -516,9 +516,12 @@ td.warn, .warn, td.over { color: var(--tomato); font-weight: 500; }
 }
 .transfers li:last-child { border-bottom: 0; }
 .transfers li .mono { margin-left: auto; font-size: 1rem; font-weight: 300; color: var(--tomato); }
-.bigline { font-size: .8125rem; color: var(--fg-3); text-transform: uppercase; letter-spacing: .14em; }
+.bigline { font-size: .8125rem; color: var(--fg-3); text-transform: uppercase; letter-spacing: .14em;
+           display: flex; align-items: baseline; gap: .4rem; flex-wrap: wrap; }
 .bigline b { color: var(--tomato); font-size: 1.5rem; font-weight: 200; letter-spacing: -.03em;
-             text-transform: none; margin-left: .4rem; }
+             text-transform: none; }
+/* separates two facts on one line without a second label row */
+.bigline .sep { padding-left: .9rem; border-left: 1px solid var(--hair); margin-left: .5rem; }
 /* the SVG is a 640x300 viewBox — let it scale past ~46rem and the type inside
    it balloons out of step with the rest of the page */
 .chart { margin-top: .5rem; max-width: 46rem; }
