@@ -1,0 +1,19 @@
+# Anything ending .local.* stays on your machine. Crew email addresses live
+# here and never in the repo — this repo is public so GitHub Pages can serve
+# it, and a public repo is not the place for other people's inboxes.
+*.local.sql
+*.local.js
+*.local.json
+
+# Superseded originals: img/grappa/ holds the web-safe copies that ship.
+Grappas/
+
+# Pre-Counter stylesheet and shell, kept locally for reference only.
+_backup/
+
+# OS and editor noise
+Thumbs.db
+desktop.ini
+.DS_Store
+.vscode/
+.idea/

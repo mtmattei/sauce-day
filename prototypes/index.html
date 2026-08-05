@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sauce Day — three directions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,300..600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:oklch(97.4% 0.006 62);--ink:oklch(22% 0.014 45);--ink-2:oklch(45% 0.012 48);
+  --ink-3:oklch(60% 0.010 50);--rule:oklch(22% 0.014 45 / .13);--tomato:oklch(55.5% 0.201 27);
+}
+@media (prefers-color-scheme:dark){:root{--paper:oklch(17.5% 0.010 55);--ink:oklch(93% 0.008 62);
+  --ink-2:oklch(74% 0.010 60);--ink-3:oklch(56% 0.012 58);--rule:oklch(93% 0.008 62 / .16);--tomato:oklch(64% 0.185 28)}}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--paper);color:var(--ink);font-family:"Newsreader",Georgia,serif;
+  font-size:1.0625rem;line-height:1.55;padding:clamp(2rem,7vw,6rem);max-width:62rem}
+h1{font-size:clamp(2rem,1.4rem + 2.4vw,3.25rem);font-weight:400;letter-spacing:-.02em;line-height:1;margin-bottom:.5rem}
+.tag{color:var(--tomato);font-style:italic;font-size:1.25rem;margin-bottom:2.5rem}
+p.intro{max-width:46ch;color:var(--ink-2);margin-bottom:3rem}
+a.card{display:grid;grid-template-columns:3rem 1fr;gap:1.5rem;padding:1.75rem 0;
+  border-top:1px solid var(--rule);text-decoration:none;color:inherit;align-items:baseline}
+a.card:last-of-type{border-bottom:1px solid var(--rule)}
+a.card:hover .n{color:var(--tomato)}
+a.card:hover h2{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:.2em}
+.n{font-size:.75rem;letter-spacing:.16em;color:var(--ink-3);text-transform:uppercase}
+h2{font-weight:400;font-size:1.625rem;letter-spacing:-.01em;margin-bottom:.35rem}
+h2 em{font-style:normal;color:var(--ink-3);font-size:1rem;margin-left:.6rem}
+.d{color:var(--ink-2);max-width:52ch;margin-bottom:.6rem}
+.meta{font-size:.8125rem;color:var(--ink-3)}
+.fine{margin-top:3rem;font-size:.875rem;color:var(--ink-3);max-width:52ch}
+code{font-size:.875em;background:oklch(22% 0.014 45 / .07);padding:.1em .35em}
+</style>
+</head>
+<body>
+<h1>Sauce Day</h1>
+<div class="tag">cut the bad</div>
+<p class="intro">Three directions for the same thirteen-tab workbook. Same real data in all three — 2020 through 2025 from the sheets, the 2026 plan as it stands — so what changes between them is only the design.</p>
+
+<p class="intro">All three share one drawn layer: a tomato icon family rooted in the cut mark, grappa bottles built from geometry and scaled to price, and photobook plates that hold their shape before there is anything in them. Nothing here waits on an asset.</p>
+
+<a class="card" href="a-slab.html">
+  <span class="n">A</span>
+  <div>
+    <h2>Slab <em>paper ledger</em></h2>
+    <p class="d">One continuous sheet of warm paper. No cards, no shadows, hairlines only. The navigation is a thirteen-notch index down the left edge; every notch is held back from the spine rule and the one you are on runs out to meet it. Anything bought gets cut with a tomato line. Photobook is a printed contact sheet, captions in serif italic.</p>
+    <p class="meta">Instrument Serif + Newsreader · warm off-white · engraved hairline icons · Fukasawa-dominant</p>
+  </div>
+</a>
+
+<a class="card" href="b-counter.html">
+  <span class="n">B</span>
+  <div>
+    <h2>Counter <em>instrument</em></h2>
+    <p class="d">A measuring device rather than a website. One typeface across nine weights, zero radii, a strict grid. The tabs are thirteen graduations on a rule, and a readout rail down the left holds the six live figures on every single tab. Grappa is a rig: bottles measured against a graduated price axis with the record drawn as a datum. Photobook is a numbered archive index.</p>
+    <p class="meta">Chivo · warm graphite, light mode included · geometric icons · Puckett-dominant, highest density</p>
+  </div>
+</a>
+
+<a class="card" href="c-line.html">
+  <span class="n">C</span>
+  <div>
+    <h2>Line <em>editorial</em></h2>
+    <p class="d">No chrome at all. A single hairline down the left edge is the entire navigation — it stays quiet until you approach it, then the thirteen names and their marks bloom out. Big display numbers, a margin column of annotations beside every table. Photobook runs one band a year with the year set huge; grappa is a shelf you read at a glance.</p>
+    <p class="meta">Bricolage Grotesque + Schibsted Grotesk · near-white · the blend</p>
+  </div>
+</a>
+
+<p class="fine">All thirteen tabs work in each. Arrow keys move between them; the URL hash keeps your place and deep links land. Serve the folder over HTTP (<code>python -m http.server 8080</code>) rather than opening the files directly, so <code>data.js</code> and <code>visuals.js</code> load.</p>
+
+<p class="fine">To add a real photograph, set a plate's <code>src</code> in <code>data.js</code> under <code>photobook</code>. To add a grappa shot, set <code>photo</code> on that year in <code>grappa</code>. Frames keep their aspect either way, so pictures drop in without moving the page.</p>
+</body>
+</html>

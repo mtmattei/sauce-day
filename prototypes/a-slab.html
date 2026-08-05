@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sauce Day — SLAB</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,200..700;1,6..72,200..500&display=swap" rel="stylesheet">
+<style>
+/* ===========================================================================
+   SLAB — one sheet of warm paper, thumbed at the edge.
+   Fukasawa: no containers, no shadows, one gesture. The index notch protrudes.
+   Tomato appears only where something is unresolved, or to cut a line.
+   =========================================================================== */
+:root{
+  --paper:      oklch(97.4% 0.006 62);
+  --paper-2:    oklch(95.2% 0.008 62);
+  --paper-3:    oklch(92.4% 0.010 62);
+  --ink:        oklch(22% 0.014 45);
+  --ink-2:      oklch(42% 0.012 48);
+  --ink-3:      oklch(58% 0.010 50);
+  --rule:       oklch(22% 0.014 45 / .13);
+  --rule-soft:  oklch(22% 0.014 45 / .07);
+  --tomato:     oklch(55.5% 0.201 27);
+  --tomato-ink: oklch(43% 0.160 27);
+
+  --serif: "Instrument Serif", "Iowan Old Style", Georgia, serif;
+  --text:  "Newsreader", "Iowan Old Style", Georgia, serif;
+
+  --spine: 16.5rem;
+  --gut: clamp(1.25rem, 3.6vw, 3.5rem);
+  --ease: cubic-bezier(.16,1,.3,1);
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --paper: oklch(17.5% 0.010 55); --paper-2: oklch(21% 0.011 55); --paper-3: oklch(25% 0.012 55);
+    --ink: oklch(93% 0.008 62); --ink-2: oklch(76% 0.010 60); --ink-3: oklch(58% 0.012 58);
+    --rule: oklch(93% 0.008 62 / .16); --rule-soft: oklch(93% 0.008 62 / .08);
+    --tomato: oklch(64% 0.185 28); --tomato-ink: oklch(72% 0.160 30);
+  }
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%}
+body{
+  background:var(--paper);color:var(--ink);
+  font-family:var(--text);font-size:clamp(.9375rem,.9rem + .2vw,1rem);
+  line-height:1.5;font-variant-numeric:tabular-nums;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--tomato);outline-offset:3px}
+
+/* ---------------------------------------------------------------- shell */
+.slab{display:grid;grid-template-columns:var(--spine) minmax(0,1fr);min-height:100dvh}
+
+/* ---------------------------------------------------------------- spine */
+.spine{
+  position:sticky;top:0;height:100dvh;
+  border-right:1px solid var(--rule);
+  display:flex;flex-direction:column;
+  padding:calc(var(--gut) * .9) 0 1.25rem;
+  background:var(--paper);z-index:5;
+}
+.mark{padding:0 1.25rem 1.6rem;}
+.mark .sig{display:block;color:var(--tomato);margin-bottom:.7rem}
+.mark .sig svg{width:2.1rem;height:2.1rem;stroke-width:1.1}
+.mark b{
+  display:block;font-family:var(--serif);font-weight:400;
+  font-size:1.6rem;line-height:.95;letter-spacing:-.01em;
+}
+.mark i{
+  display:block;font-style:normal;margin-top:.5rem;
+  font-size:.6875rem;letter-spacing:.19em;text-transform:uppercase;color:var(--ink-3);
+}
+.mark s{display:block;text-decoration:none;margin-top:.9rem;font-size:.8125rem;color:var(--tomato);font-style:italic;font-family:var(--serif);font-size:1rem}
+
+.notches{list-style:none;flex:1;overflow-y:auto;overflow-x:clip;scrollbar-width:thin}
+.notch{
+  display:grid;grid-template-columns:1.1rem 1.45rem 1fr;align-items:center;gap:.45rem;
+  width:100%;background:none;border:0;cursor:pointer;text-align:left;
+  font:inherit;color:var(--ink-2);
+  padding:.4rem 1.25rem .4rem 1.1rem;
+  /* every notch is held back from the spine edge; the active one reaches it */
+  margin-right:1.25rem;position:relative;
+  transition:color .2s var(--ease), margin-right .34s var(--ease), background-color .2s var(--ease);
+}
+.notch em{font-style:normal;font-size:.6875rem;color:var(--ink-3);letter-spacing:.06em;transition:color .2s}
+.notch span{font-size:.875rem;letter-spacing:.002em}
+/* hairline icons: engraved, never filled — this is a paper sheet */
+.notch .ico{width:1.1rem;height:1.1rem;stroke-width:1.1;color:var(--ink-3);transition:color .2s var(--ease)}
+.notch:hover .ico{color:var(--ink-2)}
+.notch[aria-current="true"] .ico{color:var(--tomato);stroke-width:1.3}
+.notch:hover{color:var(--ink)}
+.notch:hover em{color:var(--ink-2)}
+/* the thumbed tab: it alone runs out to the spine rule */
+.notch[aria-current="true"]{
+  color:var(--ink);background:var(--paper-2);margin-right:0;
+  border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);
+}
+.notch[aria-current="true"] em{color:var(--tomato)}
+.spinefoot{padding:1rem 1.25rem 0;border-top:1px solid var(--rule-soft);font-size:.75rem;color:var(--ink-3);line-height:1.35}
+
+/* ---------------------------------------------------------------- sheet */
+.sheet{padding:calc(var(--gut) * .9) var(--gut) 6rem;max-width:78rem;min-width:0}
+.sheet[data-anim]{animation:rise .5s var(--ease) both}
+@keyframes rise{from{opacity:0;transform:translateY(.75rem)}to{opacity:1;transform:none}}
+
+.head{display:flex;flex-wrap:wrap;align-items:flex-end;gap:.75rem 1.5rem;padding-bottom:.9rem;border-bottom:1px solid var(--ink);margin-bottom:1.9rem}
+.head h1{font-family:var(--serif);font-weight:400;font-size:clamp(2rem,1.5rem + 2.2vw,3.25rem);line-height:.92;letter-spacing:-.015em}
+.head p{margin-left:auto;font-size:.8125rem;color:var(--ink-3);letter-spacing:.13em;text-transform:uppercase}
+
+h2{font-family:var(--serif);font-weight:400;font-size:1.5rem;letter-spacing:-.005em;line-height:1.1}
+.sec{margin-top:3.25rem}
+/* only a section that genuinely opens the sheet loses its top margin —
+   :first-of-type was zeroing sections that follow a table or a paragraph */
+.sheet > .sec:first-child{margin-top:0}
+.sec > h2{padding-bottom:.5rem;border-bottom:1px solid var(--rule)}
+.lede{max-width:42ch;color:var(--ink-2);margin:.75rem 0 1.4rem;font-size:1.0625rem;line-height:1.5}
+.note{font-size:.8125rem;color:var(--ink-3);line-height:1.45;max-width:56ch}
+.tom{color:var(--tomato)}
+
+/* ------------------------------------------------------------ figures */
+.figures{display:flex;flex-wrap:wrap;gap:0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);margin:1.75rem 0}
+.fig{flex:1 1 9rem;padding:1.15rem 1.4rem 1.25rem;border-left:1px solid var(--rule-soft);min-width:0}
+.fig:first-child{border-left:0;padding-left:0}
+.fig dt{font-size:.6875rem;letter-spacing:.17em;text-transform:uppercase;color:var(--ink-3);margin-bottom:.5rem}
+.fig dd{font-family:var(--serif);font-size:clamp(1.75rem,1.4rem + 1.3vw,2.5rem);line-height:.95;letter-spacing:-.02em}
+.fig dd small{font-family:var(--text);font-size:.8125rem;letter-spacing:0;color:var(--ink-3);margin-left:.4rem;vertical-align:.35em}
+.fig.hot dd{color:var(--tomato)}
+.fig .sub{font-size:.8125rem;color:var(--ink-3);margin-top:.45rem}
+
+/* the countdown owns the page */
+.count{display:flex;align-items:baseline;gap:1.25rem;flex-wrap:wrap;margin-bottom:.4rem}
+.count b{font-family:var(--serif);font-weight:400;font-size:clamp(5rem,3rem + 12vw,11rem);line-height:.8;letter-spacing:-.045em;display:block}
+.count .cap{font-size:.8125rem;letter-spacing:.17em;text-transform:uppercase;color:var(--ink-3);max-width:11rem;line-height:1.6}
+.count .cap b{font-family:var(--text);font-size:.8125rem;letter-spacing:.17em;color:var(--ink);display:inline}
+
+/* ------------------------------------------------------------ tables */
+table{width:100%;border-collapse:collapse;font-size:.9375rem}
+caption{text-align:left;font-size:.6875rem;letter-spacing:.17em;text-transform:uppercase;color:var(--ink-3);padding-bottom:.6rem}
+th{text-align:left;font-weight:400;font-size:.6875rem;letter-spacing:.15em;text-transform:uppercase;color:var(--ink-3);padding:0 .75rem .5rem 0;border-bottom:1px solid var(--rule);vertical-align:bottom;white-space:nowrap}
+td{padding:.5rem .75rem .5rem 0;border-bottom:1px solid var(--rule-soft);vertical-align:baseline}
+th.r,td.r{text-align:right;padding-right:0}
+th:last-child,td:last-child{padding-right:0}
+tbody tr:last-child td{border-bottom:1px solid var(--rule)}
+tfoot td{padding-top:.7rem;border-bottom:0;font-size:.875rem}
+.dim{color:var(--ink-3)}
+.q{color:var(--ink-3);font-style:italic}
+.wrap{overflow-x:auto;margin-inline:calc(var(--gut) * -1);padding-inline:var(--gut);scrollbar-width:thin}
+.wrap > table{min-width:40rem}
+
+/* "cut the bad" — the strike is the design's one gesture */
+.cut{position:relative;color:var(--ink-3)}
+.cut::after{
+  content:"";position:absolute;left:-.1em;top:.62em;height:1px;width:calc(100% + .2em);
+  background:var(--tomato);transform-origin:left;animation:cut .42s var(--ease) both;
+}
+@keyframes cut{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+
+/* ------------------------------------------------------------ scenario */
+.scen{display:flex;gap:0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);margin:1.5rem 0}
+.scen button{
+  flex:1;background:none;border:0;border-left:1px solid var(--rule-soft);cursor:pointer;
+  font:inherit;color:var(--ink-3);text-align:left;padding:1rem 1.15rem 1.1rem;
+  transition:background-color .22s var(--ease),color .22s var(--ease);
+}
+.scen button:first-child{border-left:0;padding-left:0}
+.scen button:hover{color:var(--ink)}
+.scen button[aria-pressed="true"]{background:var(--paper-2);color:var(--ink)}
+.scen button:first-child[aria-pressed="true"]{padding-left:1.15rem}
+.scen b{display:block;font-family:var(--serif);font-size:1.75rem;line-height:1;letter-spacing:-.02em;margin-bottom:.35rem}
+.scen[data-live] button[aria-pressed="true"] b{color:var(--tomato)}
+.scen em{font-style:normal;font-size:.6875rem;letter-spacing:.15em;text-transform:uppercase}
+.scen s{display:block;text-decoration:none;font-size:.8125rem;color:var(--ink-3);margin-top:.3rem}
+
+/* the cascade, drawn as a falling line */
+.cascade{display:grid;gap:0;margin:1.5rem 0;border-top:1px solid var(--rule)}
+.casrow{display:grid;grid-template-columns:1.5rem 1fr auto;gap:1rem;align-items:baseline;padding:.85rem 0;border-bottom:1px solid var(--rule-soft)}
+.casrow i{font-style:normal;font-size:.6875rem;color:var(--ink-3);letter-spacing:.1em}
+.casrow b{font-family:var(--serif);font-weight:400;font-size:1.375rem;letter-spacing:-.01em}
+.casrow .why{font-size:.8125rem;color:var(--ink-3);display:block;margin-top:.15rem}
+.casrow.buy b{color:var(--tomato)}
+
+/* ------------------------------------------------------------ key */
+.key{display:flex;flex-wrap:wrap;gap:1.75rem;padding:1.15rem 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.key div{display:flex;align-items:baseline;gap:.6rem;font-size:.8125rem;color:var(--ink-2)}
+.swatch{width:1.5rem;height:.25rem;flex:none;translate:0 -.15rem}
+.sw-tom{background:var(--tomato)}
+.sw-tom-h{background:none;border-top:1px solid var(--tomato);height:0}
+.sw-ink{background:var(--ink)}
+.sw-dim{background:var(--ink-3);opacity:.4}
+
+/* ------------------------------------------------------------ matrix */
+.matrix{border-collapse:collapse;font-size:.9375rem}
+.matrix th{font-size:.6875rem}
+.matrix td{text-align:right;border-bottom:1px solid var(--rule-soft);border-left:1px solid var(--rule-soft)}
+.matrix td:first-child,.matrix th:first-child{text-align:left;border-left:0;white-space:nowrap}
+.matrix .self{color:var(--ink-3)}
+.matrix .pay{color:var(--tomato)}
+
+/* ------------------------------------------------------------ grappa */
+.ladder{margin:1.75rem 0;border-top:1px solid var(--rule)}
+.rung{display:grid;grid-template-columns:3.25rem 1fr auto;align-items:center;gap:1rem;padding:.7rem 0;border-bottom:1px solid var(--rule-soft)}
+.rung em{font-style:normal;color:var(--ink-3);font-size:.875rem}
+.bar{height:1px;background:var(--ink);transform-origin:left;animation:grow .6s var(--ease) both}
+.rung.rec .bar{background:var(--ink);height:2px}
+.rung.now .bar{background:var(--tomato);height:3px}
+.rung b{font-family:var(--serif);font-weight:400;font-size:1.125rem}
+.rung.now b{color:var(--tomato)}
+.rung.none .bar{background:var(--ink-3);opacity:.25}
+@keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.verdict{font-family:var(--serif);font-size:clamp(1.75rem,1.2rem + 2vw,2.75rem);line-height:1.05;letter-spacing:-.02em;max-width:20ch;margin:1.25rem 0 .5rem}
+.verdict .tom{font-style:italic}
+
+/* ------------------------------------------------------------ the shelf */
+/* Bottles stand on one line, height scaled to price. The record is drawn
+   straight across as the line to clear, so beating it is a thing you see. */
+.shelfwrap{margin:1.5rem 0 1rem;overflow-x:auto;scrollbar-width:thin;padding-top:1.25rem}
+.shelf{position:relative;display:flex;align-items:flex-end;gap:clamp(.75rem,2.4vw,2.25rem);
+  min-width:min-content;padding:0 .5rem;border-bottom:1px solid var(--ink)}
+.slot{display:flex;flex-direction:column;align-items:center;gap:0;flex:none;position:relative;z-index:1}
+.slot .btl{color:var(--ink-2);display:block;overflow:visible}
+.slot .btl-cap{fill:var(--ink-2);opacity:.16}
+.slot .btl-label{fill:var(--paper)}
+.slot.rec .btl{color:var(--ink)}
+.slot.rec .btl-cap{fill:var(--ink);opacity:.2}
+.slot.now .btl{color:var(--tomato);stroke-width:1.6}
+.slot.now .btl-cap{fill:var(--tomato);opacity:.22}
+.slot.gone .btl{color:var(--ink-3);opacity:.42}
+.slot.gone .btl-body{stroke-dasharray:2 3}
+.slot .yr{font-size:.75rem;color:var(--ink-3);letter-spacing:.08em;margin-top:.55rem}
+.slot .pr{font-family:var(--serif);font-size:1.0625rem;line-height:1.2}
+.slot.now .pr{color:var(--tomato)}
+.slot.gone .pr{color:var(--ink-3);font-family:var(--text);font-size:.75rem;font-style:italic}
+/* the record, drawn across everything */
+.recmark{position:absolute;left:0;right:0;border-top:1px dashed var(--tomato);z-index:0;pointer-events:none}
+.recmark b{position:absolute;right:0;top:-1.45rem;font-family:var(--text);font-weight:400;
+  font-size:.6875rem;letter-spacing:.15em;text-transform:uppercase;color:var(--tomato);background:var(--paper);padding-left:.5rem}
+.shelffoot{display:flex;gap:1.5rem;flex-wrap:wrap;font-size:.75rem;color:var(--ink-3);padding-top:.75rem}
+
+/* bottle portraits: drawing now, photograph the moment there is one */
+.portraits{display:grid;grid-template-columns:repeat(auto-fit,minmax(11rem,1fr));gap:2rem 2.25rem;margin-top:1.75rem}
+.port{display:grid;gap:.75rem}
+.portshot{border:1px solid var(--rule);aspect-ratio:3/4;display:grid;place-items:center;
+  background:var(--surface,transparent);position:relative;overflow:hidden}
+.portshot img{width:100%;height:100%;object-fit:cover;display:block}
+.portshot .btl{color:var(--ink-3)}
+.portshot .btl-cap{fill:var(--ink-3);opacity:.16}
+.portshot .btl-label{fill:var(--paper)}
+.port.now .portshot{border-color:var(--tomato)}
+.port.now .portshot .btl{color:var(--tomato)}
+.port.now .portshot .btl-cap{fill:var(--tomato);opacity:.2}
+.port .meta b{font-family:var(--serif);font-size:1.125rem;font-weight:400;display:block}
+.port .meta em{font-style:normal;font-size:.75rem;color:var(--ink-3);letter-spacing:.1em}
+.port .meta p{font-size:.8125rem;color:var(--ink-3);margin-top:.3rem;line-height:1.4}
+.ask{font-size:.6875rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);
+  display:flex;align-items:center;gap:.4rem;margin-top:.4rem}
+.ask .ico{width:.9rem;height:.9rem;stroke-width:1.2}
+
+/* ------------------------------------------------------------ photobook */
+/* A contact sheet. Irregular by design — a printed album page, not a CSS grid
+   of identical squares. */
+.sheetyear{margin-top:3rem;padding-top:1rem;border-top:1px solid var(--ink)}
+.sheetyear:first-of-type{margin-top:1.5rem}
+.syhead{display:flex;align-items:baseline;gap:1rem;flex-wrap:wrap;margin-bottom:1.25rem}
+.syhead b{font-family:var(--serif);font-weight:400;font-size:1.75rem;letter-spacing:-.02em;line-height:1}
+.syhead i{font-style:italic;font-family:var(--serif);font-size:1.125rem;color:var(--ink-2)}
+.syhead .c{margin-left:auto;font-size:.6875rem;letter-spacing:.15em;text-transform:uppercase;color:var(--ink-3)}
+.contact{display:grid;grid-template-columns:repeat(auto-fill,minmax(12rem,1fr));gap:1.5rem 1.75rem;align-items:start}
+.plate{margin:0;display:grid;gap:.55rem}
+.plate .plate-well{position:relative;aspect-ratio:var(--ar,1.5);border:1px solid var(--rule);
+  display:grid;place-items:center;color:var(--ink-4,var(--ink-3))}
+.plate.is-empty .plate-well{background:var(--paper-2)}
+/* one registration tick, top left. Equal arms at any aspect. */
+.plate.is-empty .plate-well::before{
+  content:"";position:absolute;top:-1px;left:-1px;width:.85rem;height:.85rem;
+  border-top:2px solid var(--tomato);border-left:2px solid var(--tomato);
+}
+.plate .plate-mark{width:1.375rem;height:1.375rem;stroke-width:1;color:var(--ink-3);opacity:.4}
+.plate img{width:100%;aspect-ratio:var(--ar,1.5);object-fit:cover;display:block;border:1px solid var(--rule)}
+.plate figcaption{font-size:.8125rem;line-height:1.4;color:var(--ink-2);font-style:italic;font-family:var(--serif)}
+.plate.wide{grid-column:span 2}
+@media (max-width:34rem){.plate.wide{grid-column:span 1}}
+
+/* ------------------------------------------------------------ charts */
+.charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(19rem,1fr));gap:2.5rem 3rem;margin-top:1.75rem}
+.chart h3{font-size:.6875rem;letter-spacing:.17em;text-transform:uppercase;color:var(--ink-3);font-weight:400;margin-bottom:.2rem}
+.chart p{font-size:.8125rem;color:var(--ink-3);margin-bottom:.9rem;min-height:2.2em;line-height:1.35}
+svg{display:block;width:100%;height:auto;overflow:visible}
+.ax{stroke:var(--rule);stroke-width:1}
+.axl{fill:var(--ink-3);font-size:9px;font-family:var(--text);letter-spacing:.09em;text-transform:uppercase}
+.vl{fill:var(--ink);font-size:10px;font-family:var(--text)}
+.bar-f{fill:var(--ink);opacity:.85}
+.bar-live{fill:var(--tomato)}
+.ln{fill:none;stroke:var(--ink);stroke-width:1.25;stroke-linejoin:round}
+.ln-live{stroke:var(--tomato)}
+.dot{fill:var(--paper);stroke:var(--ink);stroke-width:1.25}
+.dot-live{fill:var(--tomato);stroke:var(--tomato)}
+.recline{stroke:var(--tomato);stroke-width:1;stroke-dasharray:2 3}
+.st1{fill:var(--ink);opacity:.88}
+.st2{fill:var(--ink);opacity:.52}
+.st3{fill:var(--ink);opacity:.22}
+.band{fill:var(--tomato);opacity:.12}
+
+/* ------------------------------------------------------------ run/menu */
+.stack{border-top:1px solid var(--rule)}
+.grp{padding:1.5rem 0 .35rem;font-size:.6875rem;letter-spacing:.17em;text-transform:uppercase;color:var(--ink-3);display:flex;gap:1rem;align-items:baseline}
+.grp b{color:var(--ink);font-weight:400}
+.grp .r{margin-left:auto}
+.row{display:grid;grid-template-columns:3.75rem 1fr;gap:1rem;padding:.65rem 0;border-bottom:1px solid var(--rule-soft);align-items:baseline}
+.row time{font-size:.8125rem;color:var(--ink-3);letter-spacing:.03em}
+.row .what{font-size:1rem}
+.row .meta{font-size:.8125rem;color:var(--ink-3);margin-top:.2rem}
+.row .meta b{color:var(--ink-2);font-weight:400}
+.unclaimed{color:var(--tomato)}
+
+.mini{display:flex;gap:1.5rem;flex-wrap:wrap;font-size:.8125rem;color:var(--ink-3);margin-top:1rem}
+.mini b{color:var(--ink);font-family:var(--serif);font-size:1.125rem;font-weight:400;margin-right:.3rem}
+
+/* readiness rails */
+.rails{display:grid;gap:.9rem;margin:1.5rem 0}
+.rail{display:grid;grid-template-columns:7.5rem 1fr 4.5rem;gap:1rem;align-items:center;font-size:.875rem}
+.rail .track{height:1px;background:var(--rule);position:relative}
+.rail .fill{position:absolute;inset:0 auto 0 0;height:1px;background:var(--ink);transform-origin:left;animation:grow .7s var(--ease) both}
+.rail.short .fill{background:var(--tomato)}
+.rail .n{text-align:right;color:var(--ink-3);font-size:.8125rem}
+.rail .lbl{color:var(--ink-2)}
+
+/* ------------------------------------------------------------ mobile */
+@media (max-width:56rem){
+  .slab{grid-template-columns:1fr}
+  .spine{position:sticky;top:0;height:auto;border-right:0;border-bottom:1px solid var(--rule);padding:.9rem 0 0}
+  .mark{padding:0 var(--gut) .75rem;display:flex;align-items:baseline;gap:.75rem;flex-wrap:wrap}
+  .mark b{font-size:1.25rem}
+  .mark i{margin:0}
+  .mark s{margin:0 0 0 auto;font-size:.9375rem}
+  .notches{display:flex;overflow-x:auto;gap:0;flex:none;scroll-snap-type:x proximity;padding-inline:var(--gut)}
+  .notch{grid-template-columns:none;display:flex;gap:.4rem;white-space:nowrap;padding:.5rem .85rem;margin:0;scroll-snap-align:center;border-bottom:2px solid transparent}
+  .notch[aria-current="true"]{background:none;border:0;border-bottom:2px solid var(--tomato);padding:.5rem .85rem;margin:0}
+  .spinefoot{display:none}
+  .sheet{padding-top:1.5rem}
+  .fig{flex:1 1 8rem;padding-left:1rem}
+  .fig:nth-child(odd){border-left:0;padding-left:0}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::after,*::before{animation-duration:.01ms !important;transition-duration:.01ms !important}
+}
+</style>
+</head>
+<body>
+
+<div class="slab">
+  <nav class="spine" aria-label="Workbook tabs">
+    <div class="mark">
+      <span class="sig" id="sig"></span>
+      <b>Sauce Day</b>
+      <i>2026 · the seventh</i>
+      <s>cut the bad</s>
+    </div>
+    <ul class="notches" id="notches"></ul>
+    <div class="spinefoot" id="spinefoot"></div>
+  </nav>
+  <main class="sheet" id="sheet" tabindex="-1"></main>
+</div>
+
+<script src="data.js"></script>
+<script src="visuals.js"></script>
+<script>
+(function(){
+"use strict";
+const S = window.SAUCE, V2 = window.SV, $ = s => document.querySelector(s);
+const {money, money0, num, dateLong} = S;
+const ic = V2.icon;
+const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+/* ---------------------------------------------------------------- spine */
+$("#sig").innerHTML = ic("cut");
+$("#notches").innerHTML = S.TABS.map(t =>
+  `<li><button class="notch" data-tab="${t.id}" aria-current="false">${ic(t.icon)}<em>${t.n}</em><span>${esc(t.name)}</span></button></li>`
+).join("");
+const d = S.daysToGo();
+$("#spinefoot").innerHTML =
+  `<b style="color:var(--ink);font-weight:400">${d}</b> days out.<br>${dateLong(S.settings.sauceDate)}.`;
+
+/* ---------------------------------------------------------------- bits */
+const figure = (label, value, sub, hot) =>
+  `<div class="fig${hot ? " hot" : ""}"><dt>${esc(label)}</dt><dd>${value}</dd>${sub ? `<div class="sub">${sub}</div>` : ""}</div>`;
+const figures = arr => `<dl class="figures">${arr.join("")}</dl>`;
+const rail = (label, done, total, word) => {
+  const pct = total ? done / total : 0;
+  return `<div class="rail${pct < .5 ? " short" : ""}">
+    <span class="lbl">${esc(label)}</span>
+    <span class="track"><span class="fill" style="width:${(pct*100).toFixed(1)}%"></span></span>
+    <span class="n">${done}/${total}</span></div>`;
+};
+
+/* ---------------------------------------------------------------- charts */
+const W = 320, H = 150, P = {t:10,r:8,b:20,l:34};
+const sx = (i,n) => P.l + (n<2?0:(W-P.l-P.r)*i/(n-1));
+const bx = (i,n) => P.l + (W-P.l-P.r)*i/n;
+const bw = n => (W-P.l-P.r)/n * .62;
+const sy = (v,max) => H-P.b - (max?(H-P.t-P.b)*v/max:0);
+const axis = max => `<line class="ax" x1="${P.l}" y1="${H-P.b}" x2="${W-P.r}" y2="${H-P.b}"/>
+  <text class="axl" x="0" y="${H-P.b}">0</text>
+  <text class="axl" x="0" y="${P.t+7}">${max}</text>`;
+
+function chartBars(rows, val, fmt){
+  const vals = rows.map(val), max = Math.max(...vals.filter(v=>v!=null), 1);
+  const nice = Math.ceil(max/100)*100, n = rows.length;
+  return `<svg viewBox="0 0 ${W} ${H}" role="img">${axis(nice)}
+    ${rows.map((r,i)=>{
+      const v = val(r); if(v==null) return `<text class="axl" x="${bx(i,n)+bw(n)/2}" y="${H-P.b-4}" text-anchor="middle">—</text>`;
+      const y = sy(v,nice);
+      return `<rect class="bar-f${r.live?" bar-live":""}" x="${bx(i,n)}" y="${y}" width="${bw(n)}" height="${H-P.b-y}"><title>${r.year}: ${fmt(v)}</title></rect>`;
+    }).join("")}
+    ${rows.map((r,i)=>`<text class="axl" x="${bx(i,n)+bw(n)/2}" y="${H-6}" text-anchor="middle">'${String(r.year).slice(2)}</text>`).join("")}
+  </svg>`;
+}
+function chartLine(rows, val, fmt, refLine){
+  const pts = rows.map((r,i)=>({i, v: val(r), live: r.live, year: r.year})).filter(p=>p.v!=null);
+  const max = Math.ceil(Math.max(...pts.map(p=>p.v), refLine||0, 1)/50)*50, n = rows.length;
+  const px = p => sx(p.i, n), py = p => sy(p.v, max);
+  const dPath = pts.map((p,k)=>`${k?"L":"M"}${px(p)} ${py(p)}`).join(" ");
+  return `<svg viewBox="0 0 ${W} ${H}" role="img">${axis(max)}
+    ${refLine ? `<line class="recline" x1="${P.l}" y1="${sy(refLine,max)}" x2="${W-P.r}" y2="${sy(refLine,max)}"/>
+      <text class="axl" x="${W-P.r}" y="${sy(refLine,max)-4}" text-anchor="end" style="fill:var(--tomato)">record ${money0(refLine)}</text>`:""}
+    <path class="ln" d="${dPath}"/>
+    ${pts.map(p=>`<circle class="dot${p.live?" dot-live":""}" cx="${px(p)}" cy="${py(p)}" r="2.6"><title>${p.year}: ${fmt(p.v)}</title></circle>`).join("")}
+    ${rows.map((r,i)=>`<text class="axl" x="${sx(i,n)}" y="${H-6}" text-anchor="middle">'${String(r.year).slice(2)}</text>`).join("")}
+  </svg>`;
+}
+function chartStack(rows){
+  const tot = rows.map(r=>r.total||0), max = Math.ceil(Math.max(...tot,1)/200)*200, n = rows.length;
+  return `<svg viewBox="0 0 ${W} ${H}" role="img">${axis(max)}
+    ${rows.map((r,i)=>{
+      if(r.total==null) return "";
+      let acc = 0;
+      return [["toolkit","st1"],["ing","st2"],["food","st3"]].map(([k,c])=>{
+        const v = r[k]||0, y0 = sy(acc,max), y1 = sy(acc+v,max); acc += v;
+        return `<rect class="${c}" x="${bx(i,n)}" y="${y1}" width="${bw(n)}" height="${Math.max(0,y0-y1)}"><title>${r.year} ${k}: ${money0(v)}</title></rect>`;
+      }).join("");
+    }).join("")}
+    ${rows.map((r,i)=>`<text class="axl" x="${bx(i,n)+bw(n)/2}" y="${H-6}" text-anchor="middle">'${String(r.year).slice(2)}</text>`).join("")}
+  </svg>`;
+}
+function chartYield(){
+  const rows = S.series(), n = rows.length;
+  const sc = S.scenarios();
+  const max = Math.ceil(Math.max(...rows.map(r=>r.litres||0), sc[2].plan.litres)/25)*25;
+  const pts = rows.map((r,i)=>({i,v:r.litres,live:r.live,year:r.year})).filter(p=>p.v!=null);
+  const li = rows.length-1;
+  return `<svg viewBox="0 0 ${W} ${H}" role="img">${axis(max)}
+    <rect class="band" x="${sx(li,n)-9}" y="${sy(sc[2].plan.litres,max)}" width="18" height="${sy(sc[0].plan.litres,max)-sy(sc[2].plan.litres,max)}"><title>2026 range 70–126 L</title></rect>
+    ${pts.map((p,k)=>k?`<line class="ln" x1="${sx(pts[k-1].i,n)}" y1="${sy(pts[k-1].v,max)}" x2="${sx(p.i,n)}" y2="${sy(p.v,max)}" stroke-dasharray="${p.live?"3 3":"0"}"/>`:"").join("")}
+    ${pts.map(p=>`<circle class="dot${p.live?" dot-live":""}" cx="${sx(p.i,n)}" cy="${sy(p.v,max)}" r="2.6"><title>${p.year}: ${p.v} L</title></circle>`).join("")}
+    ${rows.map((r,i)=>`<text class="axl" x="${sx(i,n)}" y="${H-6}" text-anchor="middle">'${String(r.year).slice(2)}</text>`).join("")}
+  </svg>`;
+}
+
+/* ---------------------------------------------------------------- tabs */
+const V = {};
+
+V.dashboard = () => {
+  const y = S.yieldPlan(), r = S.readiness(), st = S.settlement(), g = S.grappaVerdict();
+  const b = S.budgetByCat(), a = S.actualByCat();
+  const last = S.history[S.history.length-1];
+  const lastTotal = last.toolkit + last.ing + last.food;
+  return `
+  <div class="head"><h1>Dashboard</h1><p>${S.settings.edition}th edition</p></div>
+
+  <div class="count">
+    <b>${S.daysToGo()}</b>
+    <span class="cap">days until<br><b>Saturday 29 August</b><br>2026</span>
+  </div>
+
+  ${figures([
+    figure("Logged so far", money(S.sum(a)), `across ${S.expenses.length} receipts`),
+    figure("Share per man", money(st.share), `${S.settings.crewSize} ways, even`),
+    figure("Jars still to buy", num(y.jarsToBuy), `${y.jarPacks} pack${y.jarPacks===1?"":"s"} · ${money(y.cost)}`, y.jarsToBuy>0),
+    figure("Grappa to beat", money0(g.record), g.state==="beaten" ? `beaten by ${money(g.delta)}` : "not bought yet", g.state!=="beaten"),
+    figure("2025 landed at", money0(lastTotal), `${money0(lastTotal/5)} per man`)
+  ])}
+
+  <section class="sec">
+    <h2>Budget against actual</h2>
+    <p class="lede">Only ${r.priced.done} of ${r.priced.total} ledger lines carry a price. Food is the gap — last year it was ${money0(last.food)}, and this year it is still unpriced.</p>
+    <table>
+      <thead><tr><th>Category</th><th class="r">2026 budget</th><th class="r">2026 actual</th><th class="r">2025 actual</th><th class="r">Unpriced lines</th></tr></thead>
+      <tbody>${S.CATS.map(c=>{
+        const key = c.key==="ingredients" ? "ing" : c.key;
+        const unpriced = S.items.filter(i=>i.cat===c.key && !i.budget).length;
+        return `<tr><td>${c.label}</td><td class="r">${b[c.key]?money(b[c.key]):'<span class="q">not set</span>'}</td>
+          <td class="r">${a[c.key]?money(a[c.key]):'<span class="dim">—</span>'}</td>
+          <td class="r dim">${money(last[key])}</td>
+          <td class="r ${unpriced?'tom':'dim'}">${unpriced}</td></tr>`;
+      }).join("")}</tbody>
+      <tfoot><tr><td><b>Total</b></td><td class="r">${money(S.sum(b))}</td><td class="r">${money(S.sum(a))}</td><td class="r dim">${money(lastTotal)}</td><td class="r tom">${S.items.filter(i=>!i.budget).length}</td></tr></tfoot>
+    </table>
+  </section>
+
+  <section class="sec">
+    <h2>Readiness</h2>
+    <div class="rails">
+      ${rail("Shopping", r.buy.done, r.buy.total)}
+      ${rail("Menu claimed", r.menu.done, r.menu.total)}
+      ${rail("Jars on hand", Math.min(r.jars.done,r.jars.total), r.jars.total)}
+      ${rail("Lines priced", r.priced.done, r.priced.total)}
+      ${rail("Run sheet", r.run.done, r.run.total)}
+    </div>
+    <p class="note">The run sheet stays at zero until the Friday. That is correct — it is a day-of instrument, not a plan.</p>
+  </section>
+
+  <section class="sec">
+    <h2>Colour</h2>
+    <p class="lede">One colour, three meanings. If tomato appears anywhere else, it is a mistake.</p>
+    <div class="key">
+      <div><span class="swatch sw-tom"></span> money out, or still to buy</div>
+      <div><span class="swatch sw-tom-h"></span> the record to beat</div>
+      <div><span class="swatch sw-tom"></span> a line cut — done, owned, settled</div>
+      <div><span class="swatch sw-ink"></span> ink: fact, settled, historical</div>
+      <div><span class="swatch sw-dim"></span> grey: not priced, not claimed, unknown</div>
+    </div>
+  </section>`;
+};
+
+let SCEN = "mid";
+V.yield = () => {
+  const sc = S.scenarios(), cur = sc.find(x=>x.key===SCEN), p = cur.plan, h = S.onHand();
+  const P = S.settings.packSize;
+  return `
+  <div class="head"><h1>Yield &amp; Jars</h1><p>bushels → litres → jars</p></div>
+  <p class="lede">${p.bushels} bushels between ${S.bushels.filter(b=>b.count).length} people. At the midpoint that is ${num(p.litres)} litres, and with a ${(S.settings.bufferPct*100)}% buffer you need ${num(p.jarsRequired)} jars standing ready.</p>
+
+  <div class="scen" ${SCEN!=="mid"?'data-live':""}>
+    ${sc.map(s=>`<button data-scen="${s.key}" aria-pressed="${s.key===SCEN}">
+      <b>${num(s.plan.litres)} L</b><em>${s.label} · ${s.lpb} L/bushel</em>
+      <s>${num(s.plan.jarsRequired)} jars · ${money(s.plan.cost)} to buy</s></button>`).join("")}
+  </div>
+  <p class="note">Defaulted to the midpoint. 2021 gave 60 L off 7 bushels — a bad year. 2020 gave 78 L. Reality has always sat under the midpoint, so treat Mid as the ceiling of a normal year.</p>
+
+  <section class="sec">
+    <h2>The cascade</h2>
+    <p class="lede">Jar packs ship with bands. Band packs ship with lids. Buy in that order and you stop buying twice.</p>
+    <div class="cascade">
+      <div class="casrow"><i>01</i><span>Jars required<span class="why">${num(p.litres)} L × ${1+S.settings.bufferPct} buffer, rounded up</span></span><b>${num(p.jarsRequired)}</b></div>
+      <div class="casrow"><i>02</i><span>Jars on hand<span class="why">Matt ${h.jars-24}, David 24</span></span><b>${num(h.jars)}</b></div>
+      <div class="casrow ${p.jarPacks?"buy":""}"><i>03</i><span>Jar packs to buy<span class="why">${num(p.jarsToBuy)} short ÷ ${P} per pack · ${money(S.settings.jarPrice)} each</span></span><b>${p.jarPacks} <span class="dim" style="font-size:.8125rem">= ${p.jarsFromPacks} jars</span></b></div>
+      <div class="casrow"><i>04</i><span>Bands needed after those packs<span class="why">${num(p.jarsRequired)} required − ${num(h.bands)} on hand − ${p.bandsFromJarPacks} that came with the jars</span></span><b>${p.bandsToBuy ? num(p.bandsToBuy) : '<span class="dim">none</span>'}</b></div>
+      <div class="casrow ${p.bandPacks?"buy":""}"><i>05</i><span>Band packs to buy<span class="why">${money(S.settings.bandPrice)} each</span></span><b>${p.bandPacks || '<span class="dim">0</span>'}</b></div>
+      <div class="casrow ${p.lidPacks?"buy":""}"><i>06</i><span>Lid packs to buy<span class="why">${num(p.jarsRequired)} − ${num(h.lids)} on hand − ${p.jarsFromPacks} from jar packs − ${p.lidsFromBandPacks} from band packs = ${num(p.lidsToBuy)} short · ${money(S.settings.lidPrice)} each</span></span><b>${p.lidPacks}</b></div>
+    </div>
+    ${figures([
+      figure("Jars and lids", money(p.cost), "flows to Sauce Toolkit", p.cost>0),
+      figure("Bushels", money(p.bushelCost), `${p.bushels} × ${money(S.settings.pricePerBushel)} · flows to Ingredients`),
+      figure("Sauce cost", money((p.cost+p.bushelCost)/p.litres) + "<small>/L</small>", "before food and drink")
+    ])}
+  </section>
+
+  <section class="sec">
+    <h2>Who brings what</h2>
+    <div class="wrap"><table>
+      <thead><tr><th>Person</th><th class="r">Bushels</th><th class="r">Jars</th><th class="r">Bands</th><th class="r">Lids</th></tr></thead>
+      <tbody>${S.bushels.map(b=>{
+        const j = S.jarStock.find(x=>x.person===b.person) || {jars:0,bands:0,lids:0};
+        return `<tr><td>${esc(b.person)}</td><td class="r">${b.count||'<span class="dim">—</span>'}</td>
+          <td class="r">${j.jars||'<span class="dim">—</span>'}</td><td class="r">${j.bands||'<span class="dim">—</span>'}</td><td class="r">${j.lids||'<span class="dim">—</span>'}</td></tr>`;
+      }).join("")}</tbody>
+      <tfoot><tr><td><b>Total</b></td><td class="r">${p.bushels}</td><td class="r">${h.jars}</td><td class="r">${h.bands}</td><td class="r">${h.lids}</td></tr></tfoot>
+    </table></div>
+  </section>`;
+};
+
+const ledger = catKey => {
+  const cat = S.CATS.find(c=>c.key===catKey);
+  const rows = S.items.filter(i=>i.cat===catKey);
+  const hk = catKey==="ingredients" ? "ing" : catKey;
+  const hist = [...S.history].reverse();
+  const budget = rows.reduce((a,i)=>a+(i.budget||0),0);
+  const actual = rows.reduce((a,i)=>a+(i.actual||0),0);
+  return `
+  <div class="head"><h1>${cat.label}</h1><p>${rows.length} lines</p></div>
+  <p class="lede">${catKey==="toolkit"
+    ? "Most of this is owned already and costs nothing this year. The lines that cost money are the ones that get consumed: jars, lids, propane."
+    : catKey==="ingredients"
+    ? "Nine lines. One of them is the whole year — the bushels. The rest is a Costco run."
+    : "Thirty-two lines and none of them priced. This is where the budget goes missing every year: 2025 food came in at " + money(S.history[5].food) + "."}</p>
+
+  ${figures([
+    figure("2026 budget", budget?money(budget):'<span class="q" style="font-family:var(--text);font-size:1.125rem">not set</span>', `${rows.filter(i=>i.budget).length} of ${rows.length} lines priced`, !budget),
+    figure("2026 actual", money(actual), `${rows.filter(i=>i.obtained).length} bought`),
+    figure("2025", money(S.history[5][hk]), "actual"),
+    figure("Six-year mean", money(hist.filter(h=>h[hk]!=null).reduce((a,h)=>a+h[hk],0)/hist.filter(h=>h[hk]!=null).length), "2021–2025")
+  ])}
+
+  <div class="wrap"><table>
+    <thead><tr>
+      <th>Item</th><th>Kind</th><th class="r">Qty</th><th class="r">2026 budget</th><th class="r">2026 actual</th><th>Who</th><th>Store</th><th>Again?</th>
+    </tr></thead>
+    <tbody>${rows.map(i=>`<tr>
+      <td class="${i.obtained?"cut":""}">${esc(i.name)}${i.note?`<div class="note" style="font-size:.75rem;margin-top:.1rem">${esc(i.note)}</div>`:""}</td>
+      <td class="dim">${esc(i.kind||"")}</td>
+      <td class="r">${i.qty || '<span class="dim">—</span>'}</td>
+      <td class="r">${i.budget ? money(i.budget) : '<span class="dim">—</span>'}</td>
+      <td class="r">${i.actual ? money(i.actual) : '<span class="dim">—</span>'}</td>
+      <td class="dim">${i.who ? esc(i.who) : '<span class="tom">unassigned</span>'}</td>
+      <td class="dim">${esc(i.store||"—")}</td>
+      <td class="dim">${esc(i.repeat||"")}</td>
+    </tr>`).join("")}</tbody>
+  </table></div>
+
+  <section class="sec">
+    <h2>The historical record</h2>
+    <p class="lede">The sheets only ever carried a category total per year, never a per-item history. This is everything there is.</p>
+    <div class="wrap"><table>
+      <thead><tr><th>Year</th>${hist.map(h=>`<th class="r">${h.year}</th>`).join("")}</tr></thead>
+      <tbody><tr><td>${cat.short}</td>${hist.map(h=>`<td class="r">${h[hk]==null?'<span class="dim">no sheet</span>':money(h[hk])}</td>`).join("")}</tr>
+      <tr><td class="dim">Per man</td>${hist.map(h=>`<td class="r dim">${h[hk]==null?"—":money(h[hk]/h.crew)}</td>`).join("")}</tr></tbody>
+    </table></div>
+  </section>`;
+};
+V.toolkit = () => ledger("toolkit");
+V.ingredients = () => ledger("ingredients");
+V.food = () => ledger("food");
+
+V.shopping = () => {
+  const sh = S.shopping(), buyers = S.byBuyer();
+  const known = sh.stores.reduce((a,s)=>a+s.estimate,0);
+  const unpriced = sh.stores.reduce((a,s)=>a+s.unpriced,0);
+  return `
+  <div class="head"><h1>Shopping List</h1><p>${sh.count} items · ${sh.storeCount} stores</p></div>
+  <p class="lede">Grouped by where you actually stand when you buy it. Estimates come straight from the ledger, so a blank here is a blank there.</p>
+  ${figures([
+    figure("Priced", money(known), `${sh.count-unpriced} of ${sh.count} items`),
+    figure("Unpriced", num(unpriced), "no estimate in the ledger", true),
+    figure("Bought", `${sh.stores.reduce((a,s)=>a+s.got,0)}<small>of ${sh.count}</small>`, "ticked off"),
+    figure("Stores", num(sh.storeCount), "one of them is “no store yet”")
+  ])}
+
+  <section class="sec">
+    <h2>By store</h2>
+    <div class="stack">${sh.stores.map(s=>`
+      <div class="grp"><b>${esc(s.store)}</b> ${s.list.length} item${s.list.length===1?"":"s"}
+        <span class="r">${s.estimate?money(s.estimate):'<span class="tom">no estimate</span>'}${s.got?` · ${s.got} got`:""}</span></div>
+      ${s.list.map(i=>`<div class="row" style="grid-template-columns:1fr auto">
+        <div><span class="what ${i.obtained?"cut":""}">${esc(i.name)}</span>
+          <div class="meta">${[i.kind,i.qty?"qty "+i.qty:null].filter(Boolean).map(esc).join(" · ")}${i.who?` · <b>${esc(i.who)}</b>`:' · <span class="unclaimed">unassigned</span>'}</div></div>
+        <div style="text-align:right">${i.budget?money(i.budget):'<span class="dim">—</span>'}</div>
+      </div>`).join("")}
+    `).join("")}</div>
+  </section>
+
+  <section class="sec">
+    <h2>By buyer</h2>
+    <table>
+      <thead><tr><th>Buyer</th><th class="r">Items</th><th class="r">Got</th><th class="r">Estimated outlay</th></tr></thead>
+      <tbody>${buyers.map(b=>`<tr>
+        <td class="${b.name==="Unassigned"?"tom":""}">${esc(b.name)}</td>
+        <td class="r">${b.items}</td><td class="r dim">${b.got||"—"}</td>
+        <td class="r">${b.estimate?money(b.estimate):'<span class="dim">—</span>'}</td></tr>`).join("")}</tbody>
+      <tfoot><tr><td><b>Total</b></td><td class="r">${sh.count}</td><td class="r">${sh.stores.reduce((a,s)=>a+s.got,0)}</td><td class="r">${money(known)}</td></tr></tfoot>
+    </table>
+    <p class="note">Whatever a buyer actually spends lands in Settlement. This column is only the expectation.</p>
+  </section>`;
+};
+
+V.menu = () => {
+  const svc = ["Breakfast","Snack","Lunch","Dinner","Drinks"];
+  const claimed = S.menu.filter(m=>m.claimed).length;
+  return `
+  <div class="head"><h1>Menu</h1><p>${S.menu.length} dishes · ${svc.length} services</p></div>
+  <p class="lede">${claimed} claimed, ${S.menu.length-claimed} still nobody's. The unclaimed ones are in tomato — that is the whole job of this page.</p>
+  <div class="stack">${svc.map(s=>{
+    const list = S.menu.filter(m=>m.service===s); if(!list.length) return "";
+    const c = list.filter(m=>m.claimed).length;
+    return `<div class="grp"><b>${s}</b> ${list.length} dishes <span class="r">${c}/${list.length} claimed</span></div>
+    ${list.map(m=>`<div class="row" style="grid-template-columns:1fr 9rem">
+      <div><span class="what">${esc(m.dish)}</span>
+      <div class="meta">${esc(m.source)}${m.qty&&m.qty!=="—"?` · ${esc(m.qty)}`:""}${m.note?` · <i>${esc(m.note)}</i>`:""}</div></div>
+      <div style="text-align:right">${m.who?`<b style="font-weight:400">${esc(m.who)}</b>`:'<span class="unclaimed">unclaimed</span>'}</div>
+    </div>`).join("")}`;
+  }).join("")}</div>`;
+};
+
+V.run = () => {
+  const secs = [["PREP","Friday night"],["DAY","Saturday 29 August"]];
+  return `
+  <div class="head"><h1>Run Sheet</h1><p>${S.runsheet.length} steps</p></div>
+  <p class="lede">Friday night through to settling up at 22:30. Read it top to bottom; it has never once gone in a different order.</p>
+  <div class="stack">${secs.map(([k,label])=>{
+    const list = S.runsheet.filter(r=>r.section===k);
+    return `<div class="grp"><b>${label}</b> ${list.length} steps <span class="r">${list[0].time} → ${list[list.length-1].time}</span></div>
+    ${list.map(r=>`<div class="row">
+      <time>${esc(r.time)}</time>
+      <div><span class="what">${esc(r.activity)}</span>
+        <div class="meta">Lead <b>${esc(r.lead)}</b>${r.crew?` · with ${esc(r.crew)}`:""}${r.kit?` · ${esc(r.kit)}`:""}${r.note?` · <i>${esc(r.note)}</i>`:""}</div></div>
+    </div>`).join("")}`;
+  }).join("")}</div>
+  <div class="mini"><span><b>${S.runsheet.filter(r=>r.lead==="Matt").length}</b>steps Matt leads</span>
+  <span><b>${S.runsheet.filter(r=>r.lead==="David").length}</b>David</span>
+  <span><b>${S.runsheet.filter(r=>r.lead==="All").length}</b>everyone</span>
+  <span><b>16</b>hours, 06:30 to 22:30</span></div>`;
+};
+
+V.settlement = () => {
+  const st = S.settlement(), names = st.net.map(n=>n.name);
+  const t = (from,to) => st.transfers.find(x=>x.from===from&&x.to===to);
+  return `
+  <div class="head"><h1>Settlement</h1><p>even, ${S.settings.crewSize} ways</p></div>
+  <p class="lede">Everything anyone paid, added up and cut into five. Then the fewest transfers that clear it.</p>
+  ${figures([
+    figure("Total logged", money(st.total), `${S.expenses.length} receipts`),
+    figure("Share per man", money(st.share), "even split"),
+    figure("Owed across", money(st.transfers.reduce((a,x)=>a+x.amount,0)), `${st.transfers.length} transfers`, true),
+    figure("Balance", st.balanced ? "clean" : "off", st.balanced ? "nets to zero" : "check the ledger")
+  ])}
+
+  <section class="sec">
+    <h2>Position</h2>
+    <table>
+      <thead><tr><th>Person</th><th class="r">Paid</th><th class="r">Share</th><th class="r">Net</th></tr></thead>
+      <tbody>${st.net.map(n=>`<tr><td>${esc(n.name)}</td><td class="r">${money(n.paid)}</td>
+        <td class="r dim">${money(n.share)}</td>
+        <td class="r ${n.net<0?"tom":""}">${money(n.net)}</td></tr>`).join("")}</tbody>
+      <tfoot><tr><td><b>Check</b></td><td class="r">${money(st.total)}</td><td class="r dim">${money(st.share*5)}</td><td class="r">${money(0)}</td></tr></tfoot>
+    </table>
+  </section>
+
+  <section class="sec">
+    <h2>Who pays whom</h2>
+    <div class="wrap"><table class="matrix">
+      <thead><tr><th>Pays ↓ / To →</th>${names.map(n=>`<th class="r">${esc(n)}</th>`).join("")}<th class="r">Out</th></tr></thead>
+      <tbody>${names.map(from=>{
+        const out = st.transfers.filter(x=>x.from===from).reduce((a,x)=>a+x.amount,0);
+        return `<tr><td>${esc(from)}</td>${names.map(to=>{
+          if(from===to) return `<td class="self">·</td>`;
+          const x = t(from,to);
+          return `<td class="${x?"pay":"self"}">${x?money(x.amount):"—"}</td>`;
+        }).join("")}<td class="r">${out?money(out):'<span class="dim">—</span>'}</td></tr>`;
+      }).join("")}</tbody>
+      <tfoot><tr><td><b>In</b></td>${names.map(to=>{
+        const inn = st.transfers.filter(x=>x.to===to).reduce((a,x)=>a+x.amount,0);
+        return `<td class="r">${inn?money(inn):'<span class="dim">—</span>'}</td>`;
+      }).join("")}<td class="r">${money(st.transfers.reduce((a,x)=>a+x.amount,0))}</td></tr></tfoot>
+    </table></div>
+  </section>
+
+  <section class="sec">
+    <h2>Receipts</h2>
+    <table>
+      <thead><tr><th>Item</th><th>Store</th><th>Paid by</th><th class="r">Amount</th></tr></thead>
+      <tbody>${S.expenses.map(e=>`<tr><td>${esc(e.item)}</td><td class="dim">${esc(e.store)}</td>
+        <td>${esc(e.by)}</td><td class="r">${money(e.amount)}</td></tr>`).join("")}</tbody>
+    </table>
+    <p class="note">These eight lines are sample receipts so the split has something to divide.</p>
+  </section>
+
+  <section class="sec">
+    <h2>Kept for reference</h2>
+    <table>
+      <thead><tr><th>Year</th><th class="r">Total</th><th class="r">Per man</th><th>Note</th></tr></thead>
+      <tbody>
+      <tr><td>2025</td><td class="r">${money(S.history[5].toolkit+S.history[5].ing+S.history[5].food)}</td><td class="r">${money((S.history[5].toolkit+S.history[5].ing+S.history[5].food)/5)}</td><td class="dim">Food total as stated; the $31 pasta line was left out</td></tr>
+      <tr><td>2021</td><td class="r">${money(S.history[1].toolkit+S.history[1].ing+S.history[1].food)}</td><td class="r">${money((S.history[1].toolkit+S.history[1].ing+S.history[1].food)/5)}</td><td class="dim">Rebuilt from the Sauce Boss sheet</td></tr>
+      </tbody>
+    </table>
+  </section>`;
+};
+
+V.grappa = () => {
+  const g = S.grappaVerdict(), rows = S.grappa;
+  const shelf = S.shelf();
+  const MIN = 40, MAX = 190;
+  const hOf = f => Math.round(MIN + (MAX-MIN)*f);
+  const recRow = shelf.find(b => b.record);
+  const recH = recRow ? hOf(recRow.factor) : 0;
+
+  return `
+  <div class="head"><h1>Grappa Hall of Fame</h1><p>one bottle a year</p></div>
+  <div class="verdict">${
+    g.state==="beaten" ? `Beaten. ${money(g.price)} against a ${money0(g.record)} record — <span class="tom">up ${money(g.delta)}</span>.`
+    : g.state==="pending" ? `The bottle to beat is <span class="tom">${money0(g.record)}</span>. Nothing bought yet.`
+    : `Short by <span class="tom">${money(Math.abs(g.delta))}</span>.`}</div>
+  <p class="note">Bought by ${esc(g.by || "—")}. The rule has never been written down and has never been broken: it has to cost more than last year.</p>
+
+  <section class="sec">
+    <h2>The shelf</h2>
+    <p class="lede">Every bottle since 2020, standing on one line, each drawn to the height of what it cost. The dashed line is the record. Clearing it is the entire point.</p>
+    <div class="shelfwrap">
+      <div class="shelf">
+        ${recH ? `<div class="recmark" style="bottom:${recH}px"><b>${money0(g.record)} · the line to clear</b></div>` : ""}
+        ${shelf.map(b => {
+          const cls = b.live ? "now" : b.record ? "rec" : b.empty ? "gone" : "";
+          const drawn = V2.bottle(b.factor, b.shape, {
+            min: MIN, max: MAX, empty: b.empty,
+            label: `${b.year}${b.price ? " — " + money(b.price) : " — no bottle"}`
+          });
+          return `<div class="slot ${cls}">
+            ${b.photo ? `<img src="${b.photo}" alt="${b.year} bottle" style="height:${drawn.h}px;display:block">` : drawn.svg}
+            <span class="yr">${b.year}</span>
+            <span class="pr">${b.price ? money0(b.price) : (b.price === 0 ? "none" : "no record")}</span>
+          </div>`;
+        }).join("")}
+      </div>
+    </div>
+    <div class="shelffoot">
+      <span>Height scaled to price.</span>
+      <span>Dashed outline: no bottle bought that year.</span>
+      <span>Tomato: this year's.</span>
+    </div>
+  </section>
+
+  <section class="sec">
+    <h2>The bottles</h2>
+    <p class="lede">Four of the seven years never had the bottle written down, only the price. Photographs replace these drawings the moment there are any.</p>
+    <div class="portraits">${shelf.filter(b => b.price).map(b => `
+      <div class="port ${b.live?"now":""}">
+        <div class="portshot">
+          ${b.photo ? `<img src="${b.photo}" alt="${b.year} grappa">`
+                    : V2.bottle(1, b.shape, {min:150, max:150, label:`${b.year} bottle`}).svg}
+        </div>
+        <div class="meta">
+          <b>${money(b.price)}</b>
+          <em>${b.year}${b.by ? " · " + esc(b.by) : ""}</em>
+          <p>${b.bottle ? esc(b.bottle) : "Bottle never named on the sheet."}${b.link ? ` <a href="${b.link}" target="_blank" rel="noopener">SAQ</a>` : ""}</p>
+          ${b.photo ? "" : `<div class="ask">${ic("camera")} photograph wanted</div>`}
+        </div>
+      </div>`).join("")}
+    </div>
+  </section>
+
+  <section class="sec">
+    <h2>The record</h2>
+  <table>
+    <thead><tr><th>Year</th><th class="r">Price</th><th>Bought by</th><th class="r">Beat the year before?</th><th>Note</th></tr></thead>
+    <tbody>${rows.map((r,i)=>{
+      const prev = rows.slice(0,i).filter(x=>x.price).map(x=>x.price);
+      const best = prev.length?Math.max(...prev):0;
+      const v = r.price==null ? "—" : r.price===0 ? "no bottle" : r.price>best ? "yes" : "no";
+      return `<tr><td>${r.year}</td>
+        <td class="r">${r.price==null?'<span class="dim">—</span>':r.price===0?'<span class="dim">—</span>':money(r.price)}</td>
+        <td class="dim">${esc(r.by||"—")}</td>
+        <td class="r ${v==="yes"?"tom":"dim"}">${v}</td>
+        <td class="dim">${esc(r.note)}</td></tr>`;
+    }).join("")}</tbody>
+  </table>
+  </section>`;
+};
+
+V.photobook = () => {
+  const st = S.photoStats();
+  return `
+  <div class="head"><h1>Photobook</h1><p>one spread a year</p></div>
+  <p class="lede">Seven years, ${st.plates} plates, ${st.filled ? st.filled + " filled" : "none filled yet"}. The captions are already written from the record, so the book knows what it is waiting for.</p>
+  ${figures([
+    figure("Years", num(st.years), "2020 onward"),
+    figure("Plates", num(st.plates), "laid out and captioned"),
+    figure("Photographs in", num(st.filled), st.filled ? "of " + st.plates : "nothing dropped in yet", st.filled === 0),
+    figure("Still wanted", num(st.empty), "drop files and they appear", st.empty > 0)
+  ])}
+  ${S.photobook.slice().reverse().map(y => `
+    <div class="sheetyear">
+      <div class="syhead">
+        <b>${y.year}</b>
+        <i>${esc(y.title)}</i>
+        <span class="c">${y.live ? "in progress" : "edition " + y.ed} · ${y.plates.length} plates</span>
+      </div>
+      <div class="contact">
+        ${y.plates.map(p => V2.plate(p, { cls: p.w > p.h ? "wide" : "", mark: "camera" })).join("")}
+      </div>
+    </div>`).join("")}
+  <p class="note" style="margin-top:2.5rem">To fill a plate, set its <b>src</b> in <b>data.js</b> under <b>photobook</b>. The frame keeps its aspect and the caption stays put, so adding a picture never moves the page around.</p>`;
+};
+
+V.history = () => {
+  const rows = S.series();
+  return `
+  <div class="head"><h1>History</h1><p>one row a year, forever</p></div>
+  <p class="lede">Seven editions. Two of them predate anyone keeping a proper sheet, and those gaps stay visible rather than get filled in with guesses.</p>
+  <div class="wrap"><table>
+    <thead><tr><th>Year</th><th class="r">Ed.</th><th class="r">Toolkit</th><th class="r">Ingredients</th><th class="r">Food</th><th class="r">Total</th><th class="r">Per man</th><th class="r">Bushels</th><th class="r">Litres</th><th class="r">Grappa</th></tr></thead>
+    <tbody>${rows.map(r=>`<tr>
+      <td>${r.year}${r.live?' <span class="tom" style="font-size:.75rem">live</span>':""}</td>
+      <td class="r dim">${r.ed}</td>
+      <td class="r">${r.toolkit!=null?money(r.toolkit):'<span class="dim">—</span>'}</td>
+      <td class="r">${r.ing!=null?money(r.ing):'<span class="dim">—</span>'}</td>
+      <td class="r">${r.food!=null?money(r.food):'<span class="dim">—</span>'}</td>
+      <td class="r ${r.live?"tom":""}">${r.total!=null?money(r.total):'<span class="dim">no sheet</span>'}</td>
+      <td class="r dim">${r.perMan?money(r.perMan):"—"}</td>
+      <td class="r">${r.bushels||'<span class="dim">—</span>'}</td>
+      <td class="r">${r.litres!=null?num(r.litres):'<span class="dim">—</span>'}</td>
+      <td class="r">${r.grappa?money(r.grappa):'<span class="dim">—</span>'}</td>
+    </tr>`).join("")}</tbody>
+  </table></div>
+  <section class="sec"><h2>What each year says</h2>
+    <div class="stack">${rows.map(r=>`<div class="row" style="grid-template-columns:4rem 1fr">
+      <time>${r.year}</time><div><span class="what">${esc(r.note)}</span></div></div>`).join("")}</div>
+  </section>`;
+};
+
+V.metrics = () => {
+  const rows = S.series(), g = S.grappaRecord();
+  const money0f = v => money0(v);
+  const charts = [
+    ["Total spend","Every dollar the day cost, by year. 2024 was the burners; 2025 was the food.", chartBars(rows, r=>r.total, money0f)],
+    ["Cost per man","Total ÷ five. The number anyone actually feels.", chartLine(rows, r=>r.perMan, money0f)],
+    ["Where it went","Toolkit, ingredients, food — stacked. Food overtook the gear in 2025 and has not gone back.", chartStack(rows)],
+    ["Grappa","One bottle a year, against the standing record.", chartLine(rows, r=>r.grappa||null, money0f, g)],
+    ["Gear against consumables","Toolkit is a one-time buy; ingredients and food are not. This is the line that decides whether a year was expensive or just well-equipped.", chartLine(rows, r=>r.consumables, money0f)],
+    ["Litres","What came out the other end. The 2026 band is the low/mid/high range off ${bushels} bushels.".replace("${bushels}", S.totalBushels()), chartYield()]
+  ];
+  return `
+  <div class="head"><h1>Metrics</h1><p>six charts</p></div>
+  <p class="lede">They redraw the moment a year gets closed out. The tomato mark is always the live year.</p>
+  <div class="charts">${charts.map(([h,p,svg])=>`<div class="chart"><h3>${h}</h3><p>${p}</p>${svg}</div>`).join("")}</div>
+  <div class="mini">
+    <span><b>${money0(rows.filter(r=>r.total).reduce((a,r)=>a+r.total,0))}</b>six years of sauce</span>
+    <span><b>${money0(rows.filter(r=>r.total&&!r.live).reduce((a,r)=>a+r.total,0)/rows.filter(r=>r.total&&!r.live).length)}</b>average year</span>
+    <span><b>${num(rows.filter(r=>r.litres).reduce((a,r)=>a+r.litres,0))} L</b>recorded, all time</span>
+  </div>`;
+};
+
+/* ---------------------------------------------------------------- router */
+let current = null;
+function go(id, push){
+  if(!V[id]) id = "dashboard";
+  current = id;
+  const sheet = $("#sheet");
+  sheet.removeAttribute("data-anim");
+  sheet.innerHTML = V[id]();
+  void sheet.offsetWidth;
+  sheet.setAttribute("data-anim","");
+  document.querySelectorAll(".notch").forEach(b => b.setAttribute("aria-current", String(b.dataset.tab === id)));
+  document.title = "Sauce Day — " + S.TABS.find(t=>t.id===id).name;
+  if(push !== false) history.replaceState(null,"","#"+id);
+  window.scrollTo({top:0,behavior:"instant"});
+}
+document.addEventListener("click", e => {
+  const n = e.target.closest("[data-tab]"); if(n) return go(n.dataset.tab);
+  const s = e.target.closest("[data-scen]"); if(s){ SCEN = s.dataset.scen; go("yield", false); }
+});
+document.addEventListener("keydown", e => {
+  if(e.metaKey||e.ctrlKey||e.altKey) return;
+  const i = S.TABS.findIndex(t=>t.id===current);
+  if(e.key === "ArrowDown" && document.activeElement.classList.contains("notch")){
+    e.preventDefault(); go(S.TABS[(i+1)%S.TABS.length].id);
+    document.querySelector('[aria-current="true"]').focus();
+  }
+  if(e.key === "ArrowUp" && document.activeElement.classList.contains("notch")){
+    e.preventDefault(); go(S.TABS[(i-1+S.TABS.length)%S.TABS.length].id);
+    document.querySelector('[aria-current="true"]').focus();
+  }
+});
+/* a pasted #tab link must land, even when the page is already open */
+window.addEventListener("hashchange", () => {
+  const id = location.hash.slice(1);
+  if (id && id !== current) go(id, false);
+});
+go(location.hash.slice(1) || "dashboard");
+})();
+</script>
+</body>
+</html>

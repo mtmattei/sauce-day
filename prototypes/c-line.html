@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sauce Day — LINE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Schibsted+Grotesk:ital,wght@0,400..700;1,400..500&display=swap" rel="stylesheet">
+<style>
+/* ===========================================================================
+   LINE — there is no chrome. One hairline down the left edge is the whole
+   navigation; it stays quiet until you approach it, then the twelve names
+   bloom out. Everything else is type, rules, and a margin column of notes.
+   Tomato marks exactly one thing at a time.
+   =========================================================================== */
+:root{
+  --paper:   oklch(98.2% 0.004 80);
+  --paper-2: oklch(95.8% 0.005 78);
+  --ink:     oklch(20% 0.012 50);
+  --ink-2:   oklch(45% 0.011 52);
+  --ink-3:   oklch(63% 0.010 55);
+  --ink-4:   oklch(80% 0.008 60);
+  --rule:    oklch(20% 0.012 50 / .12);
+  --rule-2:  oklch(20% 0.012 50 / .06);
+  --tomato:  oklch(56% 0.204 27);
+
+  --d: "Bricolage Grotesque", "Helvetica Neue", sans-serif;
+  --t: "Schibsted Grotesk", "Helvetica Neue", Helvetica, sans-serif;
+
+  --edge: 3.5rem;
+  --pad: clamp(1.25rem, 4vw, 5rem);
+  --e: cubic-bezier(.19,1,.22,1);
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --paper: oklch(15.5% 0.008 55); --paper-2: oklch(19.5% 0.009 55);
+    --ink: oklch(95% 0.005 78); --ink-2: oklch(72% 0.008 66); --ink-3: oklch(54% 0.010 60); --ink-4: oklch(36% 0.010 58);
+    --rule: oklch(95% 0.005 78 / .15); --rule-2: oklch(95% 0.005 78 / .07);
+    --tomato: oklch(66% 0.188 28);
+  }
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{
+  background:var(--paper);color:var(--ink);font-family:var(--t);
+  font-size:clamp(.9375rem,.9rem + .15vw,1.0625rem);line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+/* Schibsted's tabular set gives the period and comma a full digit advance, which
+   reads as a gap in prose. Scope it to the places that actually need a column. */
+td.r,th.r,.stat dd,.gauge .n,.rung .p,.st .v,.scn b,.it time,tfoot td{font-variant-numeric:tabular-nums}
+:focus-visible{outline:2px solid var(--tomato);outline-offset:4px}
+
+/* ---------------------------------------------------------------- the line */
+.line{
+  position:fixed;left:0;top:0;bottom:0;width:var(--edge);z-index:30;
+  display:flex;flex-direction:column;justify-content:center;gap:0;
+  padding:5rem 0;
+}
+.line::before{
+  content:"";position:absolute;left:calc(var(--edge) / 2);top:2rem;bottom:2rem;width:1px;
+  background:var(--rule);
+}
+.seg{
+  appearance:none;background:none;border:0;cursor:pointer;font:inherit;
+  position:relative;flex:0 1 2.25rem;max-height:2.75rem;display:flex;align-items:center;
+  padding:0;color:var(--ink-3);
+}
+.seg .mk{
+  position:absolute;left:calc(var(--edge) / 2 - 1px);width:3px;top:.35rem;bottom:.35rem;
+  background:var(--ink-4);transition:background-color .25s var(--e),transform .35s var(--e),width .25s var(--e);
+  transform-origin:center;
+}
+.seg .lab{
+  position:absolute;left:calc(var(--edge) + .25rem);white-space:nowrap;
+  display:flex;align-items:baseline;gap:.5rem;
+  opacity:0;transform:translateX(-.5rem);pointer-events:none;
+  transition:opacity .3s var(--e),transform .3s var(--e);
+  background:var(--paper);padding:.15rem .5rem .15rem 0;
+}
+.seg .lab i{font-style:normal;font-size:.6875rem;color:var(--ink-3);letter-spacing:.1em}
+.seg .lab span{font-size:.875rem;letter-spacing:-.005em}
+/* the mark rides with the label and blooms out with it */
+.seg .lab .ico{width:1rem;height:1rem;stroke-width:1.5;color:var(--ink-3);flex:none;align-self:center}
+.seg:hover .lab .ico{color:var(--ink)}
+.seg[aria-current="true"] .lab .ico{color:var(--tomato);stroke-width:1.7}
+.line:hover .seg .lab,.line:focus-within .seg .lab{opacity:1;transform:none}
+.line:hover .seg .mk,.line:focus-within .seg .mk{width:8px;left:calc(var(--edge) / 2 - 4px)}
+.seg:hover .mk{background:var(--ink)}
+.seg:hover .lab span{color:var(--ink)}
+.seg[aria-current="true"] .mk{background:var(--tomato);width:8px;left:calc(var(--edge) / 2 - 4px)}
+.seg[aria-current="true"] .lab{opacity:1;transform:none}
+.seg[aria-current="true"] .lab span{font-weight:600}
+.seg[aria-current="true"] .lab i{color:var(--tomato)}
+
+/* ---------------------------------------------------------------- page */
+.page{margin-left:var(--edge);padding:clamp(2.5rem,6vw,5.5rem) var(--pad) 8rem;max-width:96rem}
+.page[data-anim] > *{animation:in .55s var(--e) both}
+.page[data-anim] > *:nth-child(2){animation-delay:.05s}
+.page[data-anim] > *:nth-child(3){animation-delay:.09s}
+.page[data-anim] > *:nth-child(n+4){animation-delay:.13s}
+@keyframes in{from{opacity:0;transform:translateY(1rem)}to{opacity:1;transform:none}}
+
+/* masthead sits above everything, once */
+.mast{display:flex;align-items:baseline;gap:1rem;flex-wrap:wrap;margin-bottom:clamp(2rem,4vw,3.5rem)}
+.mast{align-items:center}
+.mast .sig{color:var(--tomato);display:flex}
+.mast .sig svg{width:1.5rem;height:1.5rem;stroke-width:1.6}
+.mast b{font-family:var(--d);font-weight:700;font-size:.9375rem;letter-spacing:-.01em;font-variation-settings:"opsz" 14}
+.mast em{font-style:normal;font-size:.75rem;color:var(--ink-3);letter-spacing:.16em;text-transform:uppercase}
+.mast s{text-decoration:none;margin-left:auto;font-size:.75rem;letter-spacing:.3em;text-transform:uppercase;color:var(--tomato);font-weight:600}
+
+/* headline */
+.hero{margin-bottom:clamp(2rem,5vw,4rem)}
+.hero h1{
+  font-family:var(--d);font-weight:250;font-variation-settings:"opsz" 96;
+  font-size:clamp(2.75rem,1rem + 8.5vw,8rem);line-height:.88;letter-spacing:-.045em;
+  max-width:14ch;
+}
+.hero h1 b{font-weight:700}
+.hero h1 .t{color:var(--tomato);font-weight:700;font-style:italic}
+.hero .sub{margin-top:1.5rem;max-width:44ch;color:var(--ink-2);font-size:clamp(1rem,.95rem + .3vw,1.1875rem);line-height:1.55}
+
+/* the two-column body: content left, notes right */
+.body{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,15rem);gap:clamp(1.5rem,4vw,4rem);align-items:start}
+.notes{position:sticky;top:2.5rem;display:grid;gap:1.5rem;font-size:.8125rem;line-height:1.5;color:var(--ink-2)}
+.notes h4{font-size:.625rem;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-bottom:.4rem}
+.notes p{margin-bottom:.5rem}
+.notes .big{font-family:var(--d);font-weight:300;font-size:2rem;line-height:1;letter-spacing:-.03em;color:var(--ink);font-variation-settings:"opsz" 40;display:block;margin-bottom:.25rem}
+.notes .big.t{color:var(--tomato)}
+.notes hr{border:0;border-top:1px solid var(--rule);margin:0}
+
+/* sections cut by a rule with a tomato tick */
+section{margin-top:clamp(2.5rem,5vw,4rem)}
+section:first-child{margin-top:0}
+section > h2{
+  font-family:var(--d);font-weight:600;font-variation-settings:"opsz" 24;
+  font-size:clamp(1.125rem,1rem + .5vw,1.5rem);letter-spacing:-.018em;
+  padding-top:.85rem;border-top:1px solid var(--ink);margin-bottom:.25rem;position:relative;
+}
+section > h2::before{content:"";position:absolute;top:-1px;left:0;width:2.5rem;height:3px;background:var(--tomato)}
+section > .cap{font-size:.8125rem;color:var(--ink-3);margin-bottom:1.5rem}
+p.lede{max-width:52ch;color:var(--ink-2);margin-bottom:1.75rem;font-size:1.0625rem}
+.tom{color:var(--tomato)}
+.dim{color:var(--ink-3)}
+.no{color:var(--ink-4)}
+
+/* ------------------------------------------------------------ stats */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(8.5rem,1fr));gap:1.75rem 2.5rem;margin:2rem 0}
+.stat dt{font-size:.6875rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);margin-bottom:.5rem}
+.stat dd{font-family:var(--d);font-weight:300;font-variation-settings:"opsz" 48;
+  font-size:clamp(1.875rem,1.5rem + 1.2vw,2.75rem);line-height:.95;letter-spacing:-.035em}
+.stat dd small{font-family:var(--t);font-size:.8125rem;font-weight:400;letter-spacing:0;color:var(--ink-3);margin-left:.35rem;vertical-align:.4em}
+.stat.t dd{color:var(--tomato)}
+.stat .s{font-size:.75rem;color:var(--ink-3);margin-top:.5rem;line-height:1.4}
+
+/* ------------------------------------------------------------ tables */
+.full{margin-inline:calc(var(--pad) * -1);padding-inline:var(--pad);overflow-x:auto;scrollbar-width:thin}
+table{width:100%;border-collapse:collapse;font-size:.875rem}
+.full table{min-width:46rem}
+th{text-align:left;font-weight:600;font-size:.625rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);
+  padding:0 .9rem .55rem 0;border-bottom:1px solid var(--ink);white-space:nowrap;vertical-align:bottom}
+td{padding:.5rem .9rem .5rem 0;border-bottom:1px solid var(--rule-2);vertical-align:baseline}
+th:last-child,td:last-child{padding-right:0}
+th.r,td.r{text-align:right}
+tbody tr:last-child td{border-bottom:1px solid var(--rule)}
+tfoot td{padding-top:.7rem;border-bottom:0;font-weight:600}
+td .s{font-size:.75rem;color:var(--ink-4);margin-top:.1rem}
+.done{color:var(--ink-4)}
+.done .nm{position:relative}
+.done .nm::after{content:"";position:absolute;left:-.08em;right:-.08em;top:.58em;height:1px;background:var(--tomato)}
+
+/* ------------------------------------------------------------ scenarios */
+.scn{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin:2rem 0;border-top:1px solid var(--ink)}
+.scn button{appearance:none;background:none;border:0;cursor:pointer;font:inherit;text-align:left;
+  padding:1.1rem 1.25rem 1.25rem 0;color:var(--ink-3);border-bottom:1px solid var(--rule);
+  transition:color .25s var(--e),padding .3s var(--e)}
+.scn button + button{padding-left:1.25rem;border-left:1px solid var(--rule-2)}
+.scn button:hover{color:var(--ink)}
+.scn button[aria-pressed="true"]{color:var(--ink);border-bottom:3px solid var(--tomato)}
+.scn b{display:block;font-family:var(--d);font-weight:300;font-variation-settings:"opsz" 40;
+  font-size:2rem;line-height:1;letter-spacing:-.035em;margin-bottom:.4rem}
+.scn button[aria-pressed="true"] b{color:var(--tomato);font-weight:500}
+.scn em{font-style:normal;font-size:.6875rem;letter-spacing:.14em;text-transform:uppercase;display:block}
+.scn s{text-decoration:none;display:block;font-size:.8125rem;color:var(--ink-3);margin-top:.35rem}
+
+/* the cascade as a descending stair */
+.stair{margin:2rem 0}
+.st{display:grid;grid-template-columns:2rem 1fr auto;gap:1.25rem;align-items:baseline;
+  padding:.9rem 0;border-bottom:1px solid var(--rule-2)}
+.st:first-child{border-top:1px solid var(--rule)}
+.st i{font-style:normal;font-size:.6875rem;color:var(--ink-4);letter-spacing:.08em}
+.st .l b{font-weight:600;display:block}
+.st .l span{font-size:.8125rem;color:var(--ink-3);display:block;margin-top:.1rem;max-width:52ch}
+.st .v{font-family:var(--d);font-weight:400;font-variation-settings:"opsz" 24;font-size:1.375rem;letter-spacing:-.02em}
+.st.buy .v{color:var(--tomato)}
+.st.zero .v{color:var(--ink-4)}
+
+/* ------------------------------------------------------------ key */
+.keys{display:grid;gap:0;margin-top:1.5rem;border-top:1px solid var(--rule)}
+.keyrow{display:grid;grid-template-columns:4rem 1fr;gap:1.25rem;align-items:center;padding:.85rem 0;border-bottom:1px solid var(--rule-2)}
+.keyrow .sw{height:.5rem}
+.sw1{background:var(--tomato)}
+.sw2{background:none;border-top:2px dashed var(--tomato);height:0 !important}
+.sw3{background:var(--ink)}
+.sw4{background:var(--ink-4)}
+.sw5{background:repeating-linear-gradient(135deg,var(--ink-4) 0 1px,transparent 1px 5px)}
+.keyrow b{font-weight:600}
+.keyrow span{color:var(--ink-2);font-size:.875rem}
+
+/* ------------------------------------------------------------ gauges */
+.gauge{display:grid;grid-template-columns:9rem 1fr 4.5rem;gap:1.25rem;align-items:center;padding:.55rem 0;font-size:.875rem}
+.gauge .tk{height:1px;background:var(--rule);position:relative}
+.gauge .tk i{position:absolute;left:0;top:-1px;height:3px;background:var(--ink);transform-origin:left;animation:grow .8s var(--e) both}
+/* a short bar is not an alarm — the count carries the signal, not the bar */
+.gauge .n{text-align:right;font-size:.8125rem;color:var(--ink-3)}
+.gauge.low .n{color:var(--tomato)}
+@keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+
+/* ------------------------------------------------------------ lists */
+.grp{margin-top:2rem}
+.gh{display:flex;gap:1rem;align-items:baseline;padding-bottom:.5rem;border-bottom:1px solid var(--ink);
+  font-family:var(--d);font-weight:600;font-variation-settings:"opsz" 18;font-size:1rem;letter-spacing:-.012em}
+.gh em{font-style:normal;font-family:var(--t);font-weight:400;font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
+.gh .r{margin-left:auto;font-family:var(--t);font-weight:400;font-size:.8125rem;color:var(--ink-3);letter-spacing:0;text-transform:none}
+.it{display:grid;grid-template-columns:1fr auto;gap:1.25rem;padding:.55rem 0;border-bottom:1px solid var(--rule-2);align-items:baseline}
+.it .s{font-size:.8125rem;color:var(--ink-3);margin-top:.1rem}
+.it .s b{color:var(--ink-2);font-weight:500}
+.it time{font-size:.8125rem;color:var(--ink-3)}
+.timed{grid-template-columns:4.25rem 1fr auto}
+.open{color:var(--tomato)}
+
+/* ------------------------------------------------------------ ladder */
+.rungs{margin:2rem 0;border-top:1px solid var(--rule)}
+.rung{display:grid;grid-template-columns:3.5rem 1fr 6rem;gap:1.25rem;align-items:center;padding:.6rem 0;border-bottom:1px solid var(--rule-2)}
+.rung em{font-style:normal;color:var(--ink-3);font-size:.8125rem}
+.rung .b{height:2px;background:var(--ink-4);transform-origin:left;animation:grow .8s var(--e) both}
+.rung.rec .b{background:var(--ink);height:3px}
+.rung.now .b{background:var(--tomato);height:5px}
+.rung .p{text-align:right;font-family:var(--d);font-weight:400;font-variation-settings:"opsz" 18;font-size:1rem}
+.rung.now .p{color:var(--tomato);font-weight:600}
+
+/* ------------------------------------------------------------ the shelf */
+/* Editorial: bottles are large, they stand on a heavy rule, and the record
+   crosses them as a stated line. */
+.shelfwrap{margin:2.5rem 0 .75rem;overflow-x:auto;scrollbar-width:thin;padding-top:2.5rem}
+.shelf{position:relative;display:flex;align-items:flex-end;gap:clamp(.9rem,3vw,2.75rem);
+  min-width:min-content;border-bottom:2px solid var(--ink);padding:0 .5rem}
+.slot{display:flex;flex-direction:column;align-items:center;flex:none;position:relative;z-index:1}
+.slot .btl{color:var(--ink-2);display:block;overflow:visible}
+.slot .btl-cap{fill:var(--ink-2);opacity:.9}
+.slot .btl-label{fill:var(--paper);stroke-width:1.1}
+/* is-rec, not rec: the chart's bare .rec sets stroke-dasharray, which is an
+   inherited SVG property and would dash the record bottle. */
+.slot.is-rec .btl{color:var(--ink)} .slot.is-rec .btl-cap{fill:var(--ink)}
+.slot.now .btl{color:var(--tomato);stroke-width:1.8} .slot.now .btl-cap{fill:var(--tomato)}
+.slot.gone .btl{color:var(--ink-4)} .slot.gone .btl-body{stroke-dasharray:3 3}
+.shelfyrs{display:flex;gap:clamp(.9rem,3vw,2.75rem);padding:.6rem .5rem 0;min-width:min-content}
+.shelfyrs div{flex:none;text-align:center}
+.shelfyrs em{font-style:normal;display:block;font-size:.75rem;color:var(--ink-3);letter-spacing:.06em}
+.shelfyrs b{display:block;font-family:var(--d);font-weight:400;font-variation-settings:"opsz" 20;
+  font-size:1rem;letter-spacing:-.02em;margin-top:.15rem}
+.shelfyrs .live b{color:var(--tomato);font-weight:700}
+.shelfyrs .none b{color:var(--ink-4);font-family:var(--t);font-size:.75rem;font-weight:400}
+.datum{position:absolute;left:0;right:0;border-top:2px dashed var(--tomato);z-index:0;pointer-events:none}
+.datum b{position:absolute;right:0;top:-1.5rem;font-size:.6875rem;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--tomato);font-weight:600;background:var(--paper);padding-left:.6rem}
+
+/* bottle portraits, editorial scale */
+.ports{display:grid;grid-template-columns:repeat(auto-fit,minmax(12rem,1fr));gap:2.5rem 2.75rem;margin-top:2rem}
+.port{display:grid;gap:.9rem}
+.portshot{aspect-ratio:3/4;display:grid;place-items:center;background:var(--paper-2);overflow:hidden;position:relative}
+.portshot img{width:100%;height:100%;object-fit:cover;display:block}
+.portshot .btl{color:var(--ink-3)} .portshot .btl-cap{fill:var(--ink-3)} .portshot .btl-label{fill:var(--paper-2)}
+.port.now .portshot{background:var(--paper-2)}
+.port.now .portshot .btl{color:var(--tomato)} .port.now .portshot .btl-cap{fill:var(--tomato)}
+.port .meta b{font-family:var(--d);font-weight:400;font-variation-settings:"opsz" 32;font-size:1.5rem;
+  letter-spacing:-.03em;display:block;line-height:1}
+.port.now .meta b{color:var(--tomato);font-weight:600}
+.port .meta em{font-style:normal;font-size:.75rem;color:var(--ink-3);letter-spacing:.12em;text-transform:uppercase;
+  display:block;margin-top:.4rem}
+.port .meta p{font-size:.8125rem;color:var(--ink-3);margin-top:.5rem;line-height:1.4}
+.want{display:flex;align-items:center;gap:.4rem;margin-top:.6rem;font-size:.6875rem;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--tomato);font-weight:600}
+.want .ico{width:.9rem;height:.9rem;stroke-width:1.6}
+
+/* ------------------------------------------------------------ photobook */
+/* One band a year. Big year numeral in the margin, plates running full width. */
+.spread{margin-top:clamp(2.5rem,5vw,4.5rem);padding-top:1.25rem;border-top:1px solid var(--ink);
+  position:relative;max-width:78rem}
+.spread::before{content:"";position:absolute;top:-1px;left:0;width:2.5rem;height:3px;background:var(--tomato)}
+.sphead{display:flex;align-items:baseline;gap:1.25rem;flex-wrap:wrap;margin-bottom:1.5rem}
+.sphead b{font-family:var(--d);font-weight:250;font-variation-settings:"opsz" 72;font-size:clamp(2.25rem,1.5rem + 2.6vw,3.75rem);
+  line-height:.85;letter-spacing:-.045em}
+.spread.live .sphead b{color:var(--tomato)}
+.sphead i{font-style:normal;font-family:var(--d);font-weight:600;font-variation-settings:"opsz" 20;
+  font-size:1.125rem;letter-spacing:-.015em}
+.sphead .c{margin-left:auto;font-size:.6875rem;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-3)}
+.plates{display:grid;grid-template-columns:repeat(6,1fr);gap:1.25rem 1.5rem;align-items:start}
+.plate{margin:0;display:grid;gap:.65rem;grid-column:span 2}
+.plate.wide{grid-column:span 3}
+.plate .plate-well{position:relative;aspect-ratio:var(--ar,1.5);background:var(--paper-2);display:grid;place-items:center}
+/* one registration tick, top left. Equal arms at any aspect. */
+.plate.is-empty .plate-well::before{
+  content:"";position:absolute;top:0;left:0;width:1rem;height:1rem;
+  border-top:3px solid var(--tomato);border-left:3px solid var(--tomato);
+}
+.plate .plate-mark{width:1.75rem;height:1.75rem;stroke-width:1.2;color:var(--ink-4)}
+.plate img{width:100%;aspect-ratio:var(--ar,1.5);object-fit:cover;display:block}
+.plate figcaption{font-size:.8125rem;line-height:1.45;color:var(--ink-2)}
+@media (max-width:52rem){.plates{grid-template-columns:repeat(2,1fr)}.plate,.plate.wide{grid-column:span 1}}
+
+/* ------------------------------------------------------------ charts */
+.six{display:grid;grid-template-columns:repeat(auto-fit,minmax(16rem,1fr));gap:2.75rem 3rem;margin-top:2rem}
+.ch h3{font-family:var(--d);font-weight:600;font-variation-settings:"opsz" 16;font-size:.9375rem;letter-spacing:-.01em;margin-bottom:.3rem}
+.ch p{font-size:.8125rem;color:var(--ink-3);line-height:1.45;margin-bottom:1rem;min-height:3em}
+svg{display:block;width:100%;height:auto;overflow:visible}
+.ax{stroke:var(--rule)}
+.axl{fill:var(--ink-4);font-size:9px;font-family:var(--t);letter-spacing:.05em}
+.bar{fill:var(--ink-2)}
+.bar.live{fill:var(--tomato)}
+.ln{fill:none;stroke:var(--ink);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.dot{fill:var(--paper);stroke:var(--ink);stroke-width:1.5}
+.dot.live{fill:var(--tomato);stroke:var(--tomato)}
+.rec{stroke:var(--tomato);stroke-width:1;stroke-dasharray:4 3}
+.s1{fill:var(--ink)}.s2{fill:var(--ink-3)}.s3{fill:var(--ink-4)}
+.band{fill:var(--tomato);opacity:.14}
+
+/* ------------------------------------------------------------ mobile */
+@media (max-width:64rem){
+  .body{grid-template-columns:minmax(0,1fr)}
+  .notes{position:static;grid-template-columns:repeat(auto-fit,minmax(11rem,1fr));border-top:1px solid var(--rule);padding-top:1.5rem;margin-top:2rem}
+  .notes hr{display:none}
+}
+@media (max-width:48rem){
+  :root{--edge:0px}
+  .line{position:sticky;top:0;left:auto;bottom:auto;width:100%;height:auto;flex-direction:row;
+    padding:.5rem var(--pad);gap:0;overflow-x:auto;background:var(--paper);
+    border-bottom:1px solid var(--rule);scrollbar-width:none}
+  .line::before{display:none}
+  .line::-webkit-scrollbar{display:none}
+  .seg{flex:none;max-height:none;padding:.4rem .7rem;display:block}
+  .seg .mk{position:static;width:auto;height:2px;background:transparent;display:block;margin-bottom:.35rem}
+  .seg[aria-current="true"] .mk{background:var(--tomato);width:auto;left:auto}
+  .line:hover .seg .mk,.line:focus-within .seg .mk{width:auto;left:auto}
+  .seg .lab{position:static;opacity:1;transform:none;padding:0;gap:.35rem}
+  .page{margin-left:0;padding-top:2rem}
+  .scn{grid-template-columns:1fr}
+  .scn button + button{padding-left:0;border-left:0}
+}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms !important;transition-duration:.01ms !important}}
+</style>
+</head>
+<body>
+
+<nav class="line" id="line" aria-label="Workbook tabs"></nav>
+<main class="page" id="page" tabindex="-1"></main>
+
+<script src="data.js"></script>
+<script src="visuals.js"></script>
+<script>
+(function(){
+"use strict";
+const S = window.SAUCE, V2 = window.SV, $ = s => document.querySelector(s);
+const {money, money0, num, dateLong} = S;
+const ic = V2.icon;
+const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const days = S.daysToGo();
+
+$("#line").innerHTML = S.TABS.map(t =>
+  `<button class="seg" data-tab="${t.id}" aria-current="false" title="${esc(t.name)}">
+     <span class="mk"></span><span class="lab"><i>${t.n}</i>${ic(t.icon)}<span>${esc(t.name)}</span></span></button>`).join("");
+
+/* ---------------------------------------------------------------- bits */
+const mast = `<div class="mast"><span class="sig">${ic("cut")}</span><b>Sauce Day</b><em>2026 · the seventh</em><s>cut the bad</s></div>`;
+const hero = (h, sub) => `<div class="hero"><h1>${h}</h1>${sub?`<p class="sub">${sub}</p>`:""}</div>`;
+const stat = (l,v,s,t) => `<div class="stat${t?" t":""}"><dt>${esc(l)}</dt><dd>${v}</dd>${s?`<div class="s">${s}</div>`:""}</div>`;
+const stats = a => `<div class="stats">${a.join("")}</div>`;
+const gauge = (l,d,t) => {const p=t?d/t:0;return `<div class="gauge${p<.5?" low":""}"><span>${esc(l)}</span>
+  <span class="tk"><i style="width:${(p*100).toFixed(1)}%"></i></span><span class="n">${d}/${t}</span></div>`;};
+const body = (main, notes) => `<div class="body"><div>${main}</div><aside class="notes">${notes}</aside></div>`;
+const note = (h, p) => `<div><h4>${esc(h)}</h4>${p}</div>`;
+
+/* ---------------------------------------------------------------- charts */
+const W=300,H=145,M={t:10,r:6,b:20,l:32};
+const bx=(i,n)=>M.l+(W-M.l-M.r)*i/n, bw=n=>(W-M.l-M.r)/n*.5;
+const sx=(i,n)=>M.l+(n<2?0:(W-M.l-M.r)*i/(n-1));
+const sy=(v,m)=>H-M.b-(m?(H-M.t-M.b)*v/m:0);
+const base=(m,f)=>`<line class="ax" x1="${M.l}" y1="${H-M.b}" x2="${W-M.r}" y2="${H-M.b}"/>
+  <text class="axl" x="${M.l-5}" y="${H-M.b}" text-anchor="end">0</text>
+  <text class="axl" x="${M.l-5}" y="${M.t+6}" text-anchor="end">${f?f(m):m}</text>`;
+const yl=(rows,p)=>rows.map((r,i)=>`<text class="axl" x="${p(i,rows.length)}" y="${H-6}" text-anchor="middle">${String(r.year).slice(2)}</text>`).join("");
+
+function cBars(rows,val,fmt){
+  const m=Math.ceil(Math.max(...rows.map(val).filter(v=>v!=null),1)/200)*200,n=rows.length;
+  return `<svg viewBox="0 0 ${W} ${H}" role="img">${base(m,v=>"$"+v)}
+  ${rows.map((r,i)=>{const v=val(r);if(v==null)return"";const y=sy(v,m);
+    return `<rect class="bar${r.live?" live":""}" x="${bx(i,n)}" y="${y}" width="${bw(n)}" height="${H-M.b-y}"><title>${r.year}: ${fmt(v)}</title></rect>`;}).join("")}
+  ${yl(rows,(i,n)=>bx(i,n)+bw(n)/2)}</svg>`;
+}
+function cLine(rows,val,fmt,ref){
+  const pts=rows.map((r,i)=>({i,v:val(r),live:r.live,year:r.year})).filter(p=>p.v!=null);
+  const m=Math.ceil(Math.max(...pts.map(p=>p.v),ref||0,1)/50)*50,n=rows.length;
+  return `<svg viewBox="0 0 ${W} ${H}" role="img">${base(m,v=>"$"+v)}
+  ${ref?`<line class="rec" x1="${M.l}" y1="${sy(ref,m)}" x2="${W-M.r}" y2="${sy(ref,m)}"/>
+    <text class="axl" x="${W-M.r}" y="${sy(ref,m)-4}" text-anchor="end" style="fill:var(--tomato)">record ${money0(ref)}</text>`:""}
+  <path class="ln" d="${pts.map((p,k)=>`${k?"L":"M"}${sx(p.i,n)} ${sy(p.v,m)}`).join(" ")}"/>
+  ${pts.map(p=>`<circle class="dot${p.live?" live":""}" cx="${sx(p.i,n)}" cy="${sy(p.v,m)}" r="3"><title>${p.year}: ${fmt(p.v)}</title></circle>`).join("")}
+  ${yl(rows,sx)}</svg>`;
+}
+function cStack(rows){
+  const m=Math.ceil(Math.max(...rows.map(r=>r.total||0),1)/200)*200,n=rows.length;
+  return `<svg viewBox="0 0 ${W} ${H}" role="img">${base(m,v=>"$"+v)}
+  ${rows.map((r,i)=>{if(r.total==null)return"";let a=0;
+    return [["toolkit","s1"],["ing","s2"],["food","s3"]].map(([k,c])=>{const v=r[k]||0,y0=sy(a,m),y1=sy(a+v,m);a+=v;
+      return `<rect class="${c}" x="${bx(i,n)}" y="${y1}" width="${bw(n)}" height="${Math.max(0,y0-y1)}"><title>${r.year} ${k}: ${money0(v)}</title></rect>`;}).join("");}).join("")}
+  ${yl(rows,(i,n)=>bx(i,n)+bw(n)/2)}</svg>`;
+}
+function cYield(){
+  const rows=S.series(),n=rows.length,sc=S.scenarios();
+  const m=Math.ceil(Math.max(...rows.map(r=>r.litres||0),sc[2].plan.litres)/25)*25;
+  const pts=rows.map((r,i)=>({i,v:r.litres,live:r.live,year:r.year})).filter(p=>p.v!=null);
+  return `<svg viewBox="0 0 ${W} ${H}" role="img">${base(m,v=>v+" L")}
+  <rect class="band" x="${sx(n-1,n)-9}" y="${sy(sc[2].plan.litres,m)}" width="18" height="${sy(sc[0].plan.litres,m)-sy(sc[2].plan.litres,m)}"><title>2026 range ${sc[0].plan.litres}–${sc[2].plan.litres} L</title></rect>
+  <path class="ln" d="${pts.map((p,k)=>`${k?"L":"M"}${sx(p.i,n)} ${sy(p.v,m)}`).join(" ")}" stroke-dasharray="4 3"/>
+  ${pts.map(p=>`<circle class="dot${p.live?" live":""}" cx="${sx(p.i,n)}" cy="${sy(p.v,m)}" r="3"><title>${p.year}: ${p.v} L</title></circle>`).join("")}
+  ${yl(rows,sx)}</svg>`;
+}
+
+/* ---------------------------------------------------------------- views */
+const V={};
+
+V.dashboard=()=>{
+  const y=S.yieldPlan(),r=S.readiness(),st=S.settlement(),g=S.grappaVerdict();
+  const b=S.budgetByCat(),a=S.actualByCat(),last=S.history[5],lt=last.toolkit+last.ing+last.food;
+  return mast + hero(
+    `<b>${days}</b> days<br>until the <span class="t">sauce</span>.`,
+    `Saturday 29 August 2026, the seventh edition. Five men, ${S.totalBushels()} bushels, and one bottle of grappa that has to cost more than last year's.`
+  ) + body(`
+  ${stats([
+    stat("Logged so far",money(S.sum(a)),`${S.expenses.length} receipts`),
+    stat("Share per man",money(st.share),"even, five ways"),
+    stat("Jars still to buy",num(y.jarsToBuy),`${y.jarPacks} packs · ${money(y.cost)}`,y.jarsToBuy>0),
+    stat("Grappa to beat",money0(g.record),g.state==="beaten"?`beaten by ${money(g.delta)}`:"still standing",g.state!=="beaten")
+  ])}
+
+  <section>
+    <h2>Budget against actual</h2>
+    <div class="cap">2026 planned, 2026 spent, and what the last two years actually cost</div>
+    <div class="full"><table>
+      <thead><tr><th>Category</th><th class="r">2026 budget</th><th class="r">2026 actual</th><th class="r">2025</th><th class="r">2024</th><th class="r">Lines unpriced</th></tr></thead>
+      <tbody>${S.CATS.map(c=>{const k=c.key==="ingredients"?"ing":c.key;
+        const up=S.items.filter(i=>i.cat===c.key&&!i.budget).length;
+        return `<tr><td>${c.label}</td>
+          <td class="r">${b[c.key]?money(b[c.key]):'<span class="no">not set</span>'}</td>
+          <td class="r">${a[c.key]?money(a[c.key]):'<span class="no">—</span>'}</td>
+          <td class="r dim">${money(last[k])}</td><td class="r dim">${money(S.history[4][k])}</td>
+          <td class="r ${up?"tom":"no"}">${up}</td></tr>`;}).join("")}</tbody>
+      <tfoot><tr><td>Total</td><td class="r">${money(S.sum(b))}</td><td class="r">${money(S.sum(a))}</td>
+        <td class="r">${money(lt)}</td><td class="r">${money(S.history[4].toolkit+S.history[4].ing+S.history[4].food)}</td>
+        <td class="r tom">${S.items.filter(i=>!i.budget).length}</td></tr></tfoot>
+    </table></div>
+  </section>
+
+  <section>
+    <h2>Readiness</h2>
+    <div class="cap">five counters, each one a page in this workbook</div>
+    ${gauge("Shopping",r.buy.done,r.buy.total)}
+    ${gauge("Menu claimed",r.menu.done,r.menu.total)}
+    ${gauge("Jars on hand",Math.min(r.jars.done,r.jars.total),r.jars.total)}
+    ${gauge("Lines priced",r.priced.done,r.priced.total)}
+    ${gauge("Run sheet",r.run.done,r.run.total)}
+  </section>
+
+  <section>
+    <h2>Colour</h2>
+    <div class="cap">tomato is the only colour in the workbook, and it always means something</div>
+    <div class="keys">
+      <div class="keyrow"><span class="sw sw1"></span><span><b>Solid tomato.</b> Money leaving, or something still to buy.</span></div>
+      <div class="keyrow"><span class="sw sw2"></span><span><b>Dashed tomato.</b> A record to beat. Only ever the grappa.</span></div>
+      <div class="keyrow"><span class="sw sw3"></span><span><b>Full ink.</b> Settled fact — paid, owned, closed out.</span></div>
+      <div class="keyrow"><span class="sw sw4"></span><span><b>Pale ink.</b> Known, but nothing to do about it. Prior years.</span></div>
+      <div class="keyrow"><span class="sw sw5"></span><span><b>Hatched.</b> No data and never will be. The 2020 sheet is gone.</span></div>
+      <div class="keyrow"><span style="font-family:var(--d);font-style:italic;font-weight:700;color:var(--tomato);font-size:1.125rem;letter-spacing:-.02em">sauce</span><span><b>Tomato italic, display size.</b> The one place the workbook speaks instead of reporting. Once per page, in the headline, never in a table.</span></div>
+    </div>
+  </section>`,
+  note("Where it stands", `<span class="big t">${money(S.sum(a))}</span>logged against ${money(S.sum(b))} budgeted. The gap is food — thirty-two lines with no price on them.`) +
+  `<hr>` +
+  note("Last year", `<span class="big">${money0(lt)}</span>2025 landed here, ${money0(lt/5)} a man. Food alone was ${money0(last.food)}.`) +
+  `<hr>` +
+  note("The date", `<p>${dateLong(S.settings.sauceDate)}.</p><p>Prep starts the Friday evening. Settle up at 22:30 Saturday.</p>`) +
+  `<hr>` +
+  note("Read next", `<p>Yield &amp; Jars decides how much glass to buy, and that number drives the toolkit budget. Start there.</p>`));
+};
+
+let SCEN="mid";
+V.yield=()=>{
+  const sc=S.scenarios(),p=sc.find(x=>x.key===SCEN).plan,h=S.onHand(),PK=S.settings.packSize;
+  return mast + hero(`<b>${num(p.litres)}</b> litres,<br><b>${p.jarsRequired}</b> jars.`,
+    `${p.bushels} bushels at ${p.lpb} litres each, plus a ${(S.settings.bufferPct*100)}% buffer because jars break and sauce spills.`)
+  + body(`
+  <div class="scn">${sc.map(s=>`<button data-scen="${s.key}" aria-pressed="${s.key===SCEN}">
+    <b>${num(s.plan.litres)} L</b><em>${s.label} · ${s.lpb} L per bushel</em>
+    <s>${s.plan.jarsRequired} jars · ${money(s.plan.cost)} of glass</s></button>`).join("")}</div>
+
+  <section>
+    <h2>The cascade</h2>
+    <div class="cap">jar packs ship with bands, band packs ship with lids — buy in that order and you stop buying twice</div>
+    <div class="stair">
+      <div class="st"><i>01</i><div class="l"><b>Jars required</b><span>${num(p.litres)} litres × ${(1+S.settings.bufferPct).toFixed(2)}, rounded up</span></div><div class="v">${p.jarsRequired}</div></div>
+      <div class="st"><i>02</i><div class="l"><b>Jars already on hand</b><span>Matt ${S.jarStock[0].jars}, David ${S.jarStock[1].jars}</span></div><div class="v">${h.jars}</div></div>
+      <div class="st ${p.jarPacks?"buy":"zero"}"><i>03</i><div class="l"><b>Jar packs to buy</b><span>${p.jarsToBuy} short, ${PK} to a pack, ${money(S.settings.jarPrice)} each — and each pack brings ${PK} bands with it</span></div><div class="v">${p.jarPacks}</div></div>
+      <div class="st ${p.bandsToBuy?"":"zero"}"><i>04</i><div class="l"><b>Bands still short</b><span>${p.jarsRequired} needed, ${h.bands} on hand, ${p.bandsFromJarPacks} arriving with the jars</span></div><div class="v">${p.bandsToBuy||"none"}</div></div>
+      <div class="st ${p.bandPacks?"buy":"zero"}"><i>05</i><div class="l"><b>Band packs to buy</b><span>${money(S.settings.bandPrice)} each, and each one brings ${PK} lids</span></div><div class="v">${p.bandPacks}</div></div>
+      <div class="st ${p.lidPacks?"buy":"zero"}"><i>06</i><div class="l"><b>Lid packs to buy</b><span>${p.jarsRequired} needed, ${h.lids} on hand, ${p.jarsFromPacks} from the jar packs, ${p.lidsFromBandPacks} from the band packs — ${p.lidsToBuy} short at ${money(S.settings.lidPrice)} a pack</span></div><div class="v">${p.lidPacks}</div></div>
+      <div class="st buy"><i>Σ</i><div class="l"><b>Glass and metal</b><span>posts straight into Sauce Toolkit</span></div><div class="v">${money(p.cost)}</div></div>
+    </div>
+    ${stats([
+      stat("Hardware",money(p.cost),"→ toolkit ledger",p.cost>0),
+      stat("Bushels",money(p.bushelCost),`${p.bushels} × ${money(S.settings.pricePerBushel)} → ingredients`),
+      stat("Per litre",money((p.cost+p.bushelCost)/p.litres),"tomatoes and glass only")
+    ])}
+  </section>
+
+  <section>
+    <h2>Who brings what</h2>
+    <div class="cap">bushels in, glass on hand</div>
+    <div class="full"><table>
+      <thead><tr><th>Person</th><th class="r">Bushels</th><th class="r">Jars</th><th class="r">Bands</th><th class="r">Lids</th></tr></thead>
+      <tbody>${S.bushels.map(b=>{const j=S.jarStock.find(x=>x.person===b.person)||{jars:0,bands:0,lids:0};
+        return `<tr><td>${esc(b.person)}</td><td class="r">${b.count||'<span class="no">—</span>'}</td>
+        <td class="r">${j.jars||'<span class="no">—</span>'}</td><td class="r">${j.bands||'<span class="no">—</span>'}</td>
+        <td class="r">${j.lids||'<span class="no">—</span>'}</td></tr>`;}).join("")}</tbody>
+      <tfoot><tr><td>Total</td><td class="r">${p.bushels}</td><td class="r">${h.jars}</td><td class="r">${h.bands}</td><td class="r">${h.lids}</td></tr></tfoot>
+    </table></div>
+  </section>`,
+  note("The scenarios", `<p>Low, mid and high are 10, 14 and 18 litres a bushel. The sheet defaults to the middle.</p>`) +
+  `<hr>` +
+  note("What actually happened", `<p>2021 gave <b>60 L</b> off these same seven bushels. 2020 gave <b>78 L</b>. Both are under the mid case.</p><p>Treat ${num(sc[1].plan.litres)} L as a good year, not the expected one.</p>`) +
+  `<hr>` +
+  note("Downstream", `<p>Everything on this page flows into the Toolkit and Ingredients ledgers on its own. Nothing here gets typed twice.</p>`));
+};
+
+const ledger=key=>{
+  const cat=S.CATS.find(c=>c.key===key),rows=S.items.filter(i=>i.cat===key);
+  const hk=key==="ingredients"?"ing":key,hist=[...S.history].reverse();
+  const bud=rows.reduce((a,i)=>a+(i.budget||0),0),act=rows.reduce((a,i)=>a+(i.actual||0),0);
+  const heroes={
+    toolkit:[`<b>${rows.length}</b> lines<br>of gear.`,`Twenty-six of them are already owned and cost nothing. They stay on the sheet so nobody buys a second food mill.`],
+    ingredients:[`<b>${rows.length}</b> lines.<br>One matters.`,`The bushels are the year. Everything else on this page is a Costco run that takes twenty minutes.`],
+    food:[`<b>${rows.length}</b> lines,<br><span class="t">none priced</span>.`,`Food is where the budget quietly goes. In 2025 it came to ${money(S.history[5].food)} against nothing planned.`]
+  }[key];
+  return mast + hero(heroes[0],heroes[1]) + body(`
+  ${stats([
+    stat("2026 budget",bud?money(bud):'<span style="font-family:var(--t);font-size:1.125rem;font-weight:400">not set</span>',`${rows.filter(i=>i.budget).length} of ${rows.length} priced`,!bud),
+    stat("2026 actual",money(act),`${rows.filter(i=>i.obtained).length} bought`),
+    stat("2025",money(hist[0][hk]),"actual"),
+    stat("Five-year mean",money(hist.filter(h=>h[hk]!=null).reduce((a,h)=>a+h[hk],0)/hist.filter(h=>h[hk]!=null).length),"2021 to 2025")
+  ])}
+  <section>
+    <h2>${cat.label}</h2>
+    <div class="cap">${rows.length} lines · a struck line has been bought</div>
+    <div class="full"><table>
+      <thead><tr><th>Item</th><th>Kind</th><th class="r">Qty</th><th class="r">2026 budget</th><th class="r">2026 actual</th><th>Assigned</th><th>Store</th><th>Again</th></tr></thead>
+      <tbody>${rows.map(i=>`<tr class="${i.obtained?"done":""}">
+        <td><span class="nm">${esc(i.name)}</span>${i.note?`<div class="s">${esc(i.note)}</div>`:""}</td>
+        <td class="dim">${esc(i.kind||"—")}</td>
+        <td class="r">${i.qty||'<span class="no">—</span>'}</td>
+        <td class="r">${i.budget?money(i.budget):'<span class="no">—</span>'}</td>
+        <td class="r">${i.actual?money(i.actual):'<span class="no">—</span>'}</td>
+        <td class="dim">${i.who?esc(i.who):'<span class="tom">unassigned</span>'}</td>
+        <td class="dim">${esc(i.store||"—")}</td>
+        <td class="no">${esc(i.repeat||"")}</td></tr>`).join("")}</tbody>
+      <tfoot><tr><td>Total</td><td></td><td></td><td class="r">${money(bud)}</td><td class="r">${money(act)}</td><td colspan="3"></td></tr></tfoot>
+    </table></div>
+  </section>
+
+  <section>
+    <h2>The historical record</h2>
+    <div class="cap">2025 back to 2020, category total by year</div>
+    <div class="full"><table>
+      <thead><tr><th>Measure</th>${hist.map(h=>`<th class="r">${h.year}</th>`).join("")}</tr></thead>
+      <tbody>
+        <tr><td>${cat.short}</td>${hist.map(h=>`<td class="r">${h[hk]==null?'<span class="no">no sheet</span>':money(h[hk])}</td>`).join("")}</tr>
+        <tr><td class="dim">Per man</td>${hist.map(h=>`<td class="r dim">${h[hk]==null?'<span class="no">—</span>':money(h[hk]/h.crew)}</td>`).join("")}</tr>
+        <tr><td class="dim">Share of the year</td>${hist.map(h=>{const t=h.toolkit+h.ing+h.food;
+          return `<td class="r dim">${h[hk]==null||!t?'<span class="no">—</span>':((h[hk]/t)*100).toFixed(0)+"%"}</td>`;}).join("")}</tr>
+      </tbody>
+    </table></div>
+  </section>`,
+  note("What is missing", `<p>The old sheets only ever carried a category total per year, never a line-by-line history. Anything finer than the table below does not exist for 2020 to 2025.</p>`) +
+  `<hr>` +
+  note("New for 2026", key==="toolkit"
+    ? `<p>The strainer for the sauce pot, carried over from a note on the 2025 sheet. Still unassigned.</p>`
+    : key==="ingredients" ? `<p>Nothing new. This list has not changed since 2022 and probably never will.</p>`
+    : `<p>Nothing added. The job here is putting prices against what is already listed.</p>`) +
+  `<hr>` +
+  note("Flows in from", key==="toolkit" ? `<p>Yield &amp; Jars sets the jars, bands and lids cost automatically.</p>`
+    : key==="ingredients" ? `<p>Yield &amp; Jars sets the bushel budget: ${money(S.yieldPlan().bushelCost)} at ${money(S.settings.pricePerBushel)} a bushel.</p>`
+    : `<p>Nothing. Every line here is priced by hand, which is why none of them are.</p>`));
+};
+V.toolkit=()=>ledger("toolkit"); V.ingredients=()=>ledger("ingredients"); V.food=()=>ledger("food");
+
+V.shopping=()=>{
+  const sh=S.shopping(),by=S.byBuyer(),known=sh.stores.reduce((a,s)=>a+s.estimate,0);
+  const up=sh.stores.reduce((a,s)=>a+s.unpriced,0),got=sh.stores.reduce((a,s)=>a+s.got,0);
+  return mast + hero(`<b>${sh.count}</b> things,<br><b>${sh.storeCount}</b> counters.`,
+    `Every ledger line with a store against it, grouped by where you will actually be standing when you buy it.`)
+  + body(`
+  ${stats([
+    stat("Estimated",money(known),`${sh.count-up} items priced`),
+    stat("Unpriced",num(up),"no estimate in the ledger",true),
+    stat("Bought",`${got}<small>of ${sh.count}</small>`,`${sh.count-got} outstanding`),
+    stat("Buyers",num(by.length),"including unassigned")
+  ])}
+  <section>
+    <h2>By store</h2>
+    <div class="cap">largest estimate first · a struck line is already bought</div>
+    ${sh.stores.map(s=>`<div class="grp">
+      <div class="gh">${esc(s.store)} <em>${s.list.length} item${s.list.length===1?"":"s"}</em>
+        <span class="r">${s.estimate?money(s.estimate):'<span class="tom">no estimate</span>'}${s.got?` · ${s.got} got`:""}</span></div>
+      ${s.list.map(i=>`<div class="it ${i.obtained?"done":""}">
+        <div><span class="nm">${esc(i.name)}</span>
+          <div class="s">${[i.kind,i.qty?"qty "+i.qty:null].filter(Boolean).map(esc).join(" · ")}${i.who?` · <b>${esc(i.who)}</b>`:' · <span class="open">unassigned</span>'}</div></div>
+        <div>${i.budget?money(i.budget):'<span class="no">—</span>'}</div></div>`).join("")}</div>`).join("")}
+  </section>
+
+  <section>
+    <h2>By buyer</h2>
+    <div class="cap">what each man is expected to lay out, against what he has actually paid</div>
+    <div class="full"><table>
+      <thead><tr><th>Buyer</th><th class="r">Items</th><th class="r">Bought</th><th class="r">Estimated</th><th class="r">Paid</th></tr></thead>
+      <tbody>${by.map(b=>{const paid=S.paidByPerson()[b.name]||0;
+        return `<tr><td class="${b.name==="Unassigned"?"tom":""}">${esc(b.name)}</td>
+        <td class="r">${b.items}</td><td class="r dim">${b.got||'<span class="no">—</span>'}</td>
+        <td class="r">${b.estimate?money(b.estimate):'<span class="no">—</span>'}</td>
+        <td class="r">${paid?money(paid):'<span class="no">—</span>'}</td></tr>`;}).join("")}</tbody>
+      <tfoot><tr><td>Total</td><td class="r">${sh.count}</td><td class="r">${got}</td><td class="r">${money(known)}</td><td class="r">${money(S.settlement().total)}</td></tr></tfoot>
+    </table></div>
+  </section>`,
+  note("The estimate column", `<p>Pulled straight from the ledger. A blank here is a blank there — this page never invents a number.</p>`) +
+  `<hr>` +
+  note("One store is not a store", `<p><b>No store yet</b> holds two lines: propane, which gets refilled rather than bought, and the strainer nobody has claimed.</p>`) +
+  `<hr>` +
+  note("After you buy", `<p>Whatever is actually paid goes to Settlement. The estimate is only ever an expectation.</p>`));
+};
+
+V.menu=()=>{
+  const svc=["Breakfast","Snack","Lunch","Dinner","Drinks"],c=S.menu.filter(m=>m.claimed).length;
+  return mast + hero(`<b>${S.menu.length}</b> dishes,<br><span class="t">${S.menu.length-c}</span> unclaimed.`,
+    `Four services and a drinks list, running from a McDonald's run at seven in the morning to espresso martinis after dinner.`)
+  + body(`
+  ${stats(svc.map(s=>{const l=S.menu.filter(m=>m.service===s),k=l.filter(m=>m.claimed).length;
+    return stat(s,`${k}<small>of ${l.length}</small>`,"claimed",k<l.length/2);}))}
+  ${svc.map(s=>{const l=S.menu.filter(m=>m.service===s),k=l.filter(m=>m.claimed).length;
+    return `<section><h2>${s}</h2><div class="cap">${l.length} dishes · ${k} claimed</div>
+    ${l.map(m=>`<div class="it">
+      <div><span>${esc(m.dish)}</span><div class="s">${esc(m.source)}${m.qty&&m.qty!=="—"?` · ${esc(m.qty)}`:""}${m.note?` · <i>${esc(m.note)}</i>`:""}</div></div>
+      <div>${m.who?esc(m.who):'<span class="open">open</span>'}</div></div>`).join("")}</section>`;}).join("")}`,
+  note("The only job", `<span class="big t">${S.menu.length-c}</span>dishes with nobody's name on them. Everything else on this page is already handled.`) +
+  `<hr>` +
+  note("Fixed points", `<p>Breakfast is McDonald's and it is not up for discussion. Dinner is this year's sauce, which is the entire reason anyone came.</p>`) +
+  `<hr>` +
+  note("Sources", `<p>${[...new Set(S.menu.map(m=>m.source))].length} different places supply this menu. The Shopping List groups them.</p>`));
+};
+
+V.run=()=>{
+  return mast + hero(`<b>${S.runsheet.length}</b> steps,<br>Friday to <b>22:30</b>.`,
+    `It has never once gone in a different order. Read it top to bottom and tick as you go.`)
+  + body(`
+  ${[["PREP","Friday night","the evening before"],["DAY","Saturday 29 August","06:30 to 22:30"]].map(([k,label,cap])=>{
+    const l=S.runsheet.filter(r=>r.section===k);
+    return `<section><h2>${label}</h2><div class="cap">${l.length} steps · ${cap}</div>
+    ${l.map(r=>`<div class="it timed">
+      <time>${esc(r.time)}</time>
+      <div><span>${esc(r.activity)}</span><div class="s"><b>${esc(r.lead)}</b>${r.crew?` with ${esc(r.crew)}`:""}${r.kit?` · ${esc(r.kit)}`:""}${r.note?` · <i>${esc(r.note)}</i>`:""}</div></div>
+      <div class="dim" style="font-size:.8125rem">${esc(r.section==="PREP"?"prep":"day")}</div></div>`).join("")}</section>`;}).join("")}`,
+  note("Leads", `<p>${S.runsheet.filter(r=>r.lead==="Matt").length} steps Matt, ${S.runsheet.filter(r=>r.lead==="David").length} David, ${S.runsheet.filter(r=>r.lead==="All").length} everybody. Crew is whoever is standing nearest.</p>`) +
+  `<hr>` +
+  note("Two lessons already learned", `<p>Grind the espresso Friday night. Wipe every rim before capping, or you lose the seal and the jar.</p>`) +
+  `<hr>` +
+  note("The last step", `<p>22:30, settle up. It is on the sheet because if it is not on the sheet it does not happen and somebody is owed ${money(S.settlement().share)} until Christmas.</p>`));
+};
+
+V.settlement=()=>{
+  const st=S.settlement(),names=st.net.map(n=>n.name);
+  const t=(f,to)=>st.transfers.find(x=>x.from===f&&x.to===to);
+  return mast + hero(`<b>${money(st.share)}</b><br>each.`,
+    `${money(st.total)} paid out between five men, cut evenly, then the fewest transfers that clear it.`)
+  + body(`
+  <section>
+    <h2>Position</h2>
+    <div class="cap">what each man paid against what he owes</div>
+    <div class="full"><table>
+      <thead><tr><th>Person</th><th class="r">Paid</th><th class="r">Share</th><th class="r">Net</th><th>Standing</th></tr></thead>
+      <tbody>${st.net.map(n=>`<tr><td>${esc(n.name)}</td><td class="r">${money(n.paid)}</td>
+        <td class="r dim">${money(n.share)}</td><td class="r ${n.net<0?"tom":""}">${money(n.net)}</td>
+        <td class="dim">${n.net>0.005?"is owed":n.net<-0.005?"owes":"square"}</td></tr>`).join("")}</tbody>
+      <tfoot><tr><td>Check</td><td class="r">${money(st.total)}</td><td class="r">${money(st.share*5)}</td><td class="r">${money(0)}</td><td class="dim">${st.balanced?"balances":"does not balance"}</td></tr></tfoot>
+    </table></div>
+  </section>
+
+  <section>
+    <h2>Who pays whom</h2>
+    <div class="cap">rows pay, columns receive</div>
+    <div class="full"><table>
+      <thead><tr><th>↓ pays / → to</th>${names.map(n=>`<th class="r">${esc(n)}</th>`).join("")}<th class="r">Out</th></tr></thead>
+      <tbody>${names.map(f=>{const out=st.transfers.filter(x=>x.from===f).reduce((a,x)=>a+x.amount,0);
+        return `<tr><td>${esc(f)}</td>${names.map(to=>{if(f===to)return `<td class="r no">·</td>`;
+          const x=t(f,to);return `<td class="r ${x?"tom":"no"}">${x?money(x.amount):"—"}</td>`;}).join("")}
+          <td class="r">${out?money(out):'<span class="no">—</span>'}</td></tr>`;}).join("")}</tbody>
+      <tfoot><tr><td>In</td>${names.map(to=>{const i=st.transfers.filter(x=>x.to===to).reduce((a,x)=>a+x.amount,0);
+        return `<td class="r">${i?money(i):'<span class="no">—</span>'}</td>`;}).join("")}
+        <td class="r">${money(st.transfers.reduce((a,x)=>a+x.amount,0))}</td></tr></tfoot>
+    </table></div>
+  </section>
+
+  <section>
+    <h2>Receipts</h2>
+    <div class="cap">${S.expenses.length} lines logged so far</div>
+    <div class="full"><table>
+      <thead><tr><th>Item</th><th>Category</th><th>Store</th><th>Paid by</th><th class="r">Amount</th></tr></thead>
+      <tbody>${S.expenses.map(e=>`<tr><td>${esc(e.item)}</td><td class="dim">${esc(e.cat)}</td>
+        <td class="dim">${esc(e.store)}</td><td>${esc(e.by)}</td><td class="r">${money(e.amount)}</td></tr>`).join("")}</tbody>
+      <tfoot><tr><td colspan="4">Total</td><td class="r">${money(st.total)}</td></tr></tfoot>
+    </table></div>
+  </section>
+
+  <section>
+    <h2>Kept for reference</h2>
+    <div class="cap">2025 and 2021, the two years with a full sheet</div>
+    <div class="full"><table>
+      <thead><tr><th>Year</th><th class="r">Toolkit</th><th class="r">Ingredients</th><th class="r">Food</th><th class="r">Total</th><th class="r">Per man</th></tr></thead>
+      <tbody>${[S.history[5],S.history[1]].map(h=>{const tt=h.toolkit+h.ing+h.food;
+        return `<tr><td>${h.year}</td><td class="r">${money(h.toolkit)}</td><td class="r">${money(h.ing)}</td>
+        <td class="r">${money(h.food)}</td><td class="r">${money(tt)}</td><td class="r">${money(tt/h.crew)}</td></tr>`;}).join("")}</tbody>
+    </table></div>
+  </section>`,
+  note("The check row", `<p>Net must come to exactly zero. ${st.balanced?"It does.":"It does not — something upstream is wrong."} If it ever does not, the ledger is wrong, not the arithmetic.</p>`) +
+  `<hr>` +
+  note("Transfers", `<span class="big t">${st.transfers.length}</span>payments clear the whole thing. ${money(st.transfers.reduce((a,x)=>a+x.amount,0))} moves between ${names.length} men.`) +
+  `<hr>` +
+  note("These receipts", `<p>Eight sample lines, so the split has something to divide. Real ones replace them as they are logged.</p>`));
+};
+
+V.grappa=()=>{
+  const g=S.grappaVerdict(),rows=S.grappa,max=Math.max(...rows.map(r=>r.price||0));
+  return mast + hero(
+    g.state==="beaten" ? `<b>${money0(g.price)}</b>.<br>Record <span class="t">broken</span>.`
+    : `<b>${money0(g.record)}</b><br>to beat.`,
+    `One bottle a year, bought by David, and it has to cost more than the last one. Nobody wrote the rule down and nobody has broken it.`)
+  + body(`
+  ${stats([
+    stat("Standing record",money0(g.record),"2025 · SAQ 11849106"),
+    stat("This year",g.price?money(g.price):"—",g.by?`bought by ${esc(g.by)}`:"not bought yet"),
+    stat("Verdict",g.state==="beaten"?"beaten":g.state==="pending"?"open":"short",
+      g.delta!=null?`${g.delta>0?"up ":"down "}${money(Math.abs(g.delta))}`:"nothing logged",g.state!=="beaten"),
+    stat("Bottles on record",num(rows.filter(r=>r.price).length),`across ${rows.length} years`)
+  ])}
+  <section>
+    <h2>The shelf</h2>
+    <div class="cap">every bottle since 2020, drawn to the height of what it cost</div>
+    ${(()=>{
+      const shelf=S.shelf(), MIN=44, MAX=210;
+      const hOf=f=>Math.round(MIN+(MAX-MIN)*f);
+      const rec=shelf.find(b=>b.record), recH=rec?hOf(rec.factor):0;
+      return `<div class="shelfwrap">
+        <div class="shelf">
+          ${recH?`<div class="datum" style="bottom:${recH}px"><b>${money0(g.record)} · the line to clear</b></div>`:""}
+          ${shelf.map(b=>{
+            const cls=b.live?"now":b.record?"is-rec":b.empty?"gone":"";
+            const d=V2.bottle(b.factor,b.shape,{min:MIN,max:MAX,empty:b.empty,
+              label:`${b.year}${b.price?" — "+money(b.price):" — no bottle"}`});
+            return `<div class="slot ${cls}">${b.photo?`<img src="${b.photo}" alt="${b.year}" style="height:${d.h}px;display:block">`:d.svg}</div>`;
+          }).join("")}
+        </div>
+        <div class="shelfyrs">${shelf.map(b=>{
+          const d=V2.bottle(b.factor,b.shape,{min:MIN,max:MAX});
+          return `<div class="${b.live?"live":b.empty?"none":""}" style="width:${d.w}px">
+            <em>${String(b.year).slice(2)}</em><b>${b.price?money0(b.price):"none"}</b></div>`;
+        }).join("")}</div>
+      </div>`;
+    })()}
+  </section>
+
+  <section>
+    <h2>The bottles</h2>
+    <div class="cap">four of seven years never had the bottle written down, only the price</div>
+    <div class="ports">${S.shelf().filter(b=>b.price).map(b=>`
+      <div class="port ${b.live?"now":""}">
+        <div class="portshot">${b.photo?`<img src="${b.photo}" alt="${b.year} grappa">`
+          :V2.bottle(1,b.shape,{min:170,max:170,label:`${b.year} bottle`}).svg}</div>
+        <div class="meta">
+          <b>${money(b.price)}</b>
+          <em>${b.year} · ${esc(b.by||"—")}</em>
+          <p>${b.bottle?esc(b.bottle):"Bottle never named on the sheet."}${b.link?` <a href="${b.link}" target="_blank" rel="noopener">SAQ</a>`:""}</p>
+          ${b.photo?"":`<div class="want">${ic("camera")} photograph wanted</div>`}
+        </div>
+      </div>`).join("")}</div>
+  </section>
+  <section>
+    <h2>The record</h2>
+    <div class="cap">one row a year, with an automatic verdict</div>
+    <div class="full"><table>
+      <thead><tr><th>Year</th><th class="r">Price</th><th class="r">Δ on prior best</th><th>Beat it?</th><th>Bought by</th><th>Note</th></tr></thead>
+      <tbody>${rows.map((r,i)=>{
+        const prev=rows.slice(0,i).filter(x=>x.price).map(x=>x.price),best=prev.length?Math.max(...prev):0;
+        const v=r.price==null?null:r.price===0?"no bottle":r.price>best?"yes":"no";
+        return `<tr><td>${r.year}</td><td class="r">${r.price?money(r.price):'<span class="no">—</span>'}</td>
+          <td class="r ${v==="yes"?"tom":"no"}">${r.price&&best?money(r.price-best):"—"}</td>
+          <td class="${v==="yes"?"tom":"dim"}">${v||'<span class="no">—</span>'}</td>
+          <td class="dim">${esc(r.by||"—")}</td><td class="dim">${esc(r.note)}</td></tr>`;}).join("")}</tbody>
+    </table></div>
+  </section>`,
+  note("Two blank years", `<p>2021 and 2023 have no bottle at all. They do not count as losses; they count as nothing, and the record carried straight over them.</p>`) +
+  `<hr>` +
+  note("The jump", `<span class="big">+${money0(135-82.25)}</span>2024 to 2025 was the biggest step the record has ever taken. Anything above ${money0(135)} clears it.`) +
+  `<hr>` +
+  note("Toast", `<p>18:00 on the run sheet, between the water bath and dinner. The only fixed break in the day.</p>`));
+};
+
+V.photobook=()=>{
+  const st=S.photoStats();
+  return mast + hero(
+    st.filled ? `<b>${st.filled}</b> of <b>${st.plates}</b><br>plates in.`
+              : `<b>${st.plates}</b> plates,<br>waiting.`,
+    `One spread a year. Every frame is already sized and captioned from the record, so the book has a shape before it has pictures and nothing moves when they arrive.`)
+  + `${S.photobook.slice().reverse().map(y=>`
+    <div class="spread ${y.live?"live":""}">
+      <div class="sphead">
+        <b>${y.year}</b><i>${esc(y.title)}</i>
+        <span class="c">${y.live?"in progress":"edition "+y.ed} · ${y.plates.length} plates · ${y.plates.filter(p=>p.src).length} filled</span>
+      </div>
+      <div class="plates">${y.plates.map(p=>V2.plate(p,{cls:p.w>p.h?"wide":"",mark:"camera"})).join("")}</div>
+    </div>`).join("")}
+  <section>
+    <h2>How to fill it</h2>
+    <div class="cap">the book takes files, not fuss</div>
+    <p class="lede">Set a plate's <b>src</b> in <b>data.js</b> under <b>photobook</b> and the drawing gives way to the photograph. Aspect ratios are fixed per plate, so the page you are looking at now is the page you get.</p>
+    ${stats([
+      stat("Years",num(st.years),"2020 onward"),
+      stat("Plates",num(st.plates),"sized and captioned"),
+      stat("Filled",num(st.filled),st.filled?`of ${st.plates}`:"none yet",st.filled===0),
+      stat("Wanted",num(st.empty),"awaiting a photograph",st.empty>0)
+    ])}
+  </section>`;
+};
+
+V.history=()=>{
+  const rows=S.series();
+  return mast + hero(`<b>${rows.length}</b> years<br>on one page.`,
+    `One row a year, forever. Where a sheet never existed the row stays empty, because a guess in this table poisons every average on the next one.`)
+  + body(`
+  <div class="full"><table>
+    <thead><tr><th>Year</th><th class="r">Ed</th><th>Date</th><th class="r">Toolkit</th><th class="r">Ingredients</th><th class="r">Food</th>
+      <th class="r">Total</th><th class="r">Per man</th><th class="r">Bushels</th><th class="r">Litres</th><th class="r">Grappa</th></tr></thead>
+    <tbody>${rows.map(r=>`<tr>
+      <td>${r.year}${r.live?' <span class="tom" style="font-size:.6875rem;letter-spacing:.1em">LIVE</span>':""}</td>
+      <td class="r no">${r.ed}</td><td class="dim">${r.date||'<span class="no">—</span>'}</td>
+      <td class="r">${r.toolkit!=null?money(r.toolkit):'<span class="no">—</span>'}</td>
+      <td class="r">${r.ing!=null?money(r.ing):'<span class="no">—</span>'}</td>
+      <td class="r">${r.food!=null?money(r.food):'<span class="no">—</span>'}</td>
+      <td class="r ${r.live?"tom":""}">${r.total!=null?money(r.total):'<span class="no">no sheet</span>'}</td>
+      <td class="r dim">${r.perMan?money(r.perMan):'<span class="no">—</span>'}</td>
+      <td class="r">${r.bushels||'<span class="no">—</span>'}</td>
+      <td class="r">${r.litres!=null?num(r.litres):'<span class="no">—</span>'}</td>
+      <td class="r">${r.grappa?money(r.grappa):'<span class="no">—</span>'}</td></tr>`).join("")}</tbody>
+  </table></div>
+  <section>
+    <h2>Provenance</h2>
+    <div class="cap">where each row came from, in its own words</div>
+    ${rows.map(r=>`<div class="it timed"><time>${r.year}</time><div><span>${esc(r.note)}</span></div><div></div></div>`).join("")}
+  </section>`,
+  note("Closing a year", `<p>At 22:30 on the day, the live row gets its litres and jar count and becomes permanent. Everything on Metrics redraws.</p>`) +
+  `<hr>` +
+  note("The 2020 hole", `<p>No sheet was ever kept. The only surviving number is 78 litres, from a note in the 2025 workbook. It stays a hole.</p>`) +
+  `<hr>` +
+  note("One known error", `<p>The 2025 food total leaves out a $31 fresh-pasta line. It is recorded as the sheet stated it, with the discrepancy noted rather than silently fixed.</p>`));
+};
+
+V.metrics=()=>{
+  const rows=S.series(),g=S.grappaRecord(),f=v=>money0(v);
+  const closed=rows.filter(r=>r.total&&!r.live);
+  const set=[
+    ["Total spend","Every dollar the day cost. 2024 was burners and cauldrons. 2025 was food.",cBars(rows,r=>r.total,f)],
+    ["Cost per man","Total divided by five — the only number anyone actually feels.",cLine(rows,r=>r.perMan,f)],
+    ["Where it went","Toolkit, ingredients, food, stacked. Food passed the gear in 2025 and has not gone back.",cStack(rows)],
+    ["Grappa","One bottle a year against the standing record.",cLine(rows,r=>r.grappa||null,f,g)],
+    ["Consumables only","Ingredients plus food — the part that repeats however much gear you already own.",cLine(rows,r=>r.consumables,f)],
+    ["Litres","What came out the other end. The 2026 mark carries the low-to-high band off "+S.totalBushels()+" bushels.",cYield()]
+  ];
+  return mast + hero(`<b>Six</b> charts.<br>No decoration.`,
+    `They redraw the moment a year is closed out. The tomato mark is always the live year, and nothing is plotted that was not measured.`)
+  + body(`
+  <div class="six">${set.map(([h,p,s])=>`<div class="ch"><h3>${h}</h3><p>${p}</p>${s}</div>`).join("")}</div>
+  <section>
+    <h2>All time</h2>
+    <div class="cap">computed only on years that have a sheet</div>
+    ${stats([
+      stat("Six years of sauce",money0(rows.filter(r=>r.total).reduce((a,r)=>a+r.total,0)),"2021 onward"),
+      stat("Average year",money0(closed.reduce((a,r)=>a+r.total,0)/closed.length),`${closed.length} closed years`),
+      stat("Average per man",money0(closed.reduce((a,r)=>a+r.perMan,0)/closed.length),"across those years"),
+      stat("Dearest","2024",money0(1043.85)),
+      stat("Cheapest","2021",money0(625.54))
+    ])}
+  </section>`,
+  note("What is not here", `<p>No trendlines, no projections, no sparklines. Six years is not enough data to draw a trend through and pretending otherwise would be dishonest.</p>`) +
+  `<hr>` +
+  note("Gaps stay gaps", `<p>Two of seven years carry no money and only three carry litres. Every average above is computed on what exists, never on a filled-in blank.</p>`) +
+  `<hr>` +
+  note("The one to watch", `<p>Consumables. Toolkit is a one-time buy that eventually stops; ingredients and food never do.</p>`));
+};
+
+/* ---------------------------------------------------------------- router */
+let cur=null;
+function go(id,push){
+  if(!V[id]) id="dashboard";
+  cur=id;
+  const p=$("#page");
+  p.removeAttribute("data-anim"); p.innerHTML=V[id](); void p.offsetWidth; p.setAttribute("data-anim","");
+  document.querySelectorAll(".seg").forEach(b=>b.setAttribute("aria-current",String(b.dataset.tab===id)));
+  document.title="Sauce Day — "+S.TABS.find(t=>t.id===id).name;
+  if(push!==false) history.replaceState(null,"","#"+id);
+  window.scrollTo({top:0,behavior:"instant"});
+}
+document.addEventListener("click",e=>{
+  const n=e.target.closest("[data-tab]"); if(n) return go(n.dataset.tab);
+  const s=e.target.closest("[data-scen]"); if(s){SCEN=s.dataset.scen;go("yield",false);}
+});
+document.addEventListener("keydown",e=>{
+  if(e.metaKey||e.ctrlKey||e.altKey||/^(INPUT|TEXTAREA)$/.test(document.activeElement.tagName)) return;
+  const i=S.TABS.findIndex(t=>t.id===cur);
+  if(e.key==="ArrowDown"||e.key==="ArrowRight"){e.preventDefault();go(S.TABS[(i+1)%S.TABS.length].id);}
+  if(e.key==="ArrowUp"||e.key==="ArrowLeft"){e.preventDefault();go(S.TABS[(i-1+S.TABS.length)%S.TABS.length].id);}
+});
+/* a pasted #tab link must land, even when the page is already open */
+window.addEventListener("hashchange",()=>{
+  const id=location.hash.slice(1);
+  if(id && id!==cur) go(id,false);
+});
+go(location.hash.slice(1)||"dashboard");
+})();
+</script>
+</body>
+</html>
