@@ -106,9 +106,11 @@ b, strong { font-weight: 600; }
   --gate-hero: url("img/hero-tralala.jpg");
   --gate-hero-fit: contain;
   --gate-hero-pos: center;
-  /* sampled off the poster's own border, so the letterboxing reads as a mount
-     rather than as empty space around a picture */
-  --gate-mount: #f0cfa2;
+  /* Averaged over the poster's whole border ring, not sampled at one point —
+     a single sample landed a shade off and the seam showed. The scan's own
+     dark right-hand edge is cropped off in the resize; left in, it read as a
+     second border down that side. */
+  --gate-mount: #f2d29f;
 }
 .gate {
   min-height: 100dvh; display: grid; padding: 0;
@@ -116,9 +118,11 @@ b, strong { font-weight: 600; }
   place-items: stretch;
 }
 
+/* No border-right. The cream mount against the paper panel already separates
+   the columns, and a hairline on top of that read as a second edge — the more
+   so because the left side runs cream to the screen edge with nothing on it. */
 .gatehero {
   position: relative; background: var(--gate-mount); overflow: hidden;
-  border-right: 1px solid var(--hair);
 }
 .gheroart {
   position: absolute; inset: 0;
@@ -180,7 +184,6 @@ b, strong { font-weight: 600; }
     grid-template-rows: clamp(13rem, 38vh, 20rem) 1fr;
     min-height: 100dvh;
   }
-  .gatehero { border-right: 0; border-bottom: 0; }
   .gheroart { --gate-hero-fit: cover; --gate-hero-pos: 50% 20%; }
 
   .gatepanel {
