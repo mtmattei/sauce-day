@@ -2161,5 +2161,26 @@ export const DEMO_DATA = {
       "grappa": 135.0,
       "notes": "Food total as stated on the 2025 sheet; the $31 fresh-pasta line appears to have been left out of it."
     }
+  ],
+
+  // The photobook has no sauce day photographs yet, so demo mode stands the
+  // bottle shots up instead. Real images, real captions, and enough of them to
+  // show how the stack handles. They vanish the moment Supabase is wired up.
+  "photos": [
+    { "id": "demo-p1", "year": 2026, "sort_index": 1, "taken_by": "Matt",
+      "url": "img/grappa/jacopo-poli-torcolato.png",
+      "caption": "Torcolato, $107.50 — the dearest on the shortlist, still $27.50 short" },
+    { "id": "demo-p2", "year": 2026, "sort_index": 2, "taken_by": "Matt",
+      "url": "img/grappa/poli-cleopatra-moscato-oro.png",
+      "caption": "Cleopatra Moscato Oro, $91.75 — best value per litre of the five" },
+    { "id": "demo-p3", "year": 2026, "sort_index": 3, "taken_by": "Matt",
+      "url": "img/grappa/de-negri-monovitigno-prosecco.png",
+      "caption": "De Negri Monovitigno di Prosecco, $42.25 — the only non-Poli" },
+    { "id": "demo-p4", "year": 2026, "sort_index": 4, "taken_by": "Matt",
+      "url": "img/grappa/poli-bassano-24-carati.png",
+      "caption": "Bassano 24 Carati, $41.50 — barrel time, hence the colour" },
+    { "id": "demo-p5", "year": 2026, "sort_index": 5, "taken_by": "Matt",
+      "url": "img/grappa/poli-bassano-classica.png",
+      "caption": "Bassano Del Grappa, $32.75 — the house pour" }
   ]
 };

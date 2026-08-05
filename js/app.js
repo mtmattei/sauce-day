@@ -17,6 +17,7 @@ const ROUTES = [
   { hash: "#/run",     label: "Run",     icon: "clock",  view: V.viewRun },
   { hash: "#/ledger",  label: "Ledger",  icon: "rows",   view: V.viewLedger },
   { hash: "#/grappa",  label: "Grappa",  icon: "bottle", view: V.viewGrappa },
+  { hash: "#/photos",  label: "Photos",  icon: "plates", view: V.viewPhotos },
   { hash: "#/history", label: "History", icon: "bars",   view: V.viewHistory },
   { hash: "#/crew",    label: "Crew",    icon: "crew",   view: V.viewCrew }
 ];

@@ -22,7 +22,7 @@ export const state = {
   session: null,
   me: null,
   members: [], settings: null, items: [], expenses: [], bushels: [], jars: [],
-  runsheet: [], menu: [], grappa: [], history: [],
+  runsheet: [], menu: [], grappa: [], history: [], photos: [],
   online: false, error: null, ui: {}
 };
 
@@ -33,7 +33,7 @@ export function emit() { listeners.forEach(fn => fn()); }
 const KEY = {
   members: "members", app_settings: "settings", items: "items", expenses: "expenses",
   bushels: "bushels", jar_inventory: "jars", runsheet: "runsheet", menu: "menu",
-  grappa: "grappa", history: "history"
+  grappa: "grappa", history: "history", photos: "photos"
 };
 const TABLES = [
   ["members",       q => q.order("sort_index")],
@@ -45,7 +45,9 @@ const TABLES = [
   ["runsheet",      q => q.eq("year", YEAR).order("sort_index")],
   ["menu",          q => q.eq("year", YEAR).order("sort_index")],
   ["grappa",        q => q.order("year")],
-  ["history",       q => q.order("year")]
+  ["history",       q => q.order("year")],
+  // the photobook spans every year, so no year filter here
+  ["photos",        q => q.order("year", { ascending: false }).order("sort_index")]
 ];
 
 // ---------------------------------------------------------------- demo store
@@ -66,6 +68,8 @@ function pushDemo() {
   state.menu = [...demo.menu].sort((a, b) => a.sort_index - b.sort_index);
   state.grappa = [...demo.grappa].sort((a, b) => a.year - b.year);
   state.history = [...demo.history].sort((a, b) => a.year - b.year);
+  state.photos = [...(demo.photos || [])]
+    .sort((a, b) => (b.year - a.year) || (a.sort_index - b.sort_index));
   state.online = true;
   emit();
 }

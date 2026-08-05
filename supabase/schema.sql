@@ -5,6 +5,7 @@
 -- ============================================================================
 
 -- ---------------------------------------------------------------- clean slate
+drop table if exists public.photos        cascade;
 drop table if exists public.expenses      cascade;
 drop table if exists public.items         cascade;
 drop table if exists public.bushels       cascade;
@@ -188,6 +189,26 @@ comment on table public.history is
   'One row per completed year. The current year is computed live and is NOT stored here '
   'until you close the year out from the History screen.';
 
+-- ---------------------------------------------------------------- photobook
+-- Deliberately NOT scoped to one year: the photobook is the whole record.
+-- `url` is any publicly reachable image — a Supabase Storage public URL, a
+-- Google Photos direct link, anything the browser can load.
+create table public.photos (
+  id         uuid primary key default gen_random_uuid(),
+  year       int  not null,
+  url        text not null,
+  caption    text,
+  taken_by   text,
+  sort_index int  not null default 0,
+  created_at timestamptz not null default now(),
+  created_by text,
+  updated_at timestamptz not null default now(),
+  updated_by text
+);
+create index photos_year_idx on public.photos (year desc, sort_index);
+comment on table public.photos is
+  'The photobook. Ordered newest year first, then sort_index within the year.';
+
 -- ---------------------------------------------------------------- touch trigger
 create function public.touch_row() returns trigger
 language plpgsql as $$
@@ -200,7 +221,7 @@ end $$;
 do $$
 declare t text;
 begin
-  foreach t in array array['items','runsheet','menu','grappa','history','app_settings']
+  foreach t in array array['items','runsheet','menu','grappa','history','app_settings','photos']
   loop
     execute format(
       'create trigger touch_%1$s before update on public.%1$s
@@ -217,7 +238,7 @@ do $$
 declare t text;
 begin
   foreach t in array array['app_settings','items','expenses','bushels','jar_inventory',
-                           'runsheet','menu','grappa','history']
+                           'runsheet','menu','grappa','history','photos']
   loop
     execute format('alter table public.%I enable row level security', t);
     execute format('create policy crew_read   on public.%I for select using (public.is_member())', t);
@@ -240,7 +261,7 @@ do $$
 declare t text;
 begin
   foreach t in array array['app_settings','items','expenses','bushels','jar_inventory',
-                           'runsheet','menu','grappa','history','members']
+                           'runsheet','menu','grappa','history','members','photos']
   loop
     begin
       execute format('alter publication supabase_realtime add table public.%I', t);

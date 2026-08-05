@@ -11,6 +11,7 @@ import { h, frag, field, select, check, personSelect, delButton, card, stat,
 import { stackedBars, bars, line } from "./charts.js";
 import { bottle } from "./icons.js";
 import { SHORTLIST, perLitre, shortlistVerdict } from "./grappas.js";
+import { mountStack } from "./stack.js";
 
 const SERIES_COLORS = ["var(--series-1)", "var(--series-2)", "var(--series-3)"];
 
@@ -530,6 +531,91 @@ export function viewGrappa() {
         h("thead", {}, h("tr", {}, h("th", {}, "Year"), h("th", {}, "Bottle"),
           h("th", {}, "Price"), h("th", {}, "Rating"), h("th", {}, "Verdict"))),
         h("tbody", {}, ...hall))));
+}
+
+// ============================================================ PHOTOBOOK
+let liveStack = null;
+
+export function viewPhotos() {
+  // tear down any stack from the previous render — it holds a resize listener
+  if (liveStack) { liveStack.destroy(); liveStack = null; }
+
+  const photos = [...state.photos].sort((a, b) =>
+    (b.year - a.year) || ((a.sort_index || 0) - (b.sort_index || 0)));
+
+  const years = [...new Set(photos.map(p => p.year))].sort((a, b) => b - a);
+  const filter = state.ui?.photoYear ?? null;
+  const shown = filter ? photos.filter(p => p.year === filter) : photos;
+
+  const yearTabs = years.length > 1 ? h("div", { class: "subtabs" },
+    h("button", { class: "subtab" + (filter === null ? " on" : ""), onClick: () => {
+      state.ui = { ...(state.ui || {}), photoYear: null }; render();
+    } }, `All · ${photos.length}`),
+    ...years.map(y => h("button", {
+      class: "subtab" + (filter === y ? " on" : ""),
+      onClick: () => { state.ui = { ...(state.ui || {}), photoYear: y }; render(); }
+    }, `${y} · ${photos.filter(p => p.year === y).length}`))) : null;
+
+  // the stack itself
+  const host = h("div", { class: "stackhost" });
+  if (shown.length) {
+    queueMicrotask(() => {
+      liveStack = mountStack(host, shown.map(p => ({
+        url: p.url, caption: p.caption || "", year: p.year
+      })));
+    });
+  } else {
+    host.appendChild(h("div", { class: "pempty" },
+      h("div", { class: "pemptyframe" }),
+      h("p", {}, "Nothing in the book yet."),
+      h("p", { class: "note" },
+        "Add the first one below. Paste any image link — a Supabase Storage URL, " +
+        "a Dropbox or Drive direct link. It shows up on everyone's phone at once.")));
+  }
+
+  const addForm = h("form", { class: "spendform", onSubmit: async e => {
+    e.preventDefault();
+    const f = new FormData(e.target);
+    const url = (f.get("url") || "").trim();
+    if (!url) { flash("Needs an image link", true); return; }
+    await insert("photos", {
+      year: Number(f.get("year")) || YEAR,
+      url,
+      caption: (f.get("caption") || "").trim() || null,
+      taken_by: me(),
+      sort_index: nextSort(state.photos)
+    });
+    e.target.reset();
+    e.target.querySelector('[name=year]').value = String(YEAR);
+    flash("Added to the book");
+  } },
+    lbl("Image link", h("input", { name: "url", class: "f", type: "url",
+      placeholder: "https://…", required: true })),
+    lbl("Caption", h("input", { name: "caption", class: "f",
+      placeholder: "e.g. the first cauldron on" })),
+    lbl("Year", h("input", { name: "year", class: "f", type: "number",
+      step: "1", value: String(YEAR) })),
+    h("button", { class: "btn primary wide", type: "submit" }, "Add photograph"));
+
+  const list = shown.length ? shown.map(p => h("div", { class: "row tight" },
+    h("div", { class: "rowmain" },
+      h("div", { class: "rowtitle" }, p.caption || "Untitled"),
+      h("div", { class: "rowsub" },
+        [p.year, p.taken_by ? "by " + p.taken_by : null].filter(Boolean).join(" · "))),
+    h("div", { class: "rowend" },
+      p.taken_by === me() || state.me?.is_admin
+        ? delButton("photos", p, p.caption || "this photograph") : null)))
+    : [];
+
+  return frag(
+    card("Photobook",
+      shown.length
+        ? "Drag a print off the top, tap it, or use the arrow keys."
+        : "One stack, newest first.",
+      yearTabs, host),
+    card("Add to the book",
+      "Anything the browser can load. The stack picks it up straight away.", addForm),
+    shown.length ? card("Everything in the book", `${shown.length} photograph${shown.length === 1 ? "" : "s"}`, ...list) : null);
 }
 
 // ============================================================ HISTORY

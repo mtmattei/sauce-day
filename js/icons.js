@@ -64,6 +64,13 @@ const P = {
     '<circle cx="12" cy="16.6" r="1.3"/>' +
     '<path d="M4 16.6h1.8"/><path d="M18.2 16.6H20"/><path d="M12 8v-1.8"/>',
 
+  // two prints, one behind the other
+  plates:
+    '<path d="M7.4 3.9h13v11.7h-13z"/>' +
+    '<path d="M3.6 8.4v11.7h13"/>' +
+    '<path d="M7.4 12.6l3.1-3 2.5 2.4 2.4-2.2 5 4.6"/>' +
+    '<circle cx="11" cy="7.5" r="1.2"/>',
+
   crew:
     '<circle cx="8.2" cy="8.6" r="2.7"/><circle cx="16.2" cy="8.6" r="2.7"/>' +
     '<path d="M3.2 18.8c0-2.8 2.2-4.8 5-4.8s5 2 5 4.8"/>' +
