@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Sauce Day — phone preview</title>
+<!--
+  Renders the real app inside iframes at true device sizes, so a phone layout
+  can actually be looked at rather than inferred from forced media queries.
+  Open tools/phone-preview.html through the same local server.
+-->
+<style>
+  body { margin:0; background:#22201d; color:#ddd7cc; font:13px/1.4 ui-sans-serif,system-ui,sans-serif;
+         padding:20px; display:flex; gap:26px; align-items:flex-start; flex-wrap:wrap; }
+  figure { margin:0; }
+  figcaption { font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:#8b8478;
+               margin-bottom:8px; font-family:ui-monospace,monospace; }
+  iframe { border:1px solid #4a453d; background:#000; display:block; }
+</style>
+</head>
+<body>
+  <figure>
+    <figcaption>iPhone SE · 375 × 667</figcaption>
+    <iframe src="../index.html" width="375" height="667"></iframe>
+  </figure>
+  <figure>
+    <figcaption>iPhone 15 · 393 × 852</figcaption>
+    <iframe src="../index.html" width="393" height="852"></iframe>
+  </figure>
+  <figure>
+    <figcaption>Pixel 8 · 412 × 915</figcaption>
+    <iframe src="../index.html" width="412" height="915"></iframe>
+  </figure>
+  <figure>
+    <figcaption>landscape · 740 × 360</figcaption>
+    <iframe src="../index.html" width="740" height="360"></iframe>
+  </figure>
+</body>
+</html>
