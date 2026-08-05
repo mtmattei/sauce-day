@@ -246,11 +246,28 @@ export function viewSauce() {
   const setField = (col, label, step) => lbl(label,
     field("app_settings", s, col, { type: "number", step: step || "0.01", idCol: "year" }));
 
+  // The crew buys the lot together, so bushels are one number, not a roster.
+  // calc.js sums every row in the table, so a single canonical row is all it
+  // takes — no schema change, and the cascade below is unaffected.
+  const crewBushels = state.bushels.find(b => b.person === "Crew") || state.bushels[0] || null;
+  const strays = state.bushels.filter(b => b !== crewBushels && Number(b.count) > 0);
+
+  const bushelField = crewBushels
+    ? lbl("Bushels bought", field("bushels", crewBushels, "count", { type: "number", step: "0.5" }))
+    : lbl("Bushels bought", h("button", { class: "btn", onClick: () =>
+        upsert("bushels", { person: "Crew", count: 7 }, "year,person") }, "Set the count"));
+
   const inputs = card("The forecast", "Change any of these and everything below recalculates.",
     h("div", { class: "fgrid" },
+      bushelField,
       setField("litres_per_bushel", "Litres per bushel", "0.1"),
       setField("buffer_pct", "Spare-jar buffer (0.10 = 10%)", "0.01"),
       setField("price_per_bushel", "Price per bushel", "0.01")),
+    // if older per-person rows are still around, say so rather than quietly
+    // folding them into a total nobody can see
+    strays.length ? h("p", { class: "note" },
+      `Also counted: ${strays.map(s => `${s.person} ${s.count}`).join(", ")}. ` +
+      `Zero these out on the old rows if they are no longer separate.`) : null,
     h("div", { class: "tiles small" },
       stat("Bushels", num(y.bushels)),
       stat("Litres forecast", num(y.litres, 1)),
@@ -259,23 +276,6 @@ export function viewSauce() {
     h("p", { class: "note" },
       "Your 2025 sheet carried a low/mid/high of 10 / 14 / 18 litres per bushel, and a separate two-year " +
       "average of 9.9. 14 is the midpoint. Tomatoes vary — buy a few spare jars."));
-
-  const bushelRows = state.bushels.sort((a, b) => a.person.localeCompare(b.person)).map(b =>
-    h("div", { class: "row tight" },
-      h("div", { class: "rowmain" }, h("div", { class: "rowtitle" }, b.person)),
-      h("div", { class: "rowend" },
-        field("bushels", b, "count", { type: "number", step: "0.5", class: "w80" }),
-        delButton("bushels", b, b.person))));
-
-  const addBushel = h("form", { class: "inline", onSubmit: async e => {
-    e.preventDefault();
-    const name = new FormData(e.target).get("person").trim();
-    if (!name) return;
-    await upsert("bushels", { person: name, count: 1 }, "year,person");
-    e.target.reset();
-  } },
-    h("input", { name: "person", class: "f", placeholder: "Add a name" }),
-    h("button", { class: "btn", type: "submit" }, "Add"));
 
   const jarRows = state.jars.sort((a, b) => a.person.localeCompare(b.person)).map(j =>
     h("div", { class: "row tight" },
@@ -317,7 +317,6 @@ export function viewSauce() {
 
   return frag(
     inputs,
-    card("Bushels committed", "Who is bringing how many.", ...bushelRows, addBushel),
     card("Jars, bands and lids on hand", "Recount before the day — these carry over from last year.", ...jarRows),
     card("What to buy", "Jar packs ship with bands and lids, so the maths cascades.",
       buyPlan, prices,

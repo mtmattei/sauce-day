@@ -1290,44 +1290,8 @@ export const DEMO_DATA = {
     {
       "id": "demo-0076",
       "year": 2026,
-      "person": "Matt",
-      "count": 1
-    },
-    {
-      "id": "demo-0077",
-      "year": 2026,
-      "person": "David",
-      "count": 1
-    },
-    {
-      "id": "demo-0078",
-      "year": 2026,
-      "person": "Nate",
-      "count": 1
-    },
-    {
-      "id": "demo-0079",
-      "year": 2026,
-      "person": "Chris",
-      "count": 1
-    },
-    {
-      "id": "demo-0080",
-      "year": 2026,
-      "person": "Mike",
-      "count": 1
-    },
-    {
-      "id": "demo-0081",
-      "year": 2026,
-      "person": "Maria",
-      "count": 2
-    },
-    {
-      "id": "demo-0082",
-      "year": 2026,
-      "person": "Other guest",
-      "count": 0
+      "person": "Crew",
+      "count": 7
     }
   ],
   "jar_inventory": [

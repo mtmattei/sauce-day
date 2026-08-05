@@ -112,14 +112,11 @@ insert into public.items
   (2026, 'food', 32, 'Beer', null, null, 0, null, 'Depanneur', 'Yes', null, null);
 
 -- ---------------------------------------------------------------- bushels
+-- One row, not a roster: the crew goes and buys the lot together, so the only
+-- number that matters is the total. calc.js sums every row in this table, so
+-- adding rows back later still works if that ever changes.
 insert into public.bushels (year, person, count) values
-  (2026, 'Matt', 1),
-  (2026, 'David', 1),
-  (2026, 'Nate', 1),
-  (2026, 'Chris', 1),
-  (2026, 'Mike', 1),
-  (2026, 'Maria', 2),
-  (2026, 'Other guest', 0);
+  (2026, 'Crew', 7);
 
 -- ---------------------------------------------------------------- jars on hand
 insert into public.jar_inventory (year, person, jars, bands, lids) values
