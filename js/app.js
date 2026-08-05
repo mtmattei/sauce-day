@@ -160,17 +160,21 @@ function gate(...kids) {
   g.hidden = false;
   g.innerHTML = "";
 
+  // The poster carries its own headline — Vino, Amici & Trallallà. Anything I
+  // set over it would just be arguing with it, so the left column is the print
+  // and nothing else. The words live in the right column now.
   const hero = h("div", { class: "gatehero" },
-    h("div", { class: "gheroart", "aria-hidden": "true" }),
-    h("div", { class: "gherotext" },
-      h("div", { class: "gtag" }, "cut the bad"),
-      h("h2", {}, "Seven Augusts", h("br"), "of the same Saturday."),
-      h("p", {}, "Since 2020. Five men, seven bushels, and one bottle of grappa " +
-                 "that has to cost more than last year’s.")),
-    h("div", { class: "gherofoot" },
-      h("span", {}, "2020"), h("i", {}), h("span", {}, String(YEAR))));
+    h("div", { class: "gheroart", role: "img",
+               "aria-label": "Vino, Amici e Trallallà — a bottle of grappa, three glasses " +
+                             "and a plate of salami, olives and cheese" }));
 
-  const panel = h("div", { class: "gatepanel" }, h("div", { class: "gatebox" }, ...kids));
+  const nonno = h("div", { class: "gninjawrap" },
+    h("div", { class: "gninja", role: "img",
+               "aria-label": "An old man slicing a tomato in half, over and over" }),
+    h("div", { class: "gninjacap" }, "cut the bad"));
+
+  const panel = h("div", { class: "gatepanel" },
+    h("div", { class: "gatebox" }, ...kids), nonno);
   g.append(hero, panel);
 }
 

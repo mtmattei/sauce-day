@@ -103,70 +103,84 @@ b, strong { font-weight: 600; }
    sealed-jar frame of the loader sprite — swap --gate-hero for a photograph
    and nothing else needs to change. */
 :root {
-  --gate-hero: url("img/loader/sheet.png");
-  --gate-hero-size: 600% 600%;      /* 6x6 sheet */
-  --gate-hero-pos: 100% 100%;       /* the last frame: the jar */
+  --gate-hero: url("img/hero-tralala.jpg");
+  --gate-hero-fit: contain;
+  --gate-hero-pos: center;
+  /* sampled off the poster's own border, so the letterboxing reads as a mount
+     rather than as empty space around a picture */
+  --gate-mount: #f0cfa2;
 }
 .gate {
   min-height: 100dvh; display: grid; padding: 0;
-  grid-template-columns: minmax(0, 1.35fr) minmax(22rem, 1fr);
+  grid-template-columns: minmax(0, 1.35fr) minmax(21rem, 1fr);
   place-items: stretch;
 }
 
 .gatehero {
-  position: relative; background: #000; overflow: hidden;
-  display: grid; grid-template-rows: 1fr auto auto; padding: clamp(1.5rem, 4vw, 3rem);
+  position: relative; background: var(--gate-mount); overflow: hidden;
   border-right: 1px solid var(--hair);
 }
 .gheroart {
+  position: absolute; inset: 0;
   background-image: var(--gate-hero);
-  background-size: var(--gate-hero-size);
+  background-size: var(--gate-hero-fit);
   background-position: var(--gate-hero-pos);
   background-repeat: no-repeat;
-  image-rendering: pixelated; image-rendering: crisp-edges;
-  width: min(62%, 22rem); aspect-ratio: 1; justify-self: center; align-self: center;
   animation: gheroin 1.1s cubic-bezier(.2,.76,.26,1) both;
 }
-@keyframes gheroin { from { opacity: 0; transform: translateY(1rem) scale(.97); } to { opacity: 1; transform: none; } }
-.gherotext { max-width: 34ch; color: #fff8df; }
-.gherotext .gtag {
-  font-family: var(--m); font-size: .6875rem; letter-spacing: .34em; text-transform: uppercase;
-  color: var(--tomato); margin-bottom: .9rem;
-}
-.gherotext h2 {
-  font-size: clamp(1.5rem, 1.1rem + 1.7vw, 2.5rem); font-weight: 200;
-  letter-spacing: -.035em; line-height: 1.02; margin-bottom: .9rem;
-}
-.gherotext p { font-size: .875rem; line-height: 1.6; color: oklch(72% 0.012 80); }
-.gherofoot {
-  display: flex; align-items: center; gap: .9rem; margin-top: 1.75rem;
-  font-family: var(--m); font-size: .625rem; letter-spacing: .14em; color: oklch(52% 0.012 80);
-}
-.gherofoot i { flex: 1; height: 1px; background: oklch(38% 0.012 80); }
+@keyframes gheroin { from { opacity: 0; transform: scale(1.012); } to { opacity: 1; transform: none; } }
 
-.gatepanel { display: grid; place-items: center; padding: var(--pad); background: var(--bg); }
+.gatepanel {
+  display: grid; place-items: center; align-content: center; gap: 2rem;
+  padding: var(--pad); background: var(--bg);
+}
 .gatebox { width: min(24rem, 100%); border: 0; padding: 0; background: none; }
+
+/* ---- the nonno ----
+   Eight frames of 72x56, drawn by tools/make-ninja.ps1. Classic sprite strip:
+   the element is one frame wide and the background steps a whole strip-width
+   left, so every stop lands exactly on a frame boundary. */
+.gninja {
+  --nw: 72px; --nh: 56px; --nf: 8; --ns: 2;
+  width: calc(var(--nw) * var(--ns));
+  height: calc(var(--nh) * var(--ns));
+  background-image: url("img/ninja.png");
+  background-size: calc(var(--nw) * var(--nf) * var(--ns)) calc(var(--nh) * var(--ns));
+  background-repeat: no-repeat;
+  image-rendering: pixelated; image-rendering: crisp-edges;
+  animation: ninjachop 1.15s steps(var(--nf)) infinite;
+  justify-self: center;
+}
+@keyframes ninjachop {
+  from { background-position-x: 0; }
+  to   { background-position-x: calc(var(--nw) * var(--nf) * var(--ns) * -1); }
+}
+.gninjacap {
+  font-family: var(--m); font-size: .5625rem; letter-spacing: .2em; text-transform: uppercase;
+  color: var(--fg-4); text-align: center; margin-top: .5rem;
+}
+@media (prefers-reduced-motion: reduce) {
+  .gninja { animation: none; background-position-x: 0; }
+}
 .gsig { color: var(--tomato); margin-bottom: 1.1rem; }
 .gsig .ico { width: 2.25rem; height: 2.25rem; stroke-width: 1.3; }
 
-/* the door column stacks on narrow screens, with the hero as a band on top */
+/* The door column stacks on narrow screens with the hero as a band on top.
+   The band switches the poster to cover and pulls focus to the middle of it:
+   letterboxed at band height the whole print would be thumbnail-sized, and the
+   bottle is the part worth seeing. */
 @media (max-width: 56rem) {
-  .gate { grid-template-columns: 1fr; }
+  .gate { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
   .gatehero {
     border-right: 0; border-bottom: 1px solid var(--hair);
-    grid-template-rows: auto auto; gap: 1.25rem; padding: 1.5rem 1.25rem 1.25rem;
-    align-items: center;
+    height: clamp(11rem, 32vh, 17rem);
   }
-  .gheroart { width: min(38vw, 9rem); justify-self: start; grid-row: 1; }
-  .gherotext { grid-row: 2; max-width: none; }
-  .gherotext h2 { font-size: 1.375rem; }
-  .gherotext h2 br { display: none; }
-  .gherotext p { font-size: .8125rem; }
-  .gherofoot { display: none; }
+  .gheroart { --gate-hero-fit: cover; --gate-hero-pos: 50% 34%; }
+  .gatepanel { gap: 1.5rem; padding-top: 1.75rem; }
+  .gninja { --ns: 1.6; }
 }
 @media (max-width: 30rem) {
-  .gherotext p { display: none; }
-  .gatehero { padding-bottom: 1rem; }
+  .gatehero { height: clamp(9rem, 26vh, 13rem); }
 }
 .gatebox h1 {
   font-size: 1.125rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase;
