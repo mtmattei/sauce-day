@@ -133,9 +133,20 @@ create table public.runsheet (
   equipment  text,
   done       boolean not null default false,
   notes      text,
+  -- ---- the Sauce Day timeline reads these ----
+  icon         text,                  -- key into the drawn mark family
+  duration_min int,                   -- how long the step is expected to take
+  ingredients  text,                  -- what it consumes, as opposed to equipment
+  milestone    boolean not null default false,  -- headline step, gets its own card
+  critical     boolean not null default false,  -- jarring and the like: stronger accent
+  done_at      timestamptz,           -- stamped on tick; drives pace and slippage
   updated_at timestamptz not null default now(),
   updated_by text
 );
+comment on column public.runsheet.done_at is
+  'When the step was actually ticked. The timeline compares this against '
+  'time_label to work out whether the day is running behind, and projects a '
+  'finish time from the pace so far.';
 create index runsheet_year_idx on public.runsheet (year, sort_index);
 
 create table public.menu (

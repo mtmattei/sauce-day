@@ -3,8 +3,8 @@
 // ============================================================================
 import { sb, state, YEAR, update, insert, remove, upsert, flash, signOut } from "./db.js";
 import {
-  CATS, money, money0, num, crewNames, budgetByCat, spentByCat, sum,
-  settlement, yieldPlan, seriesData, grappaRecord, readiness
+  CATS, money, money0, num, crewNames,
+  settlement, yieldPlan, seriesData, grappaRecord
 } from "./calc.js";
 import { h, frag, field, select, check, personSelect, delButton, card, stat,
          sectionBar, empty, addRow, nextSort, me } from "./ui.js";
@@ -14,50 +14,6 @@ import { SHORTLIST, perLitre, shortlistVerdict } from "./grappas.js";
 import { mountStack } from "./stack.js";
 
 const SERIES_COLORS = ["var(--series-1)", "var(--series-2)", "var(--series-3)"];
-
-// ============================================================ TODAY
-/**
- * Today used to be the dashboard. The readout rail took that job — days out,
- * your position, the even share, jars to buy, the grappa record and the buy
- * count now sit beside every screen, so a tile row here was the same six
- * numbers a second time, one of them word for word.
- *
- * What is left is what the rail cannot carry: the money in full, and the three
- * counters side by side so they can be compared. The quick-action buttons went
- * with the tiles — they pointed at Spend, Buy and Run, all three of which are
- * in the nav rule directly above and always visible.
- */
-export function viewToday() {
-  const b = budgetByCat(), s = spentByCat();
-  const r = readiness();
-
-  const prog = card("Where we're at", null,
-    progress("Buy list", r.buy), progress("Run sheet", r.run), progress("Menu confirmed", r.menu));
-
-  const budgetRows = CATS.map(c => h("tr", {},
-    h("td", {}, c.label),
-    h("td", {}, money(b[c.key])),
-    h("td", {}, money(s[c.key])),
-    h("td", { class: s[c.key] > b[c.key] ? "over" : "" },
-      money(s[c.key] - b[c.key]))));
-  const budget = card("Budget vs actual", "Budget comes from the ledger. Actual comes from what people log as paid.",
-    h("table", { class: "grid" },
-      h("thead", {}, h("tr", {}, h("th", {}, "Category"), h("th", {}, "Budget"),
-        h("th", {}, "Spent"), h("th", {}, "Variance"))),
-      h("tbody", {}, ...budgetRows,
-        h("tr", { class: "tot" }, h("td", {}, "Total"), h("td", {}, money(sum(b))),
-          h("td", {}, money(sum(s))), h("td", {}, money(sum(s) - sum(b)))))));
-
-  return frag(prog, budget);
-}
-
-function progress(label, p) {
-  const pct = p.total ? Math.round((p.done / p.total) * 100) : 0;
-  return h("div", { class: "prog" },
-    h("div", { class: "proghead" }, h("span", {}, label),
-      h("span", { class: "mono" }, `${p.done} / ${p.total}`)),
-    h("div", { class: "bar" }, h("i", { style: `width:${pct}%` })));
-}
 
 // ============================================================ BUY LIST
 export function viewBuy() {

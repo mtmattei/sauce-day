@@ -127,30 +127,68 @@ insert into public.jar_inventory (year, person, jars, bands, lids) values
   (2026, 'Mike', 0, 0, 0);
 
 -- ---------------------------------------------------------------- run sheet
+-- Two levels. `milestone` rows are the headline beats of the day and get their
+-- own card on the Sauce Day timeline; the rest are the operational steps that
+-- sit underneath the milestone above them. Both live in one table so the Run
+-- tab stays a single editable list and there is one source of truth.
 insert into public.runsheet
-  (year, sort_index, section, time_label, activity, lead, crew, equipment, notes) values
-  (2026, 1, 'PREP', 'Fri PM', 'Pick up bushels from the market', 'Nate', 'David', 'Truck, buckets', 'Get there early, best tomatoes go first'),
-  (2026, 2, 'PREP', 'Fri PM', 'Wash and sterilise every jar', 'Matt', 'All', 'Jars, dishwasher, Barkeepers Friend', 'Count as you go - update the Yield & Jars tab'),
-  (2026, 3, 'PREP', 'Fri PM', 'Set up tables, tent, chairs, kiddie pool', 'Matt', 'Chris', 'Tables, tent, chairs, pool', null),
-  (2026, 4, 'PREP', 'Fri PM', 'Fill and check propane tanks', 'Matt', 'Mike', '3 tanks', 'Refill beats buying new'),
-  (2026, 5, 'PREP', 'Fri PM', 'Chill all beer, wine, prosecco, water', 'David', null, 'Coolers, ice', null),
-  (2026, 6, 'PREP', 'Fri PM', 'Grind the espresso', 'David', null, 'Grinder', '2025 lesson: do this the night before'),
-  (2026, 7, 'SAUCE DAY', '06:30', 'Crew arrives, espresso on', 'David', 'All', 'Espresso, moka', null),
-  (2026, 8, 'SAUCE DAY', '07:00', 'McDonald''s run', 'Chris', null, 'Cash', '5 breakfast combos'),
-  (2026, 9, 'SAUCE DAY', '07:30', 'Burners lit, wash water on', 'Matt', 'Mike', '3 burners, cauldrons, propane', null),
-  (2026, 10, 'SAUCE DAY', '08:00', 'Wash tomatoes', 'All', 'All', 'Kiddie pool, buckets, strainer', 'Two-stage rinse'),
-  (2026, 11, 'SAUCE DAY', '09:00', 'First cauldron on - blanch and cook', 'Nate', 'David', 'Cauldrons, spider ladle', null),
-  (2026, 12, 'SAUCE DAY', '10:30', 'First mill run', 'Chris', 'Matt', 'Food mill, deep dish pan', 'Watch for skins clogging'),
-  (2026, 13, 'SAUCE DAY', '11:00', 'Jars into hot water, lids ready', 'Matt', null, 'Jar lifters, cauldron', null),
-  (2026, 14, 'SAUCE DAY', '12:00', 'LUNCH - antipasti spread', 'Nate', 'All', 'Tables, boards', 'See the Menu tab'),
-  (2026, 15, 'SAUCE DAY', '13:00', 'Milling continues, bottling line starts', 'All', 'All', 'Funnel, ladle, mill', null),
-  (2026, 16, 'SAUCE DAY', '15:00', 'Fill and cap jars', 'All', 'All', 'Funnel, rims, lids, bands', 'Wipe every rim before capping'),
-  (2026, 17, 'SAUCE DAY', '16:30', 'Water bath - seal the jars', 'Matt', 'David', 'Cauldron, jar lifters', 'Listen for the pops'),
-  (2026, 18, 'SAUCE DAY', '18:00', 'Break - the grappa toast', 'David', 'All', 'The bottle', 'See Grappa Hall of Fame tab'),
-  (2026, 19, 'SAUCE DAY', '19:00', 'DINNER - pasta with this year''s sauce', 'Mike', 'All', 'Pots, fresh pasta', 'See the Menu tab'),
-  (2026, 20, 'SAUCE DAY', '21:00', 'Clean-up - cauldrons, burners, tables', 'All', 'All', 'Dawn, scrub pads, metal sponges', null),
-  (2026, 21, 'SAUCE DAY', '22:00', 'Count jars, log fallen soldiers, divide the sauce', 'Matt', 'All', 'Notebook', 'Enter the count on the History tab'),
-  (2026, 22, 'SAUCE DAY', '22:30', 'Settle up', 'Matt', 'All', 'This workbook', 'Settlement tab tells you who pays whom');
+  (year, sort_index, section, time_label, activity, lead, crew, equipment,
+   icon, duration_min, ingredients, milestone, critical, notes) values
+  -- Friday night
+  (2026,  1, 'PREP', 'Fri PM', 'Pick up bushels from the market', 'Nate', 'David', 'Truck, buckets',
+   'bushel', 90, '7 bushels of San Marzano', true, false, 'Get there early, best tomatoes go first'),
+  (2026,  2, 'PREP', 'Fri PM', 'Wash and sterilise every jar', 'Matt', 'All', 'Jars, dishwasher, Barkeepers Friend',
+   'jar', 120, null, true, false, 'Count as you go'),
+  (2026,  3, 'PREP', 'Fri PM', 'Set up tables, tent, chairs, kiddie pool', 'Matt', 'Chris', 'Tables, tent, chairs, pool',
+   null, 45, null, false, false, null),
+  (2026,  4, 'PREP', 'Fri PM', 'Fill and check propane tanks', 'Matt', 'Mike', '3 tanks',
+   null, 30, null, false, false, 'Refill beats buying new'),
+  (2026,  5, 'PREP', 'Fri PM', 'Chill all beer, wine, prosecco, water', 'David', null, 'Coolers, ice',
+   null, 20, null, false, false, null),
+  (2026,  6, 'PREP', 'Fri PM', 'Grind the espresso', 'David', null, 'Grinder',
+   null, 10, 'Beans from the roastery', false, false, '2025 lesson: do this the night before'),
+
+  -- The day
+  (2026,  7, 'DAY', '06:30', 'Start sauce prep', 'Matt', 'All', 'Espresso, moka',
+   'tomato', 60, 'Espresso', true, false, 'Crew arrives. Coffee before anything else.'),
+  (2026,  8, 'DAY', '07:00', 'McDonald''s run', 'Chris', null, 'Cash',
+   null, 30, null, false, false, '5 breakfast combos'),
+  (2026,  9, 'DAY', '07:30', 'Fire up the burners', 'Matt', 'Mike', '3 burners, cauldrons, propane',
+   'flame', 30, 'Propane', true, false, 'Wash water on at the same time'),
+  (2026, 10, 'DAY', '08:00', 'Wash tomatoes', 'All', 'All', 'Kiddie pool, buckets, strainer',
+   null, 60, '7 bushels', false, false, 'Two-stage rinse'),
+  (2026, 11, 'DAY', '09:00', 'First batch cooking', 'Nate', 'David', 'Cauldrons, spider ladle',
+   'cauldron', 90, 'Washed tomatoes', true, false, 'Blanch and cook'),
+  (2026, 12, 'DAY', '10:30', 'Coffee break', 'David', 'All', 'Moka, biscotti',
+   'coffee', 20, 'Espresso, biscotti', true, false, 'Get the day off the tomatoes for ten minutes'),
+  (2026, 13, 'DAY', '10:45', 'First mill run', 'Chris', 'Matt', 'Food mill, deep dish pan',
+   null, 45, null, false, false, 'Watch for skins clogging'),
+  (2026, 14, 'DAY', '11:30', 'Jars into hot water, lids ready', 'Matt', null, 'Jar lifters, cauldron',
+   null, 30, null, false, false, null),
+  (2026, 15, 'DAY', '12:00', 'Lunch break', 'Nate', 'All', 'Tables, boards',
+   'fork', 60, 'The antipasti spread', true, false, 'See the Menu tab'),
+  (2026, 16, 'DAY', '13:00', 'Milling continues, bottling line starts', 'All', 'All', 'Funnel, ladle, mill',
+   null, 120, null, false, false, null),
+  (2026, 17, 'DAY', '15:00', 'Jarring begins', 'All', 'All', 'Funnel, rims, lids, bands',
+   'jar', 90, 'Milled sauce, basil', true, true, 'Wipe every rim before capping. This is the one that matters.'),
+  (2026, 18, 'DAY', '16:30', 'Wine break', 'David', 'All', 'Glasses',
+   'glass', 30, 'Prosecco, the whites', true, false, 'Water bath goes on at the same time'),
+  (2026, 19, 'DAY', '16:30', 'Water bath — seal the jars', 'Matt', 'David', 'Cauldron, jar lifters',
+   null, 60, null, false, true, 'Listen for the pops'),
+  (2026, 20, 'DAY', '18:00', 'Annual grappa toast', 'David', 'All', 'The bottle',
+   'bottle', 30, 'This year''s grappa', true, true, 'It has to beat last year. See the Grappa tab.'),
+  (2026, 21, 'DAY', '19:00', 'Dinner — pasta with this year''s sauce', 'Mike', 'All', 'Pots, fresh pasta',
+   'plate', 90, 'Fresh pasta, this year''s sauce', true, false, 'The whole point'),
+  (2026, 22, 'DAY', '20:30', 'Pizza run', 'Chris', null, 'Cash, the truck',
+   'pizza', 45, null, true, false, 'Second wind. Nobody has ever regretted this.'),
+  (2026, 23, 'DAY', '21:00', 'Cooling and cleanup', 'All', 'All', 'Dawn, scrub pads, metal sponges',
+   'cool', 60, null, true, false, 'Jars stay put until they are cold. Do not move them early.'),
+  (2026, 24, 'DAY', '22:00', 'Group photo', 'Matt', 'All', 'A phone and a timer',
+   'camera', 15, null, true, false, 'Goes straight into the Photobook'),
+  (2026, 25, 'DAY', '22:15', 'Count jars, log fallen soldiers, divide the sauce', 'Matt', 'All', 'Notebook',
+   null, 15, null, false, false, 'Enter the count on the History tab'),
+  (2026, 26, 'DAY', '22:30', 'Sauce Day complete', 'Matt', 'All', 'This workbook',
+   'check', null, null, true, true, 'Settle up, then bed. Settlement says who pays whom.');
 
 -- ---------------------------------------------------------------- menu
 insert into public.menu (year, sort_index, service, dish, who, source, qty, notes) values

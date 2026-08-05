@@ -6,10 +6,11 @@ import { state, DEMO, YEAR, loadAll, startRealtime, onChange, currentSession,
 import { h, me } from "./ui.js";
 import { icon } from "./icons.js";
 import { money0, settlement, yieldPlan, grappaRecord, daysToGo, readiness } from "./calc.js";
+import { viewSauceDay, stopTimeline } from "./timeline.js";
 import * as V from "./views.js";
 
 const ROUTES = [
-  { hash: "#/",        label: "Today",   icon: "dial",   view: V.viewToday },
+  { hash: "#/",        label: "Sauce Day", icon: "check", view: viewSauceDay },
   { hash: "#/buy",     label: "Buy",     icon: "list",   view: V.viewBuy },
   { hash: "#/spend",   label: "Spend",   icon: "split",  view: V.viewSpend },
   { hash: "#/sauce",   label: "Sauce",   icon: "jar",    view: V.viewSauce },
@@ -136,6 +137,7 @@ export function render() {
   renderReadout();
   const el = app();
   const y = el.scrollTop;
+  stopTimeline();          // the timeline holds a clock; never leave two running
   el.innerHTML = "";
   el.appendChild(r.view());
   el.scrollTop = y;
