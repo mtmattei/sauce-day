@@ -145,12 +145,33 @@ export function render() {
 V.setRender(render);
 
 // ---------------------------------------------------------------- sign in
+/**
+ * Two columns: the day on the left, the door on the right.
+ *
+ * The hero is the last frame of the loader sprite — the sealed jar. It is
+ * already in the repo and already in the browser cache from the splash, so it
+ * costs nothing and the two screens read as one piece. To put a real
+ * photograph there instead, point --gate-hero at it in styles.css; the layout
+ * does not care what the image is.
+ */
 function gate(...kids) {
   document.getElementById("shell").hidden = true;
   const g = document.getElementById("gate");
   g.hidden = false;
   g.innerHTML = "";
-  g.appendChild(h("div", { class: "gatebox" }, ...kids));
+
+  const hero = h("div", { class: "gatehero" },
+    h("div", { class: "gheroart", "aria-hidden": "true" }),
+    h("div", { class: "gherotext" },
+      h("div", { class: "gtag" }, "cut the bad"),
+      h("h2", {}, "Seven Augusts", h("br"), "of the same Saturday."),
+      h("p", {}, "Since 2020. Five men, seven bushels, and one bottle of grappa " +
+                 "that has to cost more than last year’s.")),
+    h("div", { class: "gherofoot" },
+      h("span", {}, "2020"), h("i", {}), h("span", {}, String(YEAR))));
+
+  const panel = h("div", { class: "gatepanel" }, h("div", { class: "gatebox" }, ...kids));
+  g.append(hero, panel);
 }
 
 let pendingEmail = "";
@@ -159,7 +180,7 @@ function renderLogin() {
   gate(
     h("div", { class: "gsig" }, icon("cut")),
     h("h1", {}, "SAUCE DAY"),
-    h("p", { class: "gsub" }, "2020 · 2021 · 2022 · 2023 · 2024 · 2025 · 2026"),
+    // the year span used to be listed here; the hero says it twice already
     h("p", {}, "Put in your email and we'll send you a six-digit code. No password to remember."),
     h("form", { class: "gform", onSubmit: async e => {
       e.preventDefault();

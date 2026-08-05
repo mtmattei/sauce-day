@@ -99,10 +99,75 @@ b, strong { font-weight: 600; }
 .ico { width: 1rem; height: 1rem; flex: none; }
 
 /* ---------------------------------------------------------------- gate */
-.gate { min-height: 100dvh; display: grid; place-items: center; padding: var(--pad); }
-.gatebox { width: min(26rem, 100%); border: 1px solid var(--hair); padding: 2rem 1.75rem; background: var(--bg-2); }
-.gsig { color: var(--tomato); margin-bottom: 1rem; }
+/* Two columns: the day on the left, the door on the right. The hero is the
+   sealed-jar frame of the loader sprite — swap --gate-hero for a photograph
+   and nothing else needs to change. */
+:root {
+  --gate-hero: url("img/loader/sheet.png");
+  --gate-hero-size: 600% 600%;      /* 6x6 sheet */
+  --gate-hero-pos: 100% 100%;       /* the last frame: the jar */
+}
+.gate {
+  min-height: 100dvh; display: grid; padding: 0;
+  grid-template-columns: minmax(0, 1.35fr) minmax(22rem, 1fr);
+  place-items: stretch;
+}
+
+.gatehero {
+  position: relative; background: #000; overflow: hidden;
+  display: grid; grid-template-rows: 1fr auto auto; padding: clamp(1.5rem, 4vw, 3rem);
+  border-right: 1px solid var(--hair);
+}
+.gheroart {
+  background-image: var(--gate-hero);
+  background-size: var(--gate-hero-size);
+  background-position: var(--gate-hero-pos);
+  background-repeat: no-repeat;
+  image-rendering: pixelated; image-rendering: crisp-edges;
+  width: min(62%, 22rem); aspect-ratio: 1; justify-self: center; align-self: center;
+  animation: gheroin 1.1s cubic-bezier(.2,.76,.26,1) both;
+}
+@keyframes gheroin { from { opacity: 0; transform: translateY(1rem) scale(.97); } to { opacity: 1; transform: none; } }
+.gherotext { max-width: 34ch; color: #fff8df; }
+.gherotext .gtag {
+  font-family: var(--m); font-size: .6875rem; letter-spacing: .34em; text-transform: uppercase;
+  color: var(--tomato); margin-bottom: .9rem;
+}
+.gherotext h2 {
+  font-size: clamp(1.5rem, 1.1rem + 1.7vw, 2.5rem); font-weight: 200;
+  letter-spacing: -.035em; line-height: 1.02; margin-bottom: .9rem;
+}
+.gherotext p { font-size: .875rem; line-height: 1.6; color: oklch(72% 0.012 80); }
+.gherofoot {
+  display: flex; align-items: center; gap: .9rem; margin-top: 1.75rem;
+  font-family: var(--m); font-size: .625rem; letter-spacing: .14em; color: oklch(52% 0.012 80);
+}
+.gherofoot i { flex: 1; height: 1px; background: oklch(38% 0.012 80); }
+
+.gatepanel { display: grid; place-items: center; padding: var(--pad); background: var(--bg); }
+.gatebox { width: min(24rem, 100%); border: 0; padding: 0; background: none; }
+.gsig { color: var(--tomato); margin-bottom: 1.1rem; }
 .gsig .ico { width: 2.25rem; height: 2.25rem; stroke-width: 1.3; }
+
+/* the door column stacks on narrow screens, with the hero as a band on top */
+@media (max-width: 56rem) {
+  .gate { grid-template-columns: 1fr; }
+  .gatehero {
+    border-right: 0; border-bottom: 1px solid var(--hair);
+    grid-template-rows: auto auto; gap: 1.25rem; padding: 1.5rem 1.25rem 1.25rem;
+    align-items: center;
+  }
+  .gheroart { width: min(38vw, 9rem); justify-self: start; grid-row: 1; }
+  .gherotext { grid-row: 2; max-width: none; }
+  .gherotext h2 { font-size: 1.375rem; }
+  .gherotext h2 br { display: none; }
+  .gherotext p { font-size: .8125rem; }
+  .gherofoot { display: none; }
+}
+@media (max-width: 30rem) {
+  .gherotext p { display: none; }
+  .gatehero { padding-bottom: 1rem; }
+}
 .gatebox h1 {
   font-size: 1.125rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase;
   margin-bottom: .35rem;
