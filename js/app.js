@@ -223,11 +223,28 @@ function gateError(msg) {
 }
 
 // ---------------------------------------------------------------- boot
+/**
+ * The splash covers the module fetch, the auth round-trip and the first load,
+ * so most of its four and a half seconds is real work rather than theatre.
+ * Whichever finishes last wins: the app never appears mid-jar, and a slow
+ * network never leaves you staring at a finished jar.
+ *
+ * splash.js guarantees its promise settles — it carries its own failsafe — so
+ * awaiting it cannot hang the boot.
+ */
+async function waitForSplash() {
+  const s = window.SAUCE_SPLASH;
+  if (!s) return;
+  try { await s.done; } catch { /* never blocks the app */ }
+  s.dismiss();
+}
+
 async function boot() {
   await currentSession();
-  if (!state.session) { renderLogin(); return; }
+  if (!state.session) { await waitForSplash(); renderLogin(); return; }
   await loadAll();
   startRealtime();
+  await waitForSplash();
   render();
 }
 
@@ -246,7 +263,9 @@ if (!DEMO && sb) {
   });
 }
 
-boot().catch(err => {
+boot().catch(async err => {
+  // a broken boot must still clear the splash, or the error is invisible
+  await waitForSplash();
   gate(h("h1", {}, "Something broke"),
        h("p", {}, err.message),
        h("p", { class: "fine" }, "Check js/config.js and that schema.sql ran without errors."));
