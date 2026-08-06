@@ -5,7 +5,7 @@
 export const DEMO_DATA = {
   "members": [
     {
-      "email": "matthewunoplatform@gmail.com",
+      "email": "admin@change-me.invalid",
       "display_name": "Matt",
       "is_admin": true,
       "sort_index": 1
@@ -1282,7 +1282,7 @@ export const DEMO_DATA = {
       "amount": 35.0,
       "label": "Propane refills x3",
       "spent_on": "2026-08-26",
-      "created_by": "matthewunoplatform@gmail.com",
+      "created_by": "admin@change-me.invalid",
       "created_at": "2026-08-26T11:05:00Z"
     }
   ],
@@ -1336,500 +1336,994 @@ export const DEMO_DATA = {
       "lids": 0
     }
   ],
-  "runsheet": [
-    {
-      "id": "demo-r1",
-      "year": 2026,
-      "sort_index": 1,
-      "section": "PREP",
-      "time_label": "Fri PM",
-      "activity": "Pick up bushels from the market",
-      "lead": "Nate",
-      "crew": "David",
-      "equipment": "Truck, buckets",
-      "icon": "bushel",
-      "duration_min": 90,
-      "ingredients": "7 bushels of San Marzano",
-      "milestone": true,
-      "critical": false,
-      "done": false,
-      "done_at": null,
-      "notes": "Get there early, best tomatoes go first"
-    },
-    {
-      "id": "demo-r2",
-      "year": 2026,
-      "sort_index": 2,
-      "section": "PREP",
-      "time_label": "Fri PM",
-      "activity": "Wash and sterilise every jar",
-      "lead": "Matt",
-      "crew": "All",
-      "equipment": "Jars, dishwasher, Barkeepers Friend",
-      "icon": "jar",
-      "duration_min": 120,
-      "ingredients": null,
-      "milestone": true,
-      "critical": false,
-      "done": false,
-      "done_at": null,
-      "notes": "Count as you go"
-    },
-    {
-      "id": "demo-r3",
-      "year": 2026,
-      "sort_index": 3,
-      "section": "PREP",
-      "time_label": "Fri PM",
-      "activity": "Set up tables, tent, chairs, kiddie pool",
-      "lead": "Matt",
-      "crew": "Chris",
-      "equipment": "Tables, tent, chairs, pool",
-      "icon": null,
-      "duration_min": 45,
-      "ingredients": null,
-      "milestone": false,
-      "critical": false,
-      "done": false,
-      "done_at": null,
-      "notes": null
-    },
-    {
-      "id": "demo-r4",
-      "year": 2026,
-      "sort_index": 4,
-      "section": "PREP",
-      "time_label": "Fri PM",
-      "activity": "Fill and check propane tanks",
-      "lead": "Matt",
-      "crew": "Mike",
-      "equipment": "3 tanks",
-      "icon": null,
-      "duration_min": 30,
-      "ingredients": null,
-      "milestone": false,
-      "critical": false,
-      "done": false,
-      "done_at": null,
-      "notes": "Refill beats buying new"
-    },
-    {
-      "id": "demo-r5",
-      "year": 2026,
-      "sort_index": 5,
-      "section": "PREP",
-      "time_label": "Fri PM",
-      "activity": "Chill all beer, wine, prosecco, water",
-      "lead": "David",
-      "crew": null,
-      "equipment": "Coolers, ice",
-      "icon": null,
-      "duration_min": 20,
-      "ingredients": null,
-      "milestone": false,
-      "critical": false,
-      "done": false,
-      "done_at": null,
-      "notes": null
-    },
-    {
-      "id": "demo-r6",
-      "year": 2026,
-      "sort_index": 6,
-      "section": "PREP",
-      "time_label": "Fri PM",
-      "activity": "Grind the espresso",
-      "lead": "David",
-      "crew": null,
-      "equipment": "Grinder",
-      "icon": null,
-      "duration_min": 10,
-      "ingredients": "Beans from the roastery",
-      "milestone": false,
-      "critical": false,
-      "done": false,
-      "done_at": null,
-      "notes": "2025 lesson: do this the night before"
-    },
-    {
-      "id": "demo-r7",
-      "year": 2026,
-      "sort_index": 7,
-      "section": "DAY",
-      "time_label": "06:30",
-      "activity": "Start sauce prep",
-      "lead": "Matt",
-      "crew": "All",
-      "equipment": "Espresso, moka",
-      "icon": "tomato",
-      "duration_min": 60,
-      "ingredients": "Espresso",
-      "milestone": true,
-      "critical": false,
-      "done": false,
-      "done_at": null,
-      "notes": "Crew arrives. Coffee before anything else."
-    },
-    {
-      "id": "demo-r8",
-      "year": 2026,
-      "sort_index": 8,
-      "section": "DAY",
-      "time_label": "07:00",
-      "activity": "McDonald's run",
-      "lead": "Chris",
-      "crew": null,
-      "equipment": "Cash",
-      "icon": null,
-      "duration_min": 30,
-      "ingredients": null,
-      "milestone": false,
-      "critical": false,
-      "done": false,
-      "done_at": null,
-      "notes": "5 breakfast combos"
-    },
-    {
-      "id": "demo-r9",
-      "year": 2026,
-      "sort_index": 9,
-      "section": "DAY",
-      "time_label": "07:30",
-      "activity": "Fire up the burners",
-      "lead": "Matt",
-      "crew": "Mike",
-      "equipment": "3 burners, cauldrons, propane",
-      "icon": "flame",
-      "duration_min": 30,
-      "ingredients": "Propane",
-      "milestone": true,
-      "critical": false,
-      "done": false,
-      "done_at": null,
-      "notes": "Wash water on at the same time"
-    },
-    {
-      "id": "demo-r10",
-      "year": 2026,
-      "sort_index": 10,
-      "section": "DAY",
-      "time_label": "08:00",
-      "activity": "Wash tomatoes",
-      "lead": "All",
-      "crew": "All",
-      "equipment": "Kiddie pool, buckets, strainer",
-      "icon": null,
-      "duration_min": 60,
-      "ingredients": "7 bushels",
-      "milestone": false,
-      "critical": false,
-      "done": false,
-      "done_at": null,
-      "notes": "Two-stage rinse"
-    },
-    {
-      "id": "demo-r11",
-      "year": 2026,
-      "sort_index": 11,
-      "section": "DAY",
-      "time_label": "09:00",
-      "activity": "First batch cooking",
-      "lead": "Nate",
-      "crew": "David",
-      "equipment": "Cauldrons, spider ladle",
-      "icon": "cauldron",
-      "duration_min": 90,
-      "ingredients": "Washed tomatoes",
-      "milestone": true,
-      "critical": false,
-      "done": false,
-      "done_at": null,
-      "notes": "Blanch and cook"
-    },
-    {
-      "id": "demo-r12",
-      "year": 2026,
-      "sort_index": 12,
-      "section": "DAY",
-      "time_label": "10:30",
-      "activity": "Coffee break",
-      "lead": "David",
-      "crew": "All",
-      "equipment": "Moka, biscotti",
-      "icon": "coffee",
-      "duration_min": 20,
-      "ingredients": "Espresso, biscotti",
-      "milestone": true,
-      "critical": false,
-      "done": false,
-      "done_at": null,
-      "notes": "Get the day off the tomatoes for ten minutes"
-    },
-    {
-      "id": "demo-r13",
-      "year": 2026,
-      "sort_index": 13,
-      "section": "DAY",
-      "time_label": "10:45",
-      "activity": "First mill run",
-      "lead": "Chris",
-      "crew": "Matt",
-      "equipment": "Food mill, deep dish pan",
-      "icon": null,
-      "duration_min": 45,
-      "ingredients": null,
-      "milestone": false,
-      "critical": false,
-      "done": false,
-      "done_at": null,
-      "notes": "Watch for skins clogging"
-    },
-    {
-      "id": "demo-r14",
-      "year": 2026,
-      "sort_index": 14,
-      "section": "DAY",
-      "time_label": "11:30",
-      "activity": "Jars into hot water, lids ready",
-      "lead": "Matt",
-      "crew": null,
-      "equipment": "Jar lifters, cauldron",
-      "icon": null,
-      "duration_min": 30,
-      "ingredients": null,
-      "milestone": false,
-      "critical": false,
-      "done": false,
-      "done_at": null,
-      "notes": null
-    },
-    {
-      "id": "demo-r15",
-      "year": 2026,
-      "sort_index": 15,
-      "section": "DAY",
-      "time_label": "12:00",
-      "activity": "Lunch break",
-      "lead": "Nate",
-      "crew": "All",
-      "equipment": "Tables, boards",
-      "icon": "fork",
-      "duration_min": 60,
-      "ingredients": "The antipasti spread",
-      "milestone": true,
-      "critical": false,
-      "done": false,
-      "done_at": null,
-      "notes": "See the Menu tab"
-    },
-    {
-      "id": "demo-r16",
-      "year": 2026,
-      "sort_index": 16,
-      "section": "DAY",
-      "time_label": "13:00",
-      "activity": "Milling continues, bottling line starts",
-      "lead": "All",
-      "crew": "All",
-      "equipment": "Funnel, ladle, mill",
-      "icon": null,
-      "duration_min": 120,
-      "ingredients": null,
-      "milestone": false,
-      "critical": false,
-      "done": false,
-      "done_at": null,
-      "notes": null
-    },
-    {
-      "id": "demo-r17",
-      "year": 2026,
-      "sort_index": 17,
-      "section": "DAY",
-      "time_label": "15:00",
-      "activity": "Jarring begins",
-      "lead": "All",
-      "crew": "All",
-      "equipment": "Funnel, rims, lids, bands",
-      "icon": "jar",
-      "duration_min": 90,
-      "ingredients": "Milled sauce, basil",
-      "milestone": true,
-      "critical": true,
-      "done": false,
-      "done_at": null,
-      "notes": "Wipe every rim before capping. This is the one that matters."
-    },
-    {
-      "id": "demo-r18",
-      "year": 2026,
-      "sort_index": 18,
-      "section": "DAY",
-      "time_label": "16:30",
-      "activity": "Wine break",
-      "lead": "David",
-      "crew": "All",
-      "equipment": "Glasses",
-      "icon": "glass",
-      "duration_min": 30,
-      "ingredients": "Prosecco, the whites",
-      "milestone": true,
-      "critical": false,
-      "done": false,
-      "done_at": null,
-      "notes": "Water bath goes on at the same time"
-    },
-    {
-      "id": "demo-r19",
-      "year": 2026,
-      "sort_index": 19,
-      "section": "DAY",
-      "time_label": "16:30",
-      "activity": "Water bath - seal the jars",
-      "lead": "Matt",
-      "crew": "David",
-      "equipment": "Cauldron, jar lifters",
-      "icon": null,
-      "duration_min": 60,
-      "ingredients": null,
-      "milestone": false,
-      "critical": true,
-      "done": false,
-      "done_at": null,
-      "notes": "Listen for the pops"
-    },
-    {
-      "id": "demo-r20",
-      "year": 2026,
-      "sort_index": 20,
-      "section": "DAY",
-      "time_label": "18:00",
-      "activity": "Annual grappa toast",
-      "lead": "David",
-      "crew": "All",
-      "equipment": "The bottle",
-      "icon": "bottle",
-      "duration_min": 30,
-      "ingredients": "This year's grappa",
-      "milestone": true,
-      "critical": true,
-      "done": false,
-      "done_at": null,
-      "notes": "It has to beat last year. See the Grappa tab."
-    },
-    {
-      "id": "demo-r21",
-      "year": 2026,
-      "sort_index": 21,
-      "section": "DAY",
-      "time_label": "19:00",
-      "activity": "Dinner - pasta with this year's sauce",
-      "lead": "Mike",
-      "crew": "All",
-      "equipment": "Pots, fresh pasta",
-      "icon": "plate",
-      "duration_min": 90,
-      "ingredients": "Fresh pasta, this year's sauce",
-      "milestone": true,
-      "critical": false,
-      "done": false,
-      "done_at": null,
-      "notes": "The whole point"
-    },
-    {
-      "id": "demo-r22",
-      "year": 2026,
-      "sort_index": 22,
-      "section": "DAY",
-      "time_label": "20:30",
-      "activity": "Pizza run",
-      "lead": "Chris",
-      "crew": null,
-      "equipment": "Cash, the truck",
-      "icon": "pizza",
-      "duration_min": 45,
-      "ingredients": null,
-      "milestone": true,
-      "critical": false,
-      "done": false,
-      "done_at": null,
-      "notes": "Second wind. Nobody has ever regretted this."
-    },
-    {
-      "id": "demo-r23",
-      "year": 2026,
-      "sort_index": 23,
-      "section": "DAY",
-      "time_label": "21:00",
-      "activity": "Cooling and cleanup",
-      "lead": "All",
-      "crew": "All",
-      "equipment": "Dawn, scrub pads, metal sponges",
-      "icon": "cool",
-      "duration_min": 60,
-      "ingredients": null,
-      "milestone": true,
-      "critical": false,
-      "done": false,
-      "done_at": null,
-      "notes": "Jars stay put until they are cold. Do not move them early."
-    },
-    {
-      "id": "demo-r24",
-      "year": 2026,
-      "sort_index": 24,
-      "section": "DAY",
-      "time_label": "22:00",
-      "activity": "Group photo",
-      "lead": "Matt",
-      "crew": "All",
-      "equipment": "A phone and a timer",
-      "icon": "camera",
-      "duration_min": 15,
-      "ingredients": null,
-      "milestone": true,
-      "critical": false,
-      "done": false,
-      "done_at": null,
-      "notes": "Goes straight into the Photobook"
-    },
-    {
-      "id": "demo-r25",
-      "year": 2026,
-      "sort_index": 25,
-      "section": "DAY",
-      "time_label": "22:15",
-      "activity": "Count jars, log fallen soldiers, divide the sauce",
-      "lead": "Matt",
-      "crew": "All",
-      "equipment": "Notebook",
-      "icon": null,
-      "duration_min": 15,
-      "ingredients": null,
-      "milestone": false,
-      "critical": false,
-      "done": false,
-      "done_at": null,
-      "notes": "Enter the count on the History tab"
-    },
-    {
-      "id": "demo-r26",
-      "year": 2026,
-      "sort_index": 26,
-      "section": "DAY",
-      "time_label": "22:30",
-      "activity": "Sauce Day complete",
-      "lead": "Matt",
-      "crew": "All",
-      "equipment": "This workbook",
-      "icon": "check",
-      "duration_min": null,
-      "ingredients": null,
-      "milestone": true,
-      "critical": true,
-      "done": false,
-      "done_at": null,
-      "notes": "Settle up, then bed. Settlement says who pays whom."
+  "runsheet": [
+
+    {
+
+      "id": "demo-r1",
+
+      "year": 2026,
+
+      "sort_index": 1,
+
+      "section": "PREP",
+
+      "time_label": "Fri PM",
+
+      "activity": "Pick up bushels from the market",
+
+      "lead": "Nate",
+
+      "crew": "David",
+
+      "equipment": "Truck, buckets",
+
+      "icon": "bushel",
+
+      "duration_min": 90,
+
+      "ingredients": "7 bushels of San Marzano",
+
+      "milestone": true,
+
+      "critical": false,
+
+      "done": false,
+
+      "done_at": null,
+
+      "notes": "Get there early, best tomatoes go first"
+
+    },
+
+    {
+
+      "id": "demo-r2",
+
+      "year": 2026,
+
+      "sort_index": 2,
+
+      "section": "PREP",
+
+      "time_label": "Fri PM",
+
+      "activity": "Wash and sterilise every jar",
+
+      "lead": "Matt",
+
+      "crew": "All",
+
+      "equipment": "Jars, dishwasher, Barkeepers Friend",
+
+      "icon": "jar",
+
+      "duration_min": 120,
+
+      "ingredients": null,
+
+      "milestone": true,
+
+      "critical": false,
+
+      "done": false,
+
+      "done_at": null,
+
+      "notes": "Count as you go"
+
+    },
+
+    {
+
+      "id": "demo-r3",
+
+      "year": 2026,
+
+      "sort_index": 3,
+
+      "section": "PREP",
+
+      "time_label": "Fri PM",
+
+      "activity": "Set up tables, tent, chairs, kiddie pool",
+
+      "lead": "Matt",
+
+      "crew": "Chris",
+
+      "equipment": "Tables, tent, chairs, pool",
+
+      "icon": null,
+
+      "duration_min": 45,
+
+      "ingredients": null,
+
+      "milestone": false,
+
+      "critical": false,
+
+      "done": false,
+
+      "done_at": null,
+
+      "notes": null
+
+    },
+
+    {
+
+      "id": "demo-r4",
+
+      "year": 2026,
+
+      "sort_index": 4,
+
+      "section": "PREP",
+
+      "time_label": "Fri PM",
+
+      "activity": "Fill and check propane tanks",
+
+      "lead": "Matt",
+
+      "crew": "Mike",
+
+      "equipment": "3 tanks",
+
+      "icon": null,
+
+      "duration_min": 30,
+
+      "ingredients": null,
+
+      "milestone": false,
+
+      "critical": false,
+
+      "done": false,
+
+      "done_at": null,
+
+      "notes": "Refill beats buying new"
+
+    },
+
+    {
+
+      "id": "demo-r5",
+
+      "year": 2026,
+
+      "sort_index": 5,
+
+      "section": "PREP",
+
+      "time_label": "Fri PM",
+
+      "activity": "Chill all beer, wine, prosecco, water",
+
+      "lead": "David",
+
+      "crew": null,
+
+      "equipment": "Coolers, ice",
+
+      "icon": null,
+
+      "duration_min": 20,
+
+      "ingredients": null,
+
+      "milestone": false,
+
+      "critical": false,
+
+      "done": false,
+
+      "done_at": null,
+
+      "notes": null
+
+    },
+
+    {
+
+      "id": "demo-r6",
+
+      "year": 2026,
+
+      "sort_index": 6,
+
+      "section": "PREP",
+
+      "time_label": "Fri PM",
+
+      "activity": "Grind the espresso",
+
+      "lead": "David",
+
+      "crew": null,
+
+      "equipment": "Grinder",
+
+      "icon": null,
+
+      "duration_min": 10,
+
+      "ingredients": "Beans from the roastery",
+
+      "milestone": false,
+
+      "critical": false,
+
+      "done": false,
+
+      "done_at": null,
+
+      "notes": "2025 lesson: do this the night before"
+
+    },
+
+    {
+
+      "id": "demo-r7",
+
+      "year": 2026,
+
+      "sort_index": 7,
+
+      "section": "DAY",
+
+      "time_label": "06:30",
+
+      "activity": "Start sauce prep",
+
+      "lead": "Matt",
+
+      "crew": "All",
+
+      "equipment": "Espresso, moka",
+
+      "icon": "tomato",
+
+      "duration_min": 60,
+
+      "ingredients": "Espresso",
+
+      "milestone": true,
+
+      "critical": false,
+
+      "done": false,
+
+      "done_at": null,
+
+      "notes": "Crew arrives. Coffee before anything else."
+
+    },
+
+    {
+
+      "id": "demo-r8",
+
+      "year": 2026,
+
+      "sort_index": 8,
+
+      "section": "DAY",
+
+      "time_label": "07:00",
+
+      "activity": "McDonald's run",
+
+      "lead": "Chris",
+
+      "crew": null,
+
+      "equipment": "Cash",
+
+      "icon": null,
+
+      "duration_min": 30,
+
+      "ingredients": null,
+
+      "milestone": false,
+
+      "critical": false,
+
+      "done": false,
+
+      "done_at": null,
+
+      "notes": "5 breakfast combos"
+
+    },
+
+    {
+
+      "id": "demo-r9",
+
+      "year": 2026,
+
+      "sort_index": 9,
+
+      "section": "DAY",
+
+      "time_label": "07:30",
+
+      "activity": "Fire up the burners",
+
+      "lead": "Matt",
+
+      "crew": "Mike",
+
+      "equipment": "3 burners, cauldrons, propane",
+
+      "icon": "flame",
+
+      "duration_min": 30,
+
+      "ingredients": "Propane",
+
+      "milestone": true,
+
+      "critical": false,
+
+      "done": false,
+
+      "done_at": null,
+
+      "notes": "Wash water on at the same time"
+
+    },
+
+    {
+
+      "id": "demo-r10",
+
+      "year": 2026,
+
+      "sort_index": 10,
+
+      "section": "DAY",
+
+      "time_label": "08:00",
+
+      "activity": "Wash tomatoes",
+
+      "lead": "All",
+
+      "crew": "All",
+
+      "equipment": "Kiddie pool, buckets, strainer",
+
+      "icon": null,
+
+      "duration_min": 60,
+
+      "ingredients": "7 bushels",
+
+      "milestone": false,
+
+      "critical": false,
+
+      "done": false,
+
+      "done_at": null,
+
+      "notes": "Two-stage rinse"
+
+    },
+
+    {
+
+      "id": "demo-r11",
+
+      "year": 2026,
+
+      "sort_index": 11,
+
+      "section": "DAY",
+
+      "time_label": "09:00",
+
+      "activity": "First batch cooking",
+
+      "lead": "Nate",
+
+      "crew": "David",
+
+      "equipment": "Cauldrons, spider ladle",
+
+      "icon": "cauldron",
+
+      "duration_min": 90,
+
+      "ingredients": "Washed tomatoes",
+
+      "milestone": true,
+
+      "critical": false,
+
+      "done": false,
+
+      "done_at": null,
+
+      "notes": "Blanch and cook"
+
+    },
+
+    {
+
+      "id": "demo-r12",
+
+      "year": 2026,
+
+      "sort_index": 12,
+
+      "section": "DAY",
+
+      "time_label": "10:30",
+
+      "activity": "Coffee break",
+
+      "lead": "David",
+
+      "crew": "All",
+
+      "equipment": "Moka, biscotti",
+
+      "icon": "coffee",
+
+      "duration_min": 20,
+
+      "ingredients": "Espresso, biscotti",
+
+      "milestone": true,
+
+      "critical": false,
+
+      "done": false,
+
+      "done_at": null,
+
+      "notes": "Get the day off the tomatoes for ten minutes"
+
+    },
+
+    {
+
+      "id": "demo-r13",
+
+      "year": 2026,
+
+      "sort_index": 13,
+
+      "section": "DAY",
+
+      "time_label": "10:45",
+
+      "activity": "First mill run",
+
+      "lead": "Chris",
+
+      "crew": "Matt",
+
+      "equipment": "Food mill, deep dish pan",
+
+      "icon": null,
+
+      "duration_min": 45,
+
+      "ingredients": null,
+
+      "milestone": false,
+
+      "critical": false,
+
+      "done": false,
+
+      "done_at": null,
+
+      "notes": "Watch for skins clogging"
+
+    },
+
+    {
+
+      "id": "demo-r14",
+
+      "year": 2026,
+
+      "sort_index": 14,
+
+      "section": "DAY",
+
+      "time_label": "11:30",
+
+      "activity": "Jars into hot water, lids ready",
+
+      "lead": "Matt",
+
+      "crew": null,
+
+      "equipment": "Jar lifters, cauldron",
+
+      "icon": null,
+
+      "duration_min": 30,
+
+      "ingredients": null,
+
+      "milestone": false,
+
+      "critical": false,
+
+      "done": false,
+
+      "done_at": null,
+
+      "notes": null
+
+    },
+
+    {
+
+      "id": "demo-r15",
+
+      "year": 2026,
+
+      "sort_index": 15,
+
+      "section": "DAY",
+
+      "time_label": "12:00",
+
+      "activity": "Lunch break",
+
+      "lead": "Nate",
+
+      "crew": "All",
+
+      "equipment": "Tables, boards",
+
+      "icon": "fork",
+
+      "duration_min": 60,
+
+      "ingredients": "The antipasti spread",
+
+      "milestone": true,
+
+      "critical": false,
+
+      "done": false,
+
+      "done_at": null,
+
+      "notes": "See the Menu tab"
+
+    },
+
+    {
+
+      "id": "demo-r16",
+
+      "year": 2026,
+
+      "sort_index": 16,
+
+      "section": "DAY",
+
+      "time_label": "13:00",
+
+      "activity": "Milling continues, bottling line starts",
+
+      "lead": "All",
+
+      "crew": "All",
+
+      "equipment": "Funnel, ladle, mill",
+
+      "icon": null,
+
+      "duration_min": 120,
+
+      "ingredients": null,
+
+      "milestone": false,
+
+      "critical": false,
+
+      "done": false,
+
+      "done_at": null,
+
+      "notes": null
+
+    },
+
+    {
+
+      "id": "demo-r17",
+
+      "year": 2026,
+
+      "sort_index": 17,
+
+      "section": "DAY",
+
+      "time_label": "15:00",
+
+      "activity": "Jarring begins",
+
+      "lead": "All",
+
+      "crew": "All",
+
+      "equipment": "Funnel, rims, lids, bands",
+
+      "icon": "jar",
+
+      "duration_min": 90,
+
+      "ingredients": "Milled sauce, basil",
+
+      "milestone": true,
+
+      "critical": true,
+
+      "done": false,
+
+      "done_at": null,
+
+      "notes": "Wipe every rim before capping. This is the one that matters."
+
+    },
+
+    {
+
+      "id": "demo-r18",
+
+      "year": 2026,
+
+      "sort_index": 18,
+
+      "section": "DAY",
+
+      "time_label": "16:30",
+
+      "activity": "Wine break",
+
+      "lead": "David",
+
+      "crew": "All",
+
+      "equipment": "Glasses",
+
+      "icon": "glass",
+
+      "duration_min": 30,
+
+      "ingredients": "Prosecco, the whites",
+
+      "milestone": true,
+
+      "critical": false,
+
+      "done": false,
+
+      "done_at": null,
+
+      "notes": "Water bath goes on at the same time"
+
+    },
+
+    {
+
+      "id": "demo-r19",
+
+      "year": 2026,
+
+      "sort_index": 19,
+
+      "section": "DAY",
+
+      "time_label": "16:30",
+
+      "activity": "Water bath - seal the jars",
+
+      "lead": "Matt",
+
+      "crew": "David",
+
+      "equipment": "Cauldron, jar lifters",
+
+      "icon": null,
+
+      "duration_min": 60,
+
+      "ingredients": null,
+
+      "milestone": false,
+
+      "critical": true,
+
+      "done": false,
+
+      "done_at": null,
+
+      "notes": "Listen for the pops"
+
+    },
+
+    {
+
+      "id": "demo-r20",
+
+      "year": 2026,
+
+      "sort_index": 20,
+
+      "section": "DAY",
+
+      "time_label": "18:00",
+
+      "activity": "Annual grappa toast",
+
+      "lead": "David",
+
+      "crew": "All",
+
+      "equipment": "The bottle",
+
+      "icon": "bottle",
+
+      "duration_min": 30,
+
+      "ingredients": "This year's grappa",
+
+      "milestone": true,
+
+      "critical": true,
+
+      "done": false,
+
+      "done_at": null,
+
+      "notes": "It has to beat last year. See the Grappa tab."
+
+    },
+
+    {
+
+      "id": "demo-r21",
+
+      "year": 2026,
+
+      "sort_index": 21,
+
+      "section": "DAY",
+
+      "time_label": "19:00",
+
+      "activity": "Dinner - pasta with this year's sauce",
+
+      "lead": "Mike",
+
+      "crew": "All",
+
+      "equipment": "Pots, fresh pasta",
+
+      "icon": "plate",
+
+      "duration_min": 90,
+
+      "ingredients": "Fresh pasta, this year's sauce",
+
+      "milestone": true,
+
+      "critical": false,
+
+      "done": false,
+
+      "done_at": null,
+
+      "notes": "The whole point"
+
+    },
+
+    {
+
+      "id": "demo-r22",
+
+      "year": 2026,
+
+      "sort_index": 22,
+
+      "section": "DAY",
+
+      "time_label": "20:30",
+
+      "activity": "Pizza run",
+
+      "lead": "Chris",
+
+      "crew": null,
+
+      "equipment": "Cash, the truck",
+
+      "icon": "pizza",
+
+      "duration_min": 45,
+
+      "ingredients": null,
+
+      "milestone": true,
+
+      "critical": false,
+
+      "done": false,
+
+      "done_at": null,
+
+      "notes": "Second wind. Nobody has ever regretted this."
+
+    },
+
+    {
+
+      "id": "demo-r23",
+
+      "year": 2026,
+
+      "sort_index": 23,
+
+      "section": "DAY",
+
+      "time_label": "21:00",
+
+      "activity": "Cooling and cleanup",
+
+      "lead": "All",
+
+      "crew": "All",
+
+      "equipment": "Dawn, scrub pads, metal sponges",
+
+      "icon": "cool",
+
+      "duration_min": 60,
+
+      "ingredients": null,
+
+      "milestone": true,
+
+      "critical": false,
+
+      "done": false,
+
+      "done_at": null,
+
+      "notes": "Jars stay put until they are cold. Do not move them early."
+
+    },
+
+    {
+
+      "id": "demo-r24",
+
+      "year": 2026,
+
+      "sort_index": 24,
+
+      "section": "DAY",
+
+      "time_label": "22:00",
+
+      "activity": "Group photo",
+
+      "lead": "Matt",
+
+      "crew": "All",
+
+      "equipment": "A phone and a timer",
+
+      "icon": "camera",
+
+      "duration_min": 15,
+
+      "ingredients": null,
+
+      "milestone": true,
+
+      "critical": false,
+
+      "done": false,
+
+      "done_at": null,
+
+      "notes": "Goes straight into the Photobook"
+
+    },
+
+    {
+
+      "id": "demo-r25",
+
+      "year": 2026,
+
+      "sort_index": 25,
+
+      "section": "DAY",
+
+      "time_label": "22:15",
+
+      "activity": "Count jars, log fallen soldiers, divide the sauce",
+
+      "lead": "Matt",
+
+      "crew": "All",
+
+      "equipment": "Notebook",
+
+      "icon": null,
+
+      "duration_min": 15,
+
+      "ingredients": null,
+
+      "milestone": false,
+
+      "critical": false,
+
+      "done": false,
+
+      "done_at": null,
+
+      "notes": "Enter the count on the History tab"
+
+    },
+
+    {
+
+      "id": "demo-r26",
+
+      "year": 2026,
+
+      "sort_index": 26,
+
+      "section": "DAY",
+
+      "time_label": "22:30",
+
+      "activity": "Sauce Day complete",
+
+      "lead": "Matt",
+
+      "crew": "All",
+
+      "equipment": "This workbook",
+
+      "icon": "check",
+
+      "duration_min": null,
+
+      "ingredients": null,
+
+      "milestone": true,
+
+      "critical": true,
+
+      "done": false,
+
+      "done_at": null,
+
+      "notes": "Settle up, then bed. Settlement says who pays whom."
+
     }
   ],
   "menu": [

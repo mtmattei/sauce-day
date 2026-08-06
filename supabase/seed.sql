@@ -18,8 +18,12 @@ delete from public.members;
 -- ---------------------------------------------------------------- crew
 -- Replace the .invalid addresses with your friends' real emails, either here
 -- or from the Crew screen once you are signed in.
+-- Placeholders on purpose. Real addresses live in supabase/crew.local.sql,
+-- which is gitignored, because this repo is public so GitHub Pages can serve
+-- it and a public repo is no place for anybody's inbox. Run crew.local.sql
+-- after this file and it replaces the whole list.
 insert into public.members (email, display_name, is_admin, sort_index) values
-  ('matthewunoplatform@gmail.com', 'Matt', true, 1),
+  ('admin@change-me.invalid', 'Matt', true, 1),
   ('david@change-me.invalid', 'David', false, 2),
   ('nate@change-me.invalid', 'Nate', false, 3),
   ('chris@change-me.invalid', 'Chris', false, 4),
