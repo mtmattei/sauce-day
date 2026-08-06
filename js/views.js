@@ -12,6 +12,7 @@ import { stackedBars, bars, line } from "./charts.js";
 import { bottle } from "./icons.js";
 import { SHORTLIST, perLitre, shortlistVerdict } from "./grappas.js";
 import { mountStack } from "./stack.js";
+import { settleUpButton } from "./share.js";
 
 const SERIES_COLORS = ["var(--series-1)", "var(--series-2)", "var(--series-3)"];
 
@@ -182,7 +183,7 @@ export function viewSpend() {
         h("thead", {}, h("tr", {}, h("th", {}, "Person"), h("th", {}, "Paid"),
           h("th", {}, "Standing"))),
         h("tbody", {}, ...netRows))),
-    card("Who pays whom", "Settle up at the end of the night.", transfers),
+    card("Who pays whom", "Settle up at the end of the night.", transfers, settleUpButton(st)),
     card("Receipts", state.expenses.length + " logged", ...log));
 }
 
