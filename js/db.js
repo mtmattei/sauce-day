@@ -6,8 +6,14 @@
 import { SUPABASE_URL, SUPABASE_ANON_KEY, CURRENT_YEAR } from "./config.js";
 
 export const YEAR = CURRENT_YEAR;
+
+// Demo mode: no backend, no sign-in, the demo dataset in js/demo.js. It turns
+// itself on while config.js is still unfilled, and ?demo on the URL forces it
+// on afterwards — for working on the site without going through the door, and
+// for showing it to someone who isn't on the crew list.
 export const DEMO = SUPABASE_URL.includes("YOUR-PROJECT-REF") ||
-                    SUPABASE_ANON_KEY.includes("YOUR-ANON");
+                    SUPABASE_ANON_KEY.includes("YOUR-ANON") ||
+                    new URLSearchParams(location.search).has("demo");
 
 export let sb = null;
 if (!DEMO) {
@@ -82,6 +88,18 @@ export async function sendCode(email) {
     options: { shouldCreateUser: true, emailRedirectTo: window.location.href }
   });
   if (error) throw error;
+}
+
+// The way in that needs no email at all: the account is created in the Supabase
+// dashboard with a password, and this hands back a real session carrying the
+// address, so is_member() in schema.sql is satisfied exactly as it is by a code.
+export async function signInWithPassword(email, password) {
+  if (DEMO) return null;
+  const { data, error } = await sb.auth.signInWithPassword({
+    email: email.trim().toLowerCase(), password
+  });
+  if (error) throw error;
+  return data.session;
 }
 
 export async function verifyCode(email, token) {
