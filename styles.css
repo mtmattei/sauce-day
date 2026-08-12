@@ -289,6 +289,10 @@ b, strong { font-weight: 600; }
 .grads {
   display: flex; align-items: flex-end; gap: clamp(.9rem, 1.8vw, 2rem);
   flex: 1 1 0; min-width: 0; overflow-x: auto; scrollbar-width: none;
+  /* overflow-x: auto makes overflow-y compute to auto, which would clip a tick
+     at full lift — the padding box is where clipping happens, so the wave
+     grows into this instead */
+  padding-top: .7rem;
 }
 .grads::-webkit-scrollbar { display: none; }
 /* the tick is the boundary, so it stays hard against the cell's left edge while
@@ -298,21 +302,36 @@ b, strong { font-weight: 600; }
    on the scale — and the tab proper centred in the gap underneath. The number
    belongs to the rule, not to the tab. */
 .navlink {
+  position: relative;
   display: grid; flex: 1 1 0; min-width: 0;
-  grid-template-columns: auto minmax(0, 1fr);
-  align-items: end; column-gap: .3rem; row-gap: .3rem;
+  grid-template-columns: minmax(0, 1fr);
+  /* the graduation row is a fixed height and the tick is absolute inside it, so
+     however tall the wave draws the mark, nothing here is ever re-measured */
+  grid-template-rows: 1.375rem auto;
+  align-items: end; row-gap: .3rem;
+  --amp: 0;   /* the wave's amplitude here, inherited by the tick and the number */
   padding: .15rem 0 .45rem; text-decoration: none; color: var(--fg-4);
   transition: color .18s var(--e); scroll-snap-align: center;
 }
 .grads::after {
   content: ""; flex: none; align-self: flex-start;
   width: 1px; height: .5rem; background: var(--fg-4);
+  margin-top: calc(.15rem + 1.375rem - .5rem);   /* base sits on the graduation line */
 }
-.navlink .ni { grid-area: 1 / 1; display: block; justify-self: start; align-self: end;
+/* The box is a fixed 1.375rem and never changes size; the mark is drawn by
+   scaling inside it from the bottom. Animating the height instead re-measured
+   .grads on every frame, which grew the sticky header and shoved the whole
+   page up and down as the wave passed. --baseS is the resting length as a
+   fraction of that box: .5rem, .875rem and 1.375rem over 1.375rem. */
+/* Out of flow, hanging upward from the bottom edge of the graduation row. The
+   height is what animates — the mechanism that works — but an absolute box
+   cannot resize its parent, so the header stays put while the wave passes. */
+.navlink .ni { position: absolute; left: 0; top: calc(.15rem + 1.375rem);
+               transform: translateY(-100%);
                width: 1px; background: currentColor;
-               --base: .5rem; --amp: 0; height: calc(var(--base) + .7rem * var(--amp)); }
+               --base: .5rem; height: calc(var(--base) + .7rem * var(--amp)); }
 .navlink:nth-child(3n+1) .ni { --base: .875rem; }
-.navlink .nn { grid-area: 1 / 2; justify-self: start; align-self: end;
+.navlink .nn { grid-area: 1 / 1; justify-self: start; align-self: end; margin-left: .35rem;
                font-family: var(--m); font-size: .625rem; letter-spacing: .06em; line-height: 1; }
 .navlink .nl {
   grid-area: 2 / 1 / 3 / 3; justify-self: center;
@@ -328,6 +347,13 @@ b, strong { font-weight: 600; }
 .navlink.on .nn { color: var(--tomato); }
 .navlink.on .nl { color: var(--fg); font-weight: 600; }
 .navlink.on .nl .ico { color: var(--tomato); stroke-width: 1.7; }
+
+/* Registered, not just declared. An untyped custom property is a bag of tokens,
+   and a transitioned transform that reads one does not reliably re-resolve when
+   only that property changes — the wave computed correctly and drew nothing.
+   Typing them makes them real animatable numbers. */
+@property --amp { syntax: "<number>"; inherits: true; initial-value: 0; }
+@property --rd  { syntax: "<number>"; inherits: true; initial-value: 0; }
 
 /* ---- the ripple ----------------------------------------------------------
    Hovering one graduation raises it and passes a wave out through its
@@ -345,7 +371,6 @@ b, strong { font-weight: 600; }
   transition-delay: calc(var(--rd, 0) * 34ms);
 }
 .grads.rip .navlink { --amp: calc(1 / (1 + var(--rd) * var(--rd) * .85)); }
-.grads.rip .navlink .ni { --amp: calc(1 / (1 + var(--rd) * var(--rd) * .85)); }
 .grads.rip .navlink .nl { transform: translateY(calc(-2px * var(--amp))); }
 /* the number sits on the rule now, so it climbs with its own tick and lights
    up as the wave reaches it rather than drifting independently */
