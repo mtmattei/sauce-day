@@ -79,6 +79,21 @@ export const SHORTLIST = [
     photo: "img/grappa/de-negri-monovitigno-prosecco.png",
     url: "https://www.saq.com/en/597534",
     note: "The only non-Poli on the list."
+  },
+  {
+    id: "15082133",
+    name: "Barrique 1898",
+    range: "Poli Barrique",
+    producer: "Poli Distillerie",
+    region: "Veneto, Italy",
+    size: "700 ml",
+    abv: 55,
+    price: 144.75,
+    colour: "amber",
+    photo: "img/grappa/poli-barrique-1898.png",
+    url: "https://www.saq.com/en/15082133",
+    note: "The first bottle on this list that clears the record. 55%, so it is "
+        + "a sipper and not a pourer. Online stock was down to one on 11 Aug."
   }
 ];
 
