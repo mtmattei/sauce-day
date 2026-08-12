@@ -263,31 +263,49 @@ b, strong { font-weight: 600; }
 
 .rule { position: sticky; top: 0; z-index: 20; background: var(--bg); border-bottom: 1px solid var(--hair); }
 .rulehead {
-  display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+  display: flex; align-items: flex-end; gap: clamp(1rem, 2.4vw, 2.5rem); flex-wrap: wrap;
   padding: calc(.6rem + env(safe-area-inset-top)) var(--pad) .45rem;
 }
+/* the wordmark stacks: name over motto, the motto indented to clear the mark
+   so it starts under the S rather than under the tomato */
+.brand { display: flex; flex-direction: column; align-items: flex-start; gap: .15rem;
+         flex: none; padding-bottom: .45rem; }
 .logo { display: flex; align-items: center; gap: .5rem; }
 .logo .sig { color: var(--tomato); display: flex; }
 .logo .sig .ico { width: 1.375rem; height: 1.375rem; stroke-width: 1.5; }
 .logo b { font-weight: 800; font-size: .9375rem; letter-spacing: .12em; text-transform: uppercase; }
+/* the seventh sauce day: the Y is a 7. Same weight and colour as the letters —
+   it is a letterform here, not a number, so it must not read as data. */
+.logo b i { font-style: normal; font-weight: inherit; margin-left: -.02em; }
 .logo em { font-style: normal; font-size: .6875rem; letter-spacing: .2em; color: var(--fg-3); }
-.tagline { font-size: .6875rem; letter-spacing: .28em; text-transform: uppercase; color: var(--tomato); font-weight: 500; }
+.tagline { font-size: .6875rem; letter-spacing: .28em; text-transform: uppercase; color: var(--tomato); font-weight: 500;
+           margin-left: calc(1.375rem + .5rem); }
 .now { margin-left: auto; font-family: var(--m); font-size: .6875rem; color: var(--fg-3); white-space: nowrap; }
 .now b { color: var(--fg); font-weight: 400; }
 
-/* the graduated rule: one tick per section, majors taller */
+/* the graduated rule: one tick per section, majors taller. It sits inline with
+   the wordmark and takes every pixel left over, so the ticks are spaced across
+   the page rather than bunched at the left with dead width on the right. */
 .grads {
   display: flex; align-items: flex-end; gap: clamp(.9rem, 1.8vw, 2rem);
-  padding: 0 var(--pad); overflow-x: auto; scrollbar-width: none;
+  flex: 1 1 0; min-width: 0; overflow-x: auto; scrollbar-width: none;
 }
 .grads::-webkit-scrollbar { display: none; }
+/* the tick is the boundary, so it stays hard against the cell's left edge while
+   the number, icon and label centre themselves in the gap it opens up. The
+   closing tick on ::after gives the last section a right-hand edge to sit in. */
 .navlink {
-  display: grid; gap: .3rem; justify-items: start; flex: none;
+  display: grid; gap: .3rem; justify-items: center; flex: 1 1 0; min-width: 0;
   padding: .15rem 0 .45rem; text-decoration: none; color: var(--fg-4);
   transition: color .18s var(--e); scroll-snap-align: center;
 }
-.navlink .ni { display: block; width: 1px; height: .5rem; background: currentColor; }
-.navlink:nth-child(3n+1) .ni { height: .875rem; }
+.grads::after {
+  content: ""; flex: none; align-self: flex-start;
+  width: 1px; height: .5rem; background: var(--fg-4);
+}
+.navlink .ni { display: block; justify-self: start; width: 1px; background: currentColor;
+               --base: .5rem; --amp: 0; height: calc(var(--base) + .7rem * var(--amp)); }
+.navlink:nth-child(3n+1) .ni { --base: .875rem; }
 .navlink .nn { font-family: var(--m); font-size: .625rem; letter-spacing: .06em; line-height: 1; }
 .navlink .nl {
   font-size: .75rem; letter-spacing: .01em; white-space: nowrap; color: var(--fg-3);
@@ -298,10 +316,35 @@ b, strong { font-weight: 600; }
 .navlink:hover .nl { color: var(--fg); }
 .navlink:hover .nl .ico { color: var(--fg-2); }
 .navlink.on { color: var(--tomato); }
-.navlink.on .ni { height: 1.375rem; width: 2px; }
+.navlink.on .ni { --base: 1.375rem; width: 2px; }
 .navlink.on .nn { color: var(--tomato); }
 .navlink.on .nl { color: var(--fg); font-weight: 600; }
 .navlink.on .nl .ico { color: var(--tomato); stroke-width: 1.7; }
+
+/* ---- the ripple ----------------------------------------------------------
+   Hovering one graduation raises it and passes a wave out through its
+   neighbours. --rd is the distance in sections from the one under the pointer,
+   set by renderNav; --amp falls off with the square of it, so the wave is
+   pronounced next door and spent about four sections out. 34ms per step is
+   slow enough to read as travel and fast enough that the far end has caught up
+   before you have moved on. */
+.navlink .ni {
+  transition: height .34s var(--e);
+  transition-delay: calc(var(--rd, 0) * 34ms);
+}
+.navlink .nl, .navlink .nn {
+  transition: color .18s var(--e), transform .34s var(--e);
+  transition-delay: calc(var(--rd, 0) * 34ms);
+}
+.grads.rip .navlink { --amp: calc(1 / (1 + var(--rd) * var(--rd) * .85)); }
+.grads.rip .navlink .ni { --amp: calc(1 / (1 + var(--rd) * var(--rd) * .85)); }
+.grads.rip .navlink .nl { transform: translateY(calc(-2px * var(--amp))); }
+.grads.rip .navlink .nn { transform: translateY(calc(-1px * var(--amp))); }
+
+@media (prefers-reduced-motion: reduce) {
+  .navlink .ni, .navlink .nl, .navlink .nn { transition-duration: .01ms; transition-delay: 0s; }
+  .grads.rip .navlink .nl, .grads.rip .navlink .nn { transform: none; }
+}
 
 /* ---------------------------------------------------------------- frame */
 .frame { display: grid; grid-template-columns: var(--rail) minmax(0, 1fr); align-items: start; }
@@ -311,9 +354,21 @@ b, strong { font-weight: 600; }
   position: sticky; top: 6.1rem; border-right: 1px solid var(--hair);
   padding: var(--pad) 0 var(--pad) var(--pad);
   height: calc(100dvh - 6.1rem); overflow-y: auto; scrollbar-width: thin;
+  display: flex; flex-direction: column;
 }
 .ro { padding: 0 var(--pad) .9rem 0; border-bottom: 1px solid var(--hair-2); margin-bottom: .9rem; }
-.ro:last-child { border-bottom: 0; }
+.ro:last-of-type { border-bottom: 0; }
+
+/* the crew list is a door, not a reading, so it sits under the numbers and is
+   pushed to the foot of the rail however few readings are above it */
+.railcrew {
+  margin-top: auto; display: flex; align-items: center; gap: .5rem;
+  padding: .85rem var(--pad) 0 0; border-top: 1px solid var(--hair-2);
+  font-size: .625rem; letter-spacing: .19em; text-transform: uppercase;
+  font-weight: 500; color: var(--fg-3); text-decoration: none;
+}
+.railcrew .ico { width: .9375rem; height: .9375rem; stroke-width: 1.5; }
+.railcrew:hover, .railcrew.on { color: var(--fg); }
 .ro .k { font-size: .625rem; letter-spacing: .19em; text-transform: uppercase; color: var(--fg-3); margin-bottom: .3rem; }
 .ro .v { font-size: 1.875rem; font-weight: 200; letter-spacing: -.035em; line-height: 1; }
 .ro .v small { font-size: .75rem; font-weight: 400; letter-spacing: 0; color: var(--fg-3); margin-left: .3rem; vertical-align: .4em; }
@@ -482,6 +537,15 @@ td.warn, .warn, td.over { color: var(--tomato); font-weight: 500; }
 /* A command centre, not a task list. One line down the day, a tomato riding it,
    and only the step you are on allowed to be loud. */
 .sday { display: grid; gap: 1rem; }
+
+/* The command centre reads as an instrument panel, so its header runs the full
+   width of the screen: the 88rem reading cap is for tables of text, and a row
+   of four numbers is not that. The cap is lifted only while this view is up. */
+main.panel:has(.sday) { max-width: none; }
+.sday .sdhead, .sday .sdstrip {
+  margin-left: calc(-1 * var(--pad)); margin-right: calc(-1 * var(--pad));
+  border-left: 0; border-right: 0;
+}
 
 .sdhead {
   display: grid; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
@@ -831,10 +895,15 @@ svg { display: block; width: 100%; height: auto; overflow: visible; }
         margin: 0; padding: .6rem var(--pad); }
   .ro .v { font-size: 1.375rem; }
   .season { grid-column: 1 / -1; padding: .6rem var(--pad) .8rem; }
+  /* the rail is a strip of cells here, so the crew door becomes one of them */
+  .railcrew { grid-column: 1 / -1; margin-top: 0; padding: .6rem var(--pad);
+              border-top: 1px solid var(--hair-2); }
   .rulehead { gap: .6rem; padding-bottom: .35rem; }
   .now { width: 100%; margin-left: 0; order: 3; }
-  .tagline { margin-left: auto; }
-  .grads { gap: 1.1rem; scroll-snap-type: x proximity; }
+  /* no room to spread ten ticks: the rule takes its own line and scrolls again */
+  .grads { flex: 1 0 100%; order: 4; gap: 1.1rem; scroll-snap-type: x proximity; }
+  .navlink { flex: none; }
+  .brand { padding-bottom: 0; }
   main.panel { padding-bottom: 4rem; }
   .row { gap: .5rem; }
   .rowend { flex-wrap: wrap; justify-content: flex-end; }

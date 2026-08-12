@@ -2,7 +2,7 @@
 //  Boot, sign-in gate, router.
 // ============================================================================
 import { state, DEMO, YEAR, loadAll, startRealtime, onChange, currentSession,
-         sendCode, verifyCode, sb, flash } from "./db.js";
+         sendCode, verifyCode, signInWithPassword, sb, flash } from "./db.js";
 import { h, me } from "./ui.js";
 import { icon } from "./icons.js";
 import { money0, settlement, yieldPlan, grappaRecord, daysToGo, readiness } from "./calc.js";
@@ -20,8 +20,12 @@ const ROUTES = [
   { hash: "#/grappa",  label: "Grappa",  icon: "bottle", view: V.viewGrappa },
   { hash: "#/photos",  label: "Photos",  icon: "plates", view: V.viewPhotos },
   { hash: "#/history", label: "History", icon: "bars",   view: V.viewHistory },
-  { hash: "#/crew",    label: "Crew",    icon: "crew",   view: V.viewCrew }
+  // rail: not a section of the day, so it keeps its route but gives up its tick
+  // on the graduated rule and lives at the foot of the readout instead.
+  { hash: "#/crew",    label: "Crew",    icon: "crew",   view: V.viewCrew, rail: true }
 ];
+
+const SECTIONS = ROUTES.filter(r => !r.rail);
 
 const app = () => document.getElementById("app");
 const nav = () => document.getElementById("nav");
@@ -33,7 +37,7 @@ function currentRoute() {
 function renderNav() {
   const r = currentRoute();
   nav().innerHTML = "";
-  ROUTES.forEach((x, i) => nav().appendChild(
+  SECTIONS.forEach((x, i) => nav().appendChild(
     h("a", { href: x.hash, class: "navlink" + (x === r ? " on" : ""),
              "aria-current": x === r ? "page" : null },
       h("span", { class: "ni" }),
@@ -41,6 +45,24 @@ function renderNav() {
       h("span", { class: "nl" }, icon(x.icon), x.label))));
   const on = nav().querySelector(".navlink.on");
   if (on) on.scrollIntoView({ block: "nearest", inline: "center", behavior: "smooth" });
+  wireRipple(nav());
+}
+
+/**
+ * The ripple down the rule. Each link is told how many sections it sits from
+ * the one under the pointer; the stylesheet turns that distance into both the
+ * size of the lift and the delay before it happens, so the wave travels.
+ */
+function wireRipple(host) {
+  const links = [...host.querySelectorAll(".navlink")];
+  links.forEach((link, i) => link.addEventListener("pointerenter", () => {
+    host.classList.add("rip");
+    links.forEach((other, j) => other.style.setProperty("--rd", Math.abs(j - i)));
+  }));
+  host.addEventListener("pointerleave", () => {
+    host.classList.remove("rip");
+    links.forEach(l => l.style.removeProperty("--rd"));
+  });
 }
 
 /** One readout, rendered by the rail. */
@@ -108,6 +130,13 @@ function renderReadout() {
   host.appendChild(ro("Bought",
     `${r.buy.done}<small>/ ${r.buy.total}</small>`,
     `${r.buy.total - r.buy.done} items outstanding`));
+
+  const crew = ROUTES.find(x => x.hash === "#/crew");
+  host.appendChild(h("a", {
+    href: crew.hash,
+    class: "railcrew" + (location.hash === crew.hash ? " on" : ""),
+    "aria-current": location.hash === crew.hash ? "page" : null
+  }, icon(crew.icon), h("span", {}, crew.label)));
 }
 
 function renderHead() {
@@ -184,6 +213,34 @@ function renderLogin() {
   gate(
     h("div", { class: "gsig" }, icon("cut")),
     h("h1", {}, "SAUCE DAY"),
+    h("p", {}, "Your email and your password."),
+    h("form", { class: "gform", onSubmit: async e => {
+      e.preventDefault();
+      const f = new FormData(e.target);
+      const btn = e.target.querySelector("button");
+      btn.disabled = true; btn.textContent = "Checking…";
+      try {
+        await signInWithPassword(f.get("email"), f.get("password"));
+        await boot();
+      } catch (err) {
+        btn.disabled = false; btn.textContent = "Let me in";
+        gateError(err.message);
+      }
+    } },
+      h("input", { name: "email", class: "f", type: "email", required: true,
+        placeholder: "you@example.com", autocomplete: "email" }),
+      h("input", { name: "password", class: "f", type: "password", required: true,
+        placeholder: "Password", autocomplete: "current-password" }),
+      h("button", { class: "btn primary wide", type: "submit" }, "Let me in")),
+    h("button", { class: "btn ghost", onClick: renderMagic }, "Email me a code instead"),
+    h("p", { class: "fine" }, "Only the five emails on the crew list can get in.")
+  );
+}
+
+function renderMagic() {
+  gate(
+    h("div", { class: "gsig" }, icon("cut")),
+    h("h1", {}, "SAUCE DAY"),
     // the year span used to be listed here; the hero says it twice already
     h("p", {}, "Put in your email and we'll send you a six-digit code. No password to remember."),
     h("form", { class: "gform", onSubmit: async e => {
@@ -203,6 +260,7 @@ function renderLogin() {
       h("input", { name: "email", class: "f", type: "email", required: true,
         placeholder: "you@example.com", autocomplete: "email" }),
       h("button", { class: "btn primary wide", type: "submit" }, "Send me a code")),
+    h("button", { class: "btn ghost", onClick: renderLogin }, "Use a password instead"),
     h("p", { class: "fine" }, "Only the five emails on the crew list can get in.")
   );
 }
@@ -228,7 +286,7 @@ function renderCode() {
       h("input", { name: "code", class: "f code", inputmode: "numeric", required: true,
         placeholder: "000000", maxlength: "8", autocomplete: "one-time-code" }),
       h("button", { class: "btn primary wide", type: "submit" }, "Let me in")),
-    h("button", { class: "btn ghost", onClick: renderLogin }, "Use a different email")
+    h("button", { class: "btn ghost", onClick: renderMagic }, "Use a different email")
   );
 }
 
