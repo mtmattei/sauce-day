@@ -180,6 +180,29 @@ function renderReadout() {
   }, icon(crew.icon), h("span", {}, crew.label)));
 }
 
+/**
+ * The sync bar. Silence used to be indistinguishable between "nothing has
+ * changed" and "this screen stopped listening an hour ago", which is the one
+ * thing a shared planner must never be vague about.
+ */
+function renderSyncBar() {
+  const bar = document.getElementById("syncbar");
+  if (!bar || DEMO) return;
+  const errs = state.loadErrors || [];
+  const rt = state.realtime;
+  if (errs.length) {
+    bar.textContent = errs.length === 1
+      ? "Could not load " + errs[0]
+      : `Could not load ${errs.length} tables — ${errs.join(" · ")}`;
+    bar.hidden = false;
+  } else if (rt && rt !== "SUBSCRIBED") {
+    bar.textContent = `Live updates are ${rt.toLowerCase().replace(/_/g, " ")} — reload to see other people's changes`;
+    bar.hidden = false;
+  } else {
+    bar.hidden = true;
+  }
+}
+
 function renderHead() {
   const ed = document.getElementById("edition");
   const now = document.getElementById("now");
@@ -204,6 +227,7 @@ export function render() {
   document.title = `Sauce Day ${YEAR} · ${r.label}`;
   renderNav();
   renderHead();
+  renderSyncBar();
   renderReadout();
   const el = app();
   const y = el.scrollTop;

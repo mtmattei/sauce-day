@@ -260,6 +260,11 @@ b, strong { font-weight: 600; }
   text-transform: uppercase; padding: .4rem .875rem; text-align: center;
 }
 .demobar code { font-family: var(--m); text-transform: none; letter-spacing: 0; }
+/* the sync bar is a warning, not the demo notice — amber, and it wraps because
+   a postgres error message is longer than a phone is wide */
+.demobar.sync { background: var(--amber, oklch(72% 0.15 70)); color: #1a1206;
+                text-transform: none; letter-spacing: .02em; font-size: .75rem;
+                text-align: left; padding: .5rem var(--pad); }
 
 .rule { position: sticky; top: 0; z-index: 20; background: var(--bg); border-bottom: 1px solid var(--hair); }
 .rulehead {

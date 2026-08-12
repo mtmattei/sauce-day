@@ -137,8 +137,13 @@ export async function loadAll() {
   }
   const results = await Promise.all(TABLES.map(([t, shape]) =>
     shape(sb.from(t).select("*")).then(r => [t, r])));
+  // every table that failed, not just the last one — one silent RLS denial on
+  // one table is exactly the case that looks like "the site stopped syncing"
+  state.loadErrors = results.filter(([, r]) => r.error)
+    .map(([t, r]) => `${t}: ${r.error.message}`);
+  state.error = state.loadErrors[0] || null;
   for (const [t, r] of results) {
-    if (r.error) { state.error = r.error.message; continue; }
+    if (r.error) continue;
     if (t === "app_settings") state.settings = r.data[0] || null;
     else state[KEY[t]] = r.data || [];
   }
@@ -167,7 +172,12 @@ export function startRealtime() {
   Object.keys(KEY).forEach(t =>
     channel.on("postgres_changes", { event: "*", schema: "public", table: t },
       () => reloadTable(t)));
-  channel.subscribe();
+  // A channel that never establishes is the difference between "nobody has
+  // changed anything" and "you have not seen a change in an hour".
+  channel.subscribe(status => {
+    state.realtime = status;                       // SUBSCRIBED / CHANNEL_ERROR / TIMED_OUT / CLOSED
+    emit();
+  });
 }
 
 // ---------------------------------------------------------------- writes
