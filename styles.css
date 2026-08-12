@@ -294,8 +294,13 @@ b, strong { font-weight: 600; }
 /* the tick is the boundary, so it stays hard against the cell's left edge while
    the number, icon and label centre themselves in the gap it opens up. The
    closing tick on ::after gives the last section a right-hand edge to sit in. */
+/* Two rows: the graduation itself — hairline plus its number, read as one mark
+   on the scale — and the tab proper centred in the gap underneath. The number
+   belongs to the rule, not to the tab. */
 .navlink {
-  display: grid; gap: .3rem; justify-items: center; flex: 1 1 0; min-width: 0;
+  display: grid; flex: 1 1 0; min-width: 0;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: end; column-gap: .3rem; row-gap: .3rem;
   padding: .15rem 0 .45rem; text-decoration: none; color: var(--fg-4);
   transition: color .18s var(--e); scroll-snap-align: center;
 }
@@ -303,11 +308,14 @@ b, strong { font-weight: 600; }
   content: ""; flex: none; align-self: flex-start;
   width: 1px; height: .5rem; background: var(--fg-4);
 }
-.navlink .ni { display: block; justify-self: start; width: 1px; background: currentColor;
+.navlink .ni { grid-area: 1 / 1; display: block; justify-self: start; align-self: end;
+               width: 1px; background: currentColor;
                --base: .5rem; --amp: 0; height: calc(var(--base) + .7rem * var(--amp)); }
 .navlink:nth-child(3n+1) .ni { --base: .875rem; }
-.navlink .nn { font-family: var(--m); font-size: .625rem; letter-spacing: .06em; line-height: 1; }
+.navlink .nn { grid-area: 1 / 2; justify-self: start; align-self: end;
+               font-family: var(--m); font-size: .625rem; letter-spacing: .06em; line-height: 1; }
 .navlink .nl {
+  grid-area: 2 / 1 / 3 / 3; justify-self: center;
   font-size: .75rem; letter-spacing: .01em; white-space: nowrap; color: var(--fg-3);
   display: flex; align-items: center; gap: .35rem; transition: color .18s var(--e);
 }
@@ -339,7 +347,10 @@ b, strong { font-weight: 600; }
 .grads.rip .navlink { --amp: calc(1 / (1 + var(--rd) * var(--rd) * .85)); }
 .grads.rip .navlink .ni { --amp: calc(1 / (1 + var(--rd) * var(--rd) * .85)); }
 .grads.rip .navlink .nl { transform: translateY(calc(-2px * var(--amp))); }
-.grads.rip .navlink .nn { transform: translateY(calc(-1px * var(--amp))); }
+/* the number sits on the rule now, so it climbs with its own tick and lights
+   up as the wave reaches it rather than drifting independently */
+.grads.rip .navlink .nn { transform: translateY(calc(-3px * var(--amp))); }
+.grads.rip .navlink:not(.on) .nn { color: color-mix(in oklch, var(--fg-4), var(--fg) calc(var(--amp) * 100%)); }
 
 @media (prefers-reduced-motion: reduce) {
   .navlink .ni, .navlink .nl, .navlink .nn { transition-duration: .01ms; transition-delay: 0s; }
