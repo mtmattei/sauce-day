@@ -65,6 +65,32 @@ function wireRipple(host) {
   });
 }
 
+// Sauce day starts at seven. The date comes from settings so it follows
+// whatever the crew set; only the hour is fixed here.
+const START_HOUR = 7;
+let countdownTimer = null;
+
+function sauceStart() {
+  const d = state.settings?.sauce_date;
+  if (!d) return null;
+  const t = new Date(d + "T00:00:00");
+  t.setHours(START_HOUR, 0, 0, 0);
+  return t;
+}
+
+/** Hours and minutes to the first pot, or null when there is no date yet. */
+function toGo() {
+  const t = sauceStart();
+  if (!t) return null;
+  const ms = t - new Date();
+  if (ms <= 0) return { past: true, at: t };
+  const mins = Math.floor(ms / 60000);
+  return { hours: Math.floor(mins / 60), mins: mins % 60, at: t };
+}
+
+const toGoValue = c =>
+  c.past ? "under way" : `${c.hours}<small>h ${String(c.mins).padStart(2, "0")}m</small>`;
+
 /** One readout, rendered by the rail. */
 function ro(label, value, sub, tone) {
   return h("div", { class: "ro" + (tone ? " " + tone : "") },
@@ -103,9 +129,14 @@ function renderReadout() {
         h("span", {}, end.toLocaleDateString("en-CA", { day: "numeric", month: "short" }).toUpperCase()))));
   }
 
-  host.appendChild(ro("Days out", days === null ? "—" : String(days),
-    date ? new Date(date + "T00:00:00").toLocaleDateString("en-CA",
-      { weekday: "long", day: "numeric", month: "long" }) : "no date set", "hot"));
+  // The day count is already in the masthead, so the rail counts down the hours
+  const c = toGo();
+  host.appendChild(ro("To the first pot", c ? toGoValue(c) : "—",
+    c ? (c.past ? "started " + c.at.toLocaleTimeString("en-CA",
+          { hour: "2-digit", minute: "2-digit", hour12: false })
+       : "07:00, " + c.at.toLocaleDateString("en-CA",
+          { weekday: "long", day: "numeric", month: "long" }))
+      : "no date set", "hot countdown"));
 
   if (mine) {
     host.appendChild(ro(mine.net >= 0 ? "You're owed" : "You owe",
@@ -130,6 +161,16 @@ function renderReadout() {
   host.appendChild(ro("Bought",
     `${r.buy.done}<small>/ ${r.buy.total}</small>`,
     `${r.buy.total - r.buy.done} items outstanding`));
+
+  // A countdown that only moves when you navigate is a clock that lies. Patch
+  // the one node every half minute rather than re-rendering the rail.
+  const cd = host.querySelector(".ro.countdown .v");
+  clearInterval(countdownTimer);
+  countdownTimer = cd ? setInterval(() => {
+    if (!document.body.contains(cd)) { clearInterval(countdownTimer); countdownTimer = null; return; }
+    const now = toGo();
+    if (now) cd.innerHTML = toGoValue(now);
+  }, 30000) : null;
 
   const crew = ROUTES.find(x => x.hash === "#/crew");
   host.appendChild(h("a", {
