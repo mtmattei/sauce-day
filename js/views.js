@@ -56,13 +56,18 @@ export function viewBuy() {
 }
 
 function buyRow(i) {
+  // what has actually been paid against this item, as opposed to budgeted
+  const paid = state.expenses
+    .filter(e => e.item_id && String(e.item_id) === String(i.id))
+    .reduce((a, e) => a + Number(e.amount || 0), 0);
   return h("div", { class: "row buy" + (i.obtained ? " got" : "") },
     check("items", i, "obtained"),
     h("div", { class: "rowmain" },
       h("div", { class: "rowtitle" }, i.name,
         i.link ? h("a", { href: i.link, target: "_blank", rel: "noopener", class: "link" }, "↗") : null),
       h("div", { class: "rowsub" },
-        [i.qty ? "qty " + i.qty : null, i.kind, i.comments].filter(Boolean).join(" · "))),
+        [i.qty ? "qty " + i.qty : null, i.kind, i.comments,
+         paid ? "paid " + money(paid) : null].filter(Boolean).join(" · "))),
     h("div", { class: "rowend" },
       personSelect("items", i, "assigned_to"),
       field("items", i, "budget", { type: "number", class: "w80", placeholder: "$" })));
@@ -126,23 +131,49 @@ const lbl = (text, ctrl) => h("label", { class: "fl" }, h("span", {}, text), ctr
 // ============================================================ SPEND
 export function viewSpend() {
   const st = settlement();
+
+  // The receipt is the moment you know both facts — that it is paid for and
+  // that it is in the truck — so picking the item here does both jobs at once.
+  const outstanding = state.items
+    .filter(i => !i.obtained && (i.store || ["Need", "Buy", "Refill", "Costco"].includes(i.kind)))
+    .sort((a, b) => (a.store || "zzz").localeCompare(b.store || "zzz")
+      || a.name.localeCompare(b.name));
+
   const form = h("form", { class: "spendform", onSubmit: async (e) => {
     e.preventDefault();
     const f = new FormData(e.target);
     const amount = Number(f.get("amount"));
     if (!amount || amount <= 0) { flash("Put an amount in", true); return; }
+    const itemId = f.get("item_id") || null;
     await insert("expenses", {
       category: f.get("category"), paid_by: f.get("paid_by"),
-      amount, label: f.get("label") || null,
+      amount, label: f.get("label") || null, item_id: itemId,
       spent_on: f.get("spent_on") || new Date().toISOString().slice(0, 10),
       created_by: state.session?.user?.email || null
     });
+    // one action, both books: the receipt is logged and the item is ticked off
+    if (itemId) await update("items", itemId, { obtained: true });
     e.target.reset();
     e.target.querySelector('[name=paid_by]').value = me() || "";
-    flash("Logged " + money(amount));
+    flash(itemId ? "Logged " + money(amount) + " and ticked it off"
+                 : "Logged " + money(amount));
   } },
     lbl("Who paid", h("select", { name: "paid_by", class: "f", required: true },
       ...crewNames().map(n => h("option", { value: n, selected: n === me() }, n)))),
+    lbl("What did it pay for", h("select", { name: "item_id", class: "f", onChange: e => {
+      const it = outstanding.find(x => String(x.id) === e.target.value);
+      if (!it) return;
+      // the category follows the item; the amount does not — items.budget is an
+      // estimate and logging an estimate as a receipt is how a split goes wrong
+      const fm = e.target.form;
+      fm.querySelector("[name=category]").value = it.category;
+      if (!fm.querySelector("[name=label]").value) {
+        fm.querySelector("[name=label]").value = it.name;
+      }
+    } },
+      h("option", { value: "" }, "— nothing on the buy list —"),
+      ...outstanding.map(i => h("option", { value: i.id },
+        `${i.store ? i.store + " · " : ""}${i.name}${i.budget ? " · est. " + money(i.budget) : ""}`)))),
     lbl("Category", h("select", { name: "category", class: "f" },
       ...CATS.map(c => h("option", { value: c.key }, c.label)))),
     lbl("Amount", h("input", { name: "amount", class: "f", type: "number", step: "0.01",
@@ -170,7 +201,9 @@ export function viewSpend() {
         h("div", { class: "rowmain" },
           h("div", { class: "rowtitle" }, e.label || CATS.find(c => c.key === e.category)?.label),
           h("div", { class: "rowsub" },
-            `${e.paid_by} · ${CATS.find(c => c.key === e.category)?.short} · ${e.spent_on}`)),
+            [e.paid_by, CATS.find(c => c.key === e.category)?.short, e.spent_on,
+             e.item_id ? "ticked off " + (state.items.find(i => String(i.id) === String(e.item_id))?.name || "an item") : null
+            ].filter(Boolean).join(" · "))),
         h("div", { class: "rowend" }, h("span", { class: "mono" }, money(e.amount)),
           e.paid_by === me() || state.me?.is_admin ? delButton("expenses", e, e.label || "this expense") : null)))
     : [empty("No receipts logged yet.")];
