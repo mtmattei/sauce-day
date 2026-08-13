@@ -29,7 +29,7 @@ export const state = {
   me: null,
   members: [], settings: null, items: [], expenses: [], bushels: [], jars: [],
   runsheet: [], menu: [], grappa: [], history: [], photos: [],
-  online: false, error: null, ui: {}
+  online: false, error: null, writeError: null, ui: {}
 };
 
 const listeners = new Set();
@@ -158,7 +158,16 @@ export async function reloadTable(table) {
   const entry = TABLES.find(([t]) => t === table);
   if (!entry) return;
   const r = await entry[1](sb.from(table).select("*"));
-  if (r.error) return;
+  // A refresh that fails leaves the old rows on screen looking current. Say so.
+  if (r.error) {
+    const msg = `${table}: ${r.error.message}`;
+    state.loadErrors = [...(state.loadErrors || []).filter(e => !e.startsWith(table + ":")), msg];
+    state.error = state.loadErrors[0];
+    emit();
+    return;
+  }
+  state.loadErrors = (state.loadErrors || []).filter(e => !e.startsWith(table + ":"));
+  state.error = state.loadErrors[0] || null;
   if (table === "app_settings") state.settings = r.data[0] || null;
   else state[KEY[table]] = r.data || [];
   emit();
@@ -181,7 +190,33 @@ export function startRealtime() {
 }
 
 // ---------------------------------------------------------------- writes
-const stamp = patch => ({ ...patch, updated_by: state.session?.user?.email || null });
+// Only these tables carry updated_at/updated_by and the touch trigger that
+// maintains them (schema.sql). Sending updated_by to any of the others —
+// expenses, bushels, jar_inventory, members — is rejected by PostgREST with
+// PGRST204 before the row is ever reached, so the write silently never lands.
+// That is the whole reason the ledger stayed empty while every screen read fine.
+const STAMPED  = new Set(["app_settings", "items", "runsheet", "menu", "grappa", "history", "photos"]);
+// Append-only tables stamp who filed the row instead of who last touched it.
+const AUTHORED = new Set(["expenses", "photos"]);
+
+const who = () => state.session?.user?.email || null;
+const stamp = (table, patch) =>
+  STAMPED.has(table) ? { ...patch, updated_by: who() } : patch;
+const stampNew = (table, row) => {
+  const r = stamp(table, row);
+  return AUTHORED.has(table) ? { created_by: who(), ...r } : r;
+};
+
+// A write that fails gets five seconds of toast and then the screen looks
+// exactly like a screen where the write worked. Park it in the sync bar as
+// well, so a save that never landed is still visible a minute later.
+function failed(table, verb, error) {
+  if (!error) { state.writeError = null; return false; }
+  state.writeError = `Could not ${verb} ${table} — ${error.message}`;
+  flash(error.message, true);
+  emit();
+  return true;
+}
 
 export async function update(table, id, patch, idCol = "id") {
   if (DEMO) {
@@ -190,8 +225,8 @@ export async function update(table, id, patch, idCol = "id") {
     pushDemo();
     return true;
   }
-  const { error } = await sb.from(table).update(stamp(patch)).eq(idCol, id);
-  if (error) { flash(error.message, true); return false; }
+  const { error } = await sb.from(table).update(stamp(table, patch)).eq(idCol, id);
+  if (failed(table, "save", error)) return false;
   await reloadTable(table);
   return true;
 }
@@ -202,8 +237,8 @@ export async function insert(table, row) {
     pushDemo();
     return true;
   }
-  const { error } = await sb.from(table).insert({ year: YEAR, ...stamp(row) });
-  if (error) { flash(error.message, true); return false; }
+  const { error } = await sb.from(table).insert({ year: YEAR, ...stampNew(table, row) });
+  if (failed(table, "add", error)) return false;
   await reloadTable(table);
   return true;
 }
@@ -215,7 +250,7 @@ export async function remove(table, id, idCol = "id") {
     return true;
   }
   const { error } = await sb.from(table).delete().eq(idCol, id);
-  if (error) { flash(error.message, true); return false; }
+  if (failed(table, "delete from", error)) return false;
   await reloadTable(table);
   return true;
 }
@@ -230,8 +265,8 @@ export async function upsert(table, row, conflict) {
     return true;
   }
   const { error } = await sb.from(table)
-    .upsert({ year: YEAR, ...stamp(row) }, { onConflict: conflict });
-  if (error) { flash(error.message, true); return false; }
+    .upsert({ year: YEAR, ...stampNew(table, row) }, { onConflict: conflict });
+  if (failed(table, "save", error)) return false;
   await reloadTable(table);
   return true;
 }

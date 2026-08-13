@@ -190,7 +190,10 @@ function renderSyncBar() {
   if (!bar || DEMO) return;
   const errs = state.loadErrors || [];
   const rt = state.realtime;
-  if (errs.length) {
+  if (state.writeError) {
+    bar.textContent = state.writeError + " — nothing was saved";
+    bar.hidden = false;
+  } else if (errs.length) {
     bar.textContent = errs.length === 1
       ? "Could not load " + errs[0]
       : `Could not load ${errs.length} tables — ${errs.join(" · ")}`;
