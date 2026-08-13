@@ -1134,3 +1134,34 @@ svg { display: block; width: 100%; height: auto; overflow: visible; }
 .bsuggest { margin-top: .6rem; padding-top: .55rem; border-top: 1px solid var(--hair-2);
             display: grid; gap: .2rem; }
 .bsuggest .btn { margin-top: .45rem; justify-self: start; text-decoration: none; }
+
+/* ---------------------------------------------------------------- card alignment */
+/* Without this, each card stacks its own text and a two-line name shoves
+   everything under it down — seven cards, seven different baselines, a wave.
+   Subgrid makes every card in a band share ten row tracks, so each track is
+   as tall as its tallest occupant and prices sit beside prices, verdicts
+   beside verdicts. Browsers without subgrid just keep the wave. The parent
+   keeps zero gap (the hairline lattice depends on borders butting), so the
+   breathing room lives in child margins, which grow the shared track. */
+@supports (grid-template-rows: subgrid) {
+  .bottlecard { grid-template-rows: subgrid; grid-row: span 10; }
+  .bottlecard .bmeta { display: contents; }
+  .bottlecard .shot     { grid-row: 1; }
+  .bottlecard .byr      { grid-row: 2; }
+  .bottlecard .bprice   { grid-row: 3; }
+  .bottlecard .bname    { grid-row: 4; }
+  .bottlecard .brange   { grid-row: 5; }
+  .bottlecard .bprod    { grid-row: 6; }
+  .bottlecard .bverdict { grid-row: 7; }
+  .bottlecard .blitre   { grid-row: 8; }
+  .bottlecard .bnote    { grid-row: 9;  align-self: start; }
+  .bottlecard .bmeta > .btn { grid-row: 10; align-self: start; }
+  .bottlecard.pending .bsuggest { grid-row: 8 / 11; align-self: start; }
+  /* the row map above is for the card's shared tracks; the suggestion block
+     is its own little grid, and inheriting those rows scrambles its order */
+  .bottlecard .bsuggest > * { grid-row: auto; }
+  /* bmeta's box is display: contents now, so its padding moves to the rows */
+  .bottlecard .bmeta > * { margin: .2rem .8rem 0; }
+  .bottlecard .byr { margin-top: .7rem; }
+  .bottlecard .bmeta > .btn, .bottlecard.pending .bsuggest { margin-bottom: .8rem; }
+}

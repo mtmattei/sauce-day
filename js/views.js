@@ -556,10 +556,10 @@ export function viewGrappa() {
           h("div", { class: "bprice" }, money(g.price)),
           h("div", { class: "bname" }, g.name),
           h("div", { class: "brange" }, `${g.range} · ${g.size} · ${g.abv}%`),
-          h("div", { class: "bsub" }, `${g.producer} — ${g.region}`),
+          h("div", { class: "bsub bprod" }, `${g.producer} — ${g.region}`),
           h("div", { class: "bverdict" + (reigning ? " good" : "") },
             reigning ? "the standing record" : `topped in ${year + 1}`),
-          h("div", { class: "bsub" }, `${money(perLitre(g))} per litre`),
+          h("div", { class: "bsub blitre" }, `${money(perLitre(g))} per litre`),
           g.note ? h("p", { class: "bnote" }, g.note) : null,
           h("a", { class: "btn", href: g.url, target: "_blank", rel: "noopener" }, "SAQ ↗")));
     });
