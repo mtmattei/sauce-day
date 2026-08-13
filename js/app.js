@@ -211,15 +211,13 @@ function renderHead() {
   const now = document.getElementById("now");
   const sig = document.getElementById("sig");
   if (sig && !sig.firstChild) sig.appendChild(icon("cut"));
-  if (ed) ed.textContent = state.settings?.edition
-    ? `${YEAR} / ${roman(state.settings.edition)}` : String(YEAR);
+  if (ed) ed.textContent = String(YEAR);
   const d = daysToGo();
   if (now) now.innerHTML = state.settings?.sauce_date
     ? `SAUCE DAY <b>${state.settings.sauce_date}</b>` +
       (d === null ? "" : ` · T MINUS <b>${d}</b> DAY${d === 1 ? "" : "S"}`)
     : "";
 }
-const roman = n => ["", "i", "ii", "iii", "iv", "v", "vi", "vii", "viii", "ix", "x"][n] || n;
 
 export function render() {
   if (!state.session) return renderLogin();
