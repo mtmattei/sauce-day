@@ -977,3 +977,109 @@ svg { display: block; width: 100%; height: auto; overflow: visible; }
 .jw.ghost .jw-glass { stroke: var(--fg-4); stroke-dasharray: 2 2; }
 .jw .jw-cell.in { animation: jwin .3s var(--e) both; }
 @keyframes jwin { from { opacity: 0; } }
+
+/* ---------------------------------------------------------------- THE BOARD */
+/* The home screen: a ruled sheet, not a card grid. Five readings and a strip
+   of meters, every one of them a door into the screen that owns the number.
+   Tomato keeps its three meanings; the countdown is none of them, so it sits
+   in ink. */
+.board { display: grid; grid-template-columns: minmax(0, 1fr); }
+.bsec { border-bottom: 1px solid var(--hair); padding: calc(var(--pad) * .9) var(--pad); }
+
+.bhero { text-align: left; padding-top: calc(var(--pad) * 1.2); }
+.bdays { font-variant-numeric: tabular-nums; line-height: .9; letter-spacing: -.04em; }
+.bdays b { font-size: clamp(4.5rem, 15vw, 7.5rem); font-weight: 200; }
+.bdays small {
+  font-size: .8125rem; font-weight: 400; letter-spacing: .3em; text-transform: uppercase;
+  color: var(--fg-3); margin-left: .6rem;
+}
+.bwhen { font-family: var(--m); font-size: .75rem; color: var(--fg-2); margin-top: .8rem; }
+.bpeek {
+  display: inline-block; margin-top: .9rem; padding: .5rem 0;
+  font-family: var(--m); font-size: .6875rem; letter-spacing: .08em;
+  color: var(--fg-3); text-decoration: none;
+}
+.bpeek:hover { color: var(--fg); }
+
+.bsec > .k, .bhead .k {
+  font-size: .625rem; letter-spacing: .19em; text-transform: uppercase;
+  color: var(--fg-3); font-weight: 500;
+}
+.bsec > .k { display: block; margin-bottom: .45rem; }
+
+/* one fact per line, the whole line is the door */
+.bline {
+  display: flex; align-items: baseline; gap: .7rem; flex-wrap: wrap;
+  min-height: 2.75rem; padding: .55rem 0; border-top: 1px solid var(--hair-2);
+  text-decoration: none; color: var(--fg-2); font-size: .8125rem;
+}
+.bline:first-of-type { border-top: 0; }
+.bline b { font-size: 1.25rem; font-weight: 300; letter-spacing: -.02em; color: var(--fg); white-space: nowrap; }
+.bline b.hot { color: var(--tomato); }
+.bline b.good { color: var(--good); }
+.bline:hover { color: var(--fg); }
+.bsquare { font-size: .9375rem; color: var(--good); padding: .4rem 0 .1rem; }
+
+.barrow { margin-left: auto; color: var(--fg-4); transition: transform .18s var(--e), color .18s var(--e); }
+.bline:hover .barrow, .bhead:hover .barrow, .bcrewrow:hover .barrow { transform: translateX(3px); color: var(--fg); }
+
+/* jars + grappa share the reading-as-a-door header */
+.bhead {
+  display: flex; align-items: baseline; gap: .7rem; flex-wrap: wrap;
+  text-decoration: none; color: var(--fg-2); min-height: 2.75rem;
+}
+.bhead b {
+  font-size: 1.875rem; font-weight: 200; letter-spacing: -.035em; color: var(--fg);
+  font-variant-numeric: tabular-nums;
+}
+.bhead b.good { color: var(--good); }
+.bhead .bsub { font-size: .75rem; color: var(--fg-3); }
+.bhead:hover .bsub { color: var(--fg-2); }
+.bjars .jw { margin-top: .9rem; }
+
+.bcrewrow {
+  display: flex; align-items: center; gap: .7rem;
+  min-height: 2.75rem; padding: .35rem 0; border-top: 1px solid var(--hair-2);
+  text-decoration: none; color: var(--fg-2); font-size: .8125rem;
+}
+.bcrewrow:first-of-type { border-top: 0; }
+.bcrewrow b { font-weight: 500; color: var(--fg); min-width: 4.5rem; }
+.bcrewrow .dot { width: 5px; height: 5px; background: var(--bg-3); flex: none; }
+.bcrewrow .dot.on { background: var(--tomato); }
+.bcrewrow.clear { color: var(--fg-4); }
+.bcrewrow.clear b { color: var(--fg-3); }
+.bcrewrow:hover { color: var(--fg); }
+
+.bready { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--pad); }
+.bmeter { display: grid; gap: .4rem; text-decoration: none; color: var(--fg-2); align-content: start; }
+.bmeter b {
+  font-size: 1.375rem; font-weight: 200; letter-spacing: -.02em; color: var(--fg);
+  font-variant-numeric: tabular-nums;
+}
+.bmeter b small { font-size: .6875rem; font-weight: 400; color: var(--fg-3); margin-left: .25rem; }
+.bmeter .track { height: 2px; background: var(--bg-3); }
+.bmeter .track i { display: block; height: 100%; background: var(--fg-2); }
+.bmeter:hover .track i { background: var(--fg); }
+
+/* two columns once there is room: the wall takes the right, the readings the
+   left, and the meters run the full width underneath */
+@media (min-width: 60rem) {
+  .board { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .bhero, .bready { grid-column: 1 / -1; }
+  .bjars { grid-column: 2; grid-row: 2 / span 3; border-left: 1px solid var(--hair); }
+  .byou, .bpulse, .brecord { grid-column: 1; }
+}
+
+/* the board carries its own numbers, so the rail stands down on this one route */
+.frame.solo { grid-template-columns: minmax(0, 1fr); }
+.frame.solo .readout { display: none; }
+
+/* peeking at the run of the day from the board: the way back */
+.bback {
+  display: flex; align-items: center; gap: .5rem; width: 100%;
+  padding: .6rem var(--pad); border: 0; border-bottom: 1px solid var(--hair);
+  background: none; color: var(--fg-3); cursor: pointer;
+  font: 500 .625rem/1 var(--f); letter-spacing: .19em; text-transform: uppercase;
+  text-align: left;
+}
+.bback:hover { color: var(--fg); }

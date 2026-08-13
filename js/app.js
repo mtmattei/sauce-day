@@ -8,9 +8,32 @@ import { icon } from "./icons.js";
 import { money0, settlement, yieldPlan, grappaRecord, daysToGo, readiness } from "./calc.js";
 import { viewSauceDay, stopTimeline } from "./timeline.js";
 import * as V from "./views.js";
+import * as H from "./home.js";
+
+/**
+ * The home route is context-aware. Seventeen days out the crew is asking
+ * "what do I owe, are we ready" — that is the Board. From the Friday prep
+ * evening (one day out) the only question is "how is the day going", so the
+ * timeline takes the route over. Before then it stays a peek away.
+ */
+function viewHome() {
+  const d = daysToGo();
+  const takeover = d !== null && d <= 1;
+  if (takeover) return viewSauceDay();
+  if (state.ui?.peekDay) {
+    const back = h("button", { class: "bback", onClick: () => {
+      state.ui = { ...(state.ui || {}), peekDay: false };
+      render();
+    } }, "← back to the board");
+    const f = document.createDocumentFragment();
+    f.append(back, viewSauceDay());
+    return f;
+  }
+  return H.viewBoard();
+}
 
 const ROUTES = [
-  { hash: "#/",        label: "Sauce Day", icon: "check", view: viewSauceDay },
+  { hash: "#/",        label: "Sauce Day", icon: "check", view: viewHome },
   { hash: "#/buy",     label: "Buy",     icon: "list",   view: V.viewBuy },
   { hash: "#/spend",   label: "Spend",   icon: "split",  view: V.viewSpend },
   { hash: "#/sauce",   label: "Sauce",   icon: "jar",    view: V.viewSauce },
@@ -230,6 +253,9 @@ export function render() {
   renderHead();
   renderSyncBar();
   renderReadout();
+  // the Board carries the rail's numbers full-width, so on #/ the rail stands
+  // down — including when the timeline holds the route, which is full-bleed
+  document.querySelector(".frame")?.classList.toggle("solo", r.hash === "#/");
   const el = app();
   const y = el.scrollTop;
   stopTimeline();          // the timeline holds a clock; never leave two running
@@ -238,6 +264,7 @@ export function render() {
   el.scrollTop = y;
 }
 V.setRender(render);
+H.setRender(render);
 
 // ---------------------------------------------------------------- sign in
 /**

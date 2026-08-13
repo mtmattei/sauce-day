@@ -34,7 +34,9 @@ export function viewBuy() {
   const only = state.ui?.buyMine ? me() : null;
   const blocks = [];
   byStore.forEach((list, store) => {
-    const shown = only ? list.filter(i => i.assigned_to === only) : list;
+    // assigned_to is free text — "Matt / David", "David (4) / Matt (2)" — so
+    // "mine" is a substring test. Equality showed 2 of Matt's 14 items.
+    const shown = only ? list.filter(i => i.assigned_to && i.assigned_to.includes(only)) : list;
     if (!shown.length) return;
     const total = shown.reduce((a, i) => a + (Number(i.budget) || 0), 0);
     blocks.push(h("div", { class: "store" },
