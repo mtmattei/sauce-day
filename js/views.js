@@ -4,7 +4,7 @@
 import { sb, state, YEAR, update, insert, remove, upsert, flash, signOut } from "./db.js";
 import {
   CATS, money, money0, num, crewNames,
-  settlement, yieldPlan, seriesData, grappaRecord
+  settlement, yieldPlan, seriesData, grappaRecord, daysToGo
 } from "./calc.js";
 import { h, frag, field, select, check, personSelect, delButton, card, stat,
          sectionBar, empty, addRow, nextSort, me } from "./ui.js";
@@ -39,11 +39,14 @@ export function viewBuy() {
     const shown = only ? list.filter(i => i.assigned_to && i.assigned_to.includes(only)) : list;
     if (!shown.length) return;
     const total = shown.reduce((a, i) => a + (Number(i.budget) || 0), 0);
+    const todo = shown.filter(i => !i.obtained);
+    const got = shown.filter(i => i.obtained);
     blocks.push(h("div", { class: "store" },
       sectionBar(store),
       h("div", { class: "storemeta" },
-        `${shown.filter(i => i.obtained).length} of ${shown.length} got · est. ${money(total)}`),
-      ...shown.map(buyRow)));
+        `${got.length} of ${shown.length} got · est. ${money(total)}`),
+      ...todo.map(buyRow),
+      ...foldDone("buy:" + store, got, "got", buyRow)));
   });
 
   const filter = h("div", { class: "btnrow" },
@@ -130,6 +133,26 @@ function ledgerRow(i) {
 }
 
 const lbl = (text, ctrl) => h("label", { class: "fl" }, h("span", {}, text), ctrl);
+
+/**
+ * Completed rows fold shut. A list where the 32 things already handled sit
+ * at full height above the 3 that still matter reads as 35 things to worry
+ * about — the done rows collapse behind one line that says how many, and a
+ * tap brings them back. Fold state lives in state.ui: session-only, gone on
+ * reload, which is the right lifetime for "I just wanted to check one".
+ */
+function foldDone(key, doneRows, word, rowFn) {
+  if (!doneRows.length) return [];
+  const open = !!state.ui?.folds?.[key];
+  const bar = h("button", { class: "foldbar" + (open ? " open" : ""), onClick: () => {
+    const folds = { ...(state.ui?.folds || {}), [key]: !open };
+    state.ui = { ...(state.ui || {}), folds };
+    render();
+  } },
+    h("span", {}, `${doneRows.length} ${word}`),
+    h("i", {}, open ? "hide" : "show"));
+  return open ? [bar, ...doneRows.map(rowFn)] : [bar];
+}
 
 // ============================================================ SPEND
 export function viewSpend() {
@@ -331,7 +354,11 @@ export function viewMenu() {
   });
   const blocks = [];
   groups.forEach((list, service) => {
-    blocks.push(h("div", { class: "store" }, sectionBar(service), ...list.map(menuRow)));
+    const todo = list.filter(m => !m.confirmed);
+    const donel = list.filter(m => m.confirmed);
+    blocks.push(h("div", { class: "store" }, sectionBar(service),
+      ...todo.map(menuRow),
+      ...foldDone("menu:" + service, donel, "confirmed", menuRow)));
   });
   const add = h("form", { class: "inline", onSubmit: async e => {
     e.preventDefault();
@@ -379,11 +406,18 @@ export function viewRun() {
   });
   const blocks = [];
   groups.forEach((list, section) => {
-    const done = list.filter(r => r.done).length;
+    const todo = list.filter(r => !r.done);
+    const donel = list.filter(r => r.done);
+    // the run sheet keeps its order sacred on the day itself — done steps fold
+    // only while the day is still ahead, because during the day the sequence
+    // (step 12 after step 11) is the whole reading
+    const foldable = (daysToGo() ?? 99) > 1;
     blocks.push(h("div", { class: "store" },
       sectionBar(section),
-      h("div", { class: "storemeta" }, `${done} of ${list.length} done`),
-      ...list.map(runRow)));
+      h("div", { class: "storemeta" }, `${donel.length} of ${list.length} done`),
+      ...(foldable
+        ? [...todo.map(runRow), ...foldDone("run:" + section, donel, "done", runRow)]
+        : list.map(runRow))));
   });
   return frag(
     card("Run sheet", "The order the day happens in. Tick each step as it happens — everyone's phone updates."),
