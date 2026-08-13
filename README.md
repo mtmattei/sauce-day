@@ -133,6 +133,13 @@ without an email on the crew list.
 The `.nojekyll` file in the root stops GitHub from doing anything clever to the
 `js/` folder. Leave it there.
 
+**When you change any code**, run `.\tools\Bump-Version.ps1` before you commit.
+It rewrites the version stamp in `index.html`, which pins every script and the
+stylesheet to one version. Pages caches files for ten minutes and phones cache
+harder; without the bump, someone can get your new HTML with last week's
+JavaScript — the stamp makes each deploy all-or-nothing. Content-only edits
+(SQL, images, this file) don't need it.
+
 ### 6. Add the crew
 
 Sign in with your own email (it's already seeded as admin). Go to **Crew** and
