@@ -61,13 +61,39 @@ export function viewBuy() {
     ...blocks);
 }
 
+// ---- the lock, shared by every screen an item renders on.
+// A locked row is inert EVERYWHERE: checkbox refused, no editor, no inline
+// fields. Half-locked — editor barred but the tick still live — read as a bug,
+// because it was one. The padlock is the single way in; the unlock is
+// session-only, so the guard re-arms itself on the next visit.
+const isUnlocked = i => !!state.ui?.unlockedItems?.[i.id];
+
+function lockBtn(i) {
+  const unlocked = isUnlocked(i);
+  return h("button", {
+    class: "icon lockbtn" + (unlocked ? " on" : ""),
+    title: unlocked ? "Lock again" : "Unlock to edit",
+    "aria-label": (unlocked ? "Lock " : "Unlock ") + i.name,
+    "aria-pressed": unlocked ? "true" : "false",
+    onClick: () => {
+      const u = { ...(state.ui?.unlockedItems || {}) };
+      if (unlocked) delete u[i.id]; else u[i.id] = true;
+      state.ui = { ...(state.ui || {}), unlockedItems: u,
+                   // re-locking slams the editor shut with it
+                   openItem: unlocked && state.ui?.openItem === i.id ? null : state.ui?.openItem };
+      render();
+    }
+  }, icon(unlocked ? "lockopen" : "lock"));
+}
+
 function buyRow(i) {
+  const locked = !!i.locked && !isUnlocked(i);
   // what has actually been paid against this item, as opposed to budgeted
   const paid = state.expenses
     .filter(e => e.item_id && String(e.item_id) === String(i.id))
     .reduce((a, e) => a + Number(e.amount || 0), 0);
-  return h("div", { class: "row buy" + (i.obtained ? " got" : "") },
-    check("items", i, "obtained"),
+  return h("div", { class: "row buy" + (i.obtained ? " got" : "") + (locked ? " locked" : "") },
+    check("items", i, "obtained", null, { disabled: locked }),
     h("div", { class: "rowmain" },
       h("div", { class: "rowtitle" }, i.name,
         i.link ? h("a", { href: i.link, target: "_blank", rel: "noopener", class: "link" }, "↗") : null),
@@ -75,8 +101,13 @@ function buyRow(i) {
         [i.qty ? "qty " + i.qty : null, i.kind, i.comments,
          paid ? "paid " + money(paid) : null].filter(Boolean).join(" · "))),
     h("div", { class: "rowend" },
-      personSelect("items", i, "assigned_to"),
-      field("items", i, "budget", { type: "number", class: "w80", placeholder: "$" })));
+      locked
+        ? h("span", { class: "rowsub" }, i.assigned_to || "")
+        : personSelect("items", i, "assigned_to"),
+      locked
+        ? null
+        : field("items", i, "budget", { type: "number", class: "w80", placeholder: "$" }),
+      i.locked ? lockBtn(i) : null));
 }
 
 // ============================================================ LEDGER
@@ -96,7 +127,13 @@ export function viewLedger() {
       kind: "Need", budget: 0 }, "Item added") }, "+ Add item");
 
   // toolkit rows carry a subcategory ("Cooking & Heat", "Jarring & Canning");
-  // group under section bars where they do, stay flat where they don't
+  // group under section bars where they do, stay flat where they don't.
+  //
+  // Within a group the rows are three different kinds of thing and read as
+  // three different states: the work (to get, full rows), the manifest
+  // (owned kit, quiet single lines — a cauldron is not a task), and the done
+  // (folded, struck through). Flat sameness across all three was the reason
+  // the screen had no flow.
   const bySub = new Map();
   rows.forEach(i => {
     const k = i.subcategory || "";
@@ -105,9 +142,18 @@ export function viewLedger() {
   });
   const blocks = [];
   bySub.forEach((list, sub) => {
+    const owned  = list.filter(i => i.kind === "Owned" || i.kind === "Have");
+    const active = list.filter(i => !owned.includes(i) && !i.obtained);
+    const got    = list.filter(i => !owned.includes(i) && i.obtained);
     blocks.push(h("div", { class: "store" },
       sub ? sectionBar(sub) : null,
-      ...list.map(ledgerRow)));
+      (active.length || owned.length) ? h("div", { class: "storemeta" },
+        [active.length ? `${active.length} to get` : null,
+         owned.length ? `${owned.length} owned` : null]
+          .filter(Boolean).join(" · ")) : null,
+      ...active.map(ledgerRow),
+      ...owned.map(ownedRow),
+      ...foldDone(`ledger:${cat}:${sub}`, got, "got", ledgerRow)));
   });
 
   return frag(
@@ -118,24 +164,36 @@ export function viewLedger() {
     ...blocks);
 }
 
+function itemEditor(i) {
+  return h("div", { class: "editor" },
+    lbl("Name", field("items", i, "name")),
+    lbl("Need / owned", field("items", i, "kind")),
+    lbl("Qty", field("items", i, "qty")),
+    lbl("Budget", field("items", i, "budget", { type: "number" })),
+    lbl("Assigned to", personSelect("items", i, "assigned_to")),
+    lbl("Store", field("items", i, "store")),
+    lbl("Use next year?", select("items", i, "repeat_next", ["Yes", "No", "Buy", "Refill", "Maybe"])),
+    lbl("Link", field("items", i, "link", { placeholder: "https://" })),
+    lbl("Notes", field("items", i, "comments")),
+    // writes the DB column, so the lock is shared: lock it here and it is
+    // locked on every phone. The padlock's unlock stays session-only.
+    check("items", i, "locked", "Locked — guard this row from stray edits"),
+    h("div", { class: "btnrow spread" },
+      h("button", { class: "btn", onClick: () => {
+        state.ui = { ...(state.ui || {}), openItem: null }; render();
+      } }, "Close"),
+      delButton("items", i, i.name)));
+}
+
+/** The work: a full row with the tick, the assignee and the money. */
 function ledgerRow(i) {
   const open = state.ui?.openItem === i.id;
-  // Owned kit is locked: the mill and the cauldrons don't change between
-  // Augusts, but a thumb on a phone changes them by accident. The lock is a
-  // guard, not a wall — one tap opens it, and it closes itself next session.
-  const unlocked = !!state.ui?.unlockedItems?.[i.id];
-  const locked = !!i.locked && !unlocked;
-  const toggleLock = () => {
-    const u = { ...(state.ui?.unlockedItems || {}) };
-    if (unlocked) delete u[i.id]; else u[i.id] = true;
-    state.ui = { ...(state.ui || {}), unlockedItems: u,
-                 openItem: unlocked && open ? null : state.ui?.openItem };
-    render();
-  };
-  return h("div", { class: "row item" + (open ? " open" : "") + (locked ? " locked" : "") },
-    check("items", i, "obtained"),
+  const locked = !!i.locked && !isUnlocked(i);
+  return h("div", { class: "row item" + (open ? " open" : "")
+      + (locked ? " locked" : "") + (i.obtained ? " got" : "") },
+    check("items", i, "obtained", null, { disabled: locked }),
     h("div", { class: "rowmain", onClick: () => {
-      if (locked) { flash("Owned kit is locked — tap the padlock to edit"); return; }
+      if (locked) { flash("Locked — tap the padlock to edit"); return; }
       state.ui = { ...(state.ui || {}), openItem: open ? null : i.id }; render();
     } },
       h("div", { class: "rowtitle" }, i.name),
@@ -144,31 +202,27 @@ function ledgerRow(i) {
         || "tap to edit")),
     h("div", { class: "rowend" },
       h("span", { class: "mono" }, money(i.budget)),
-      i.locked ? h("button", {
-        class: "icon lockbtn" + (unlocked ? " on" : ""),
-        title: locked ? "Unlock to edit" : "Lock again",
-        "aria-label": locked ? `Unlock ${i.name} for editing` : `Lock ${i.name}`,
-        "aria-pressed": unlocked ? "true" : "false",
-        onClick: toggleLock
-      }, icon(locked ? "lock" : "lockopen")) : null),
-    open ? h("div", { class: "editor" },
-      lbl("Name", field("items", i, "name")),
-      lbl("Need / owned", field("items", i, "kind")),
-      lbl("Qty", field("items", i, "qty")),
-      lbl("Budget", field("items", i, "budget", { type: "number" })),
-      lbl("Assigned to", personSelect("items", i, "assigned_to")),
-      lbl("Store", field("items", i, "store")),
-      lbl("Use next year?", select("items", i, "repeat_next", ["Yes", "No", "Buy", "Refill", "Maybe"])),
-      lbl("Link", field("items", i, "link", { placeholder: "https://" })),
-      lbl("Notes", field("items", i, "comments")),
-      // writes the DB column, so the lock is shared: lock it here and it is
-      // locked on every phone. The padlock's unlock stays session-only.
-      check("items", i, "locked", "Locked — guard this row from stray edits"),
-      h("div", { class: "btnrow spread" },
-        h("button", { class: "btn", onClick: () => {
-          state.ui = { ...(state.ui || {}), openItem: null }; render();
-        } }, "Close"),
-        delButton("items", i, i.name))) : null);
+      i.locked ? lockBtn(i) : null),
+    open && !locked ? itemEditor(i) : null);
+}
+
+/** The manifest: owned kit on one quiet line. A cauldron is not a task, so
+    there is no tick — just the name, the count, who keeps it, and the lock. */
+function ownedRow(i) {
+  const open = state.ui?.openItem === i.id;
+  const locked = !!i.locked && !isUnlocked(i);
+  return h("div", { class: "row owned" + (open ? " open" : "") + (locked ? " locked" : "") },
+    h("div", { class: "rowmain", onClick: () => {
+      if (locked) { flash("Owned kit is locked — tap the padlock to edit"); return; }
+      state.ui = { ...(state.ui || {}), openItem: open ? null : i.id }; render();
+    } },
+      h("span", { class: "oname" }, i.name),
+      h("span", { class: "ometa" },
+        [i.qty ? "× " + i.qty : null, i.assigned_to].filter(Boolean).join(" · "))),
+    h("div", { class: "rowend" },
+      Number(i.budget) > 0 ? h("span", { class: "mono dim" }, money(i.budget)) : null,
+      i.locked ? lockBtn(i) : null),
+    open && !locked ? itemEditor(i) : null);
 }
 
 const lbl = (text, ctrl) => h("label", { class: "fl" }, h("span", {}, text), ctrl);

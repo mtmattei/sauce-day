@@ -55,12 +55,14 @@ export function select(table, row, col, options, opts = {}) {
   return s;
 }
 
-/** Big tappable checkbox bound to a boolean column. */
-export function check(table, row, col, label) {
+/** Big tappable checkbox bound to a boolean column. opts.disabled renders it
+    inert — a locked row's tick must refuse the tap, not half-take it. */
+export function check(table, row, col, label, opts = {}) {
   const id = "c" + Math.random().toString(36).slice(2);
-  const box = h("input", { type: "checkbox", id, checked: !!row[col] });
+  const box = h("input", { type: "checkbox", id, checked: !!row[col],
+    disabled: opts.disabled || null });
   box.addEventListener("change", () => update(table, row.id, { [col]: box.checked }));
-  return h("label", { class: "chk" }, box, h("span", {}, label || ""));
+  return h("label", { class: "chk" + (opts.disabled ? " off" : "") }, box, h("span", {}, label || ""));
 }
 
 export function personSelect(table, row, col) {

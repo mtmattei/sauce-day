@@ -1165,3 +1165,29 @@ svg { display: block; width: 100%; height: auto; overflow: visible; }
   .bottlecard .byr { margin-top: .7rem; }
   .bottlecard .bmeta > .btn, .bottlecard.pending .bsuggest { margin-bottom: .8rem; }
 }
+
+/* ---------------------------------------------------------------- ledger states */
+/* Three kinds of row, three volumes. The work speaks at full strength; the
+   owned manifest murmurs on one line; the done rows are folded and struck.
+   A disabled tick is visibly refused, not just quietly ignored. */
+.chk.off { opacity: .35; }
+.chk.off input { cursor: not-allowed; }
+
+.row.owned {
+  min-height: 2.25rem; padding-top: .3rem; padding-bottom: .3rem;
+  border: 1px solid var(--hair-2); margin-bottom: -1px; background: none;
+}
+.row.owned .rowmain {
+  display: flex; align-items: baseline; gap: .6rem; cursor: pointer; min-width: 0;
+}
+.row.owned.locked .rowmain { cursor: default; }
+.row.owned .oname { font-size: .8125rem; font-weight: 400; color: var(--fg-2); white-space: nowrap; }
+.row.owned .ometa {
+  font-family: var(--m); font-size: .625rem; color: var(--fg-4);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.row.owned:hover .oname { color: var(--fg); }
+.row.owned .mono.dim { font-size: .6875rem; color: var(--fg-4); }
+.row.owned .lockbtn { border-color: transparent; }
+.row.owned .lockbtn:hover { border-color: var(--hair); }
+.row.owned.open { border-color: var(--tomato-2); background: var(--bg-2); }
