@@ -1122,3 +1122,15 @@ svg { display: block; width: 100%; height: auto; overflow: visible; }
 .lockbtn.on { color: var(--tomato); border-color: var(--tomato-2); }
 .row.locked .rowmain { cursor: default; }
 .row.locked .rowsub { color: var(--fg-4); }
+
+/* ---------------------------------------------------------------- hall of fame */
+/* The year tag on each bottle, and the empty slot the next bottle will take. */
+.byr { font-family: var(--m); font-size: .625rem; letter-spacing: .16em; color: var(--fg-3); }
+.bverdict.hot { color: var(--tomato); }
+.bottlecard.pending .shot { display: grid; place-items: center; }
+.bottlecard.pending .shot .btl { color: var(--fg-4); }
+.bottlecard.pending .shot .btl-body { stroke-dasharray: 3 3; }
+.bottlecard.pending .byr, .bottlecard.pending .bprice { color: var(--fg-3); }
+.bsuggest { margin-top: .6rem; padding-top: .55rem; border-top: 1px solid var(--hair-2);
+            display: grid; gap: .2rem; }
+.bsuggest .btn { margin-top: .45rem; justify-self: start; text-decoration: none; }

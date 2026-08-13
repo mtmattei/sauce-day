@@ -97,6 +97,24 @@ export const SHORTLIST = [
   }
 ];
 
+// The suggestion for this year's empty slot. Read off the SAQ on 2026-08-13:
+// the only in-stock grappas clearing the 1898's $144.75 were this, the Villa
+// de Varda Sherry Cask ($164.50, non-Poli), the Cornelissen MunJebel ($228)
+// and the Distillato di Magma ($503.50, for the year the crew loses its mind).
+// This one keeps the Poli line going and clears the record by $19.25.
+export const SUGGESTION = {
+  id: "11435211",
+  name: "Barili di Sassicaia",
+  range: "Jacopo Poli",
+  producer: "Poli Distillerie",
+  region: "Veneto, Italy",
+  size: "500 ml",
+  abv: 40,
+  price: 164.00,
+  url: "https://www.saq.com/en/11435211",
+  note: "Aged in Sassicaia barriques, 5/5 on the SAQ. In store only — check stock before David drives out."
+};
+
 /** Price per litre — the five bottles are not all the same size. */
 export const perLitre = g => g.price / (parseInt(g.size, 10) / 1000);
 

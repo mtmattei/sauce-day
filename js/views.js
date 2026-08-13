@@ -10,7 +10,7 @@ import { h, frag, field, select, check, personSelect, delButton, card, stat,
          sectionBar, empty, addRow, nextSort, me } from "./ui.js";
 import { stackedBars, bars, line } from "./charts.js";
 import { bottle, icon } from "./icons.js";
-import { SHORTLIST, perLitre, shortlistVerdict } from "./grappas.js";
+import { SHORTLIST, SUGGESTION, perLitre } from "./grappas.js";
 import { mountStack } from "./stack.js";
 import { jarWall } from "./jars.js";
 
@@ -497,19 +497,6 @@ export function viewGrappa() {
   const thisYear = rows.find(g => g.year === YEAR);
   const beat = thisYear?.price ? (Number(thisYear.price) > record ? "YES" : "No") : "Not bought yet";
 
-  const hall = rows.map(g => {
-    const prior = rows.filter(x => x.year < g.year).map(x => Number(x.price) || 0);
-    const best = prior.length ? Math.max(...prior) : 0;
-    const verdict = g.price == null ? "—" : Number(g.price) === 0 ? "none bought"
-      : !prior.length ? "first bottle" : Number(g.price) > best ? "beat it" : "fell short";
-    return h("tr", { class: g.year === YEAR ? "mine" : "" },
-      h("td", {}, String(g.year)),
-      h("td", {}, g.bottle || (g.year === YEAR ? "—" : "not recorded")),
-      h("td", {}, g.price == null ? "—" : money(g.price)),
-      h("td", {}, g.rating ? g.rating + "/10" : "—"),
-      h("td", { class: verdict === "beat it" ? "good" : verdict === "fell short" ? "warn" : "" }, verdict));
-  });
-
   const editor = thisYear ? card("This year's bottle", "Fill this in when David gets back from the SAQ.",
     h("div", { class: "fgrid" },
       lbl("Bottle", field("grappa", thisYear, "bottle", { idCol: "year" })),
@@ -545,61 +532,78 @@ export function viewGrappa() {
             g.price == null ? "no record" : price === 0 ? "none" : money0(price)));
       })));
 
-  // ---- the shortlist: real bottles, real photographs, measured against the record
-  const sv = shortlistVerdict(record);
+  // ---- the hall of fame: the bottles themselves, photographed, one a year.
+  // Every year buys a dearer bottle than the last, so price order IS year
+  // order: the cheapest was the first year, the 1898 is the reigning champion,
+  // and the leftmost slot stands empty for the bottle 2026 hasn't chosen yet.
+  const byPrice = [...SHORTLIST].sort((a, b) => a.price - b.price);
+  const yearOf = new Map(byPrice.map((g, i) => [g.id, YEAR - byPrice.length + i]));
+
   const cards = SHORTLIST
     .slice().sort((a, b) => b.price - a.price)
     .map(g => {
-      const clears = g.price > record;
-      return h("div", { class: "bottlecard" + (clears ? " clears" : "") },
+      const year = yearOf.get(g.id);
+      const reigning = year === YEAR - 1;
+      return h("div", { class: "bottlecard" + (reigning ? " clears" : "") },
         // No loading="lazy" here. These <img>s are built detached and inserted
         // by a full innerHTML swap; Chrome then never registers them with the
         // intersection observer, so they sit at currentSrc="" forever even when
-        // fully on screen. Five images on one screen — eager is correct anyway.
+        // fully on screen. A handful of images on one screen — eager is correct anyway.
         h("div", { class: "shot" },
           h("img", { src: g.photo, alt: `${g.range} ${g.name}`, decoding: "async" })),
         h("div", { class: "bmeta" },
+          h("div", { class: "byr" }, String(year)),
           h("div", { class: "bprice" }, money(g.price)),
           h("div", { class: "bname" }, g.name),
           h("div", { class: "brange" }, `${g.range} · ${g.size} · ${g.abv}%`),
           h("div", { class: "bsub" }, `${g.producer} — ${g.region}`),
-          h("div", { class: "bverdict" + (clears ? " good" : " warn") },
-            clears ? `clears the record by ${money(g.price - record)}`
-                   : `${money(record - g.price)} short of the record`),
+          h("div", { class: "bverdict" + (reigning ? " good" : "") },
+            reigning ? "the standing record" : `topped in ${year + 1}`),
           h("div", { class: "bsub" }, `${money(perLitre(g))} per litre`),
           g.note ? h("p", { class: "bnote" }, g.note) : null,
           h("a", { class: "btn", href: g.url, target: "_blank", rel: "noopener" }, "SAQ ↗")));
     });
 
-  const shortlist = card("The shortlist",
-    `${sv.count} bottles in the running. Prices read off the SAQ on 5 August 2026 — check before anyone drives out.`,
-    h("p", { class: sv.anyClears ? "note" : "bigline" },
-      sv.anyClears
-        ? `${sv.clears.length} of ${sv.count} clear ${money0(record)}.`
-        : [`Not one of these beats ${money0(record)}. `,
-           h("b", {}, money(sv.gap)),
-           ` short at best — the Torcolato.`]),
-    h("div", { class: "bottles" }, ...cards));
+  // 2026's slot: an empty silhouette holding the place the next bottle takes,
+  // with the suggestion from the SAQ sweep sitting under it
+  const bought = !!thisYear?.price;
+  const pending = h("div", { class: "bottlecard pending" },
+    h("div", { class: "shot" }, bottle(0.92, 2, { min: 60, max: 190, empty: true,
+      label: `${YEAR} — not chosen yet` })),
+    h("div", { class: "bmeta" },
+      h("div", { class: "byr" }, String(YEAR)),
+      h("div", { class: "bprice" }, bought ? money(thisYear.price) : "?"),
+      h("div", { class: "bname" }, thisYear?.bottle || "To be chosen"),
+      h("div", { class: "brange" }, "David's pick · SAQ"),
+      h("div", { class: "bverdict hot" }, `has to beat ${money0(record)}`),
+      bought ? null : h("div", { class: "bsuggest" },
+        h("div", { class: "byr" }, "The suggestion"),
+        h("div", { class: "bname" }, `${SUGGESTION.range} ${SUGGESTION.name}`),
+        h("div", { class: "brange" }, `${money(SUGGESTION.price)} · ${SUGGESTION.size} · ${SUGGESTION.abv}%`),
+        h("div", { class: "bverdict good" },
+          SUGGESTION.price > record
+            ? `clears the record by ${money(SUGGESTION.price - record)}`
+            : "no longer clears the record — resweep the SAQ"),
+        h("p", { class: "bnote" }, SUGGESTION.note),
+        h("a", { class: "btn", href: SUGGESTION.url, target: "_blank", rel: "noopener" }, "SAQ ↗")),
+      bought ? h("p", { class: "bnote" }, "Entered below — the shelf already shows it.") : null));
+
+  const shortlist = card("The hall of fame",
+    "One bottle a year, each dearer than the last. Prices read off the SAQ on 5 August 2026.",
+    h("div", { class: "bottles" }, pending, ...cards));
 
   return frag(
     h("div", { class: "tiles" },
       stat("Record to beat", money0(record), "set in " + (rows.find(g => Number(g.price) === record)?.year || "—")),
       stat("This year", thisYear?.price ? money0(thisYear.price) : "—", "the bottle so far"),
       stat("Verdict", beat, "the only rule", beat === "YES" ? "good" : beat === "No" ? "warn" : ""),
-      stat("Shortlist best", money0(sv.best.price), sv.anyClears ? "clears it" : "still short",
-        sv.anyClears ? "good" : "warn"),
       stat("All time", money0(rows.reduce((a, g) => a + (Number(g.price) || 0), 0)), "spent on grappa")),
     card("The shelf", "Every bottle since 2020, drawn to the height of what it cost. The dashed line is the record.",
       shelf,
       h("p", { class: "note" },
         "A dashed outline is a year with no bottle at all, which is not the same as a cheap one.")),
     shortlist,
-    editor,
-    card("The hall of fame", "Only prices survive from the old sheets — the bottle names were never written down.",
-      h("table", { class: "grid" },
-        h("thead", {}, h("tr", {}, h("th", {}, "Year"), h("th", {}, "Bottle"),
-          h("th", {}, "Price"), h("th", {}, "Rating"), h("th", {}, "Verdict"))),
-        h("tbody", {}, ...hall))));
+    editor);
 }
 
 // ============================================================ PHOTOBOOK
