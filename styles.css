@@ -433,12 +433,15 @@ main.panel { padding: var(--pad) var(--pad) 5rem; min-width: 0; max-width: 88rem
   font-size: .6875rem; letter-spacing: .21em; text-transform: uppercase; color: var(--fg-3);
   font-weight: 500; padding: .55rem .85rem; background: var(--bg-2); border-bottom: 1px solid var(--hair);
 }
-.card > .sub { font-size: .75rem; color: var(--fg-3); padding: .6rem .85rem 0; line-height: 1.5; max-width: 68ch; }
+/* One-sentence captions, not body text: they run the width they're given
+   rather than breaking two words onto a second line at a reading measure.
+   text-wrap: pretty keeps narrow screens from stranding a single word. */
+.card > .sub { font-size: .75rem; color: var(--fg-3); padding: .6rem .85rem 0; line-height: 1.5; text-wrap: pretty; }
 .card > *:not(h2):not(.sub) { margin-left: .85rem; margin-right: .85rem; }
 .card > *:last-child { margin-bottom: .85rem; }
 .card > .sub + * { margin-top: .75rem; }
 .card > h2 + *:not(.sub) { margin-top: .85rem; }
-.note { font-size: .75rem; color: var(--fg-3); line-height: 1.5; max-width: 68ch; }
+.note { font-size: .75rem; color: var(--fg-3); line-height: 1.5; max-width: 68ch; text-wrap: pretty; }
 .empty { color: var(--fg-4); font-size: .8125rem; padding: .5rem 0; }
 
 /* ---------------------------------------------------------------- tiles */
