@@ -57,7 +57,7 @@ insert into public.items
   -- Toolkit · Cooking & Heat
   (2026, 'toolkit', 'Cooking & Heat', 13, 'Cauldrons', 'Owned', '3', 0, 'Matt (2) / David (1) / Chris (2)', null, 'Yes', null, null),
   (2026, 'toolkit', 'Cooking & Heat', 14, 'Burners', 'Owned', '3', 0, 'David (2) / Matt (1)', 'Home Depot', 'Buy', null, 'https://www.homedepot.ca/product/martin-r65-propane-burner/1000751079'),
-  (2026, 'toolkit', 'Cooking & Heat', 15, 'Propane', 'Refill', '4', 40.0, 'Matt (2) / Mike / Chris (1)', null, 'Yes', 'Recurring every year. 3 sauce burners + 1 BBQ.', null),
+  (2026, 'toolkit', 'Cooking & Heat', 15, 'Propane', 'Refill', '4', 40.0, 'Matt (3) / Chris (1)', null, 'Yes', 'Recurring every year. 3 sauce burners + 1 BBQ.', null),
   (2026, 'toolkit', 'Cooking & Heat', 16, 'Ladle', 'Owned', '1', 0, 'Matt', null, 'Yes', null, null),
   (2026, 'toolkit', 'Cooking & Heat', 17, 'Spider ladle', 'Owned', '1', 0, 'Matt / Mike', null, 'Yes', null, null),
   (2026, 'toolkit', 'Cooking & Heat', 18, 'Stainless deep dish pan', 'Owned', null, 0, 'Matt', null, 'Yes', null, null),
