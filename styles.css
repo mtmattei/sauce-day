@@ -957,3 +957,23 @@ svg { display: block; width: 100%; height: auto; overflow: visible; }
 @media (prefers-reduced-motion: reduce) {
   * { animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }
+
+/* ---------------------------------------------------------------- jar wall */
+/* Twelve to a row because twelve to a box is how jars are bought: a row is a
+   pack. Full = on hand (later: filled), outline = still to buy, and a fallen
+   soldier lies where it fell. The cells are placed by the transform ATTRIBUTE,
+   so the entrance animates opacity only — a CSS transform would override the
+   placement and stack the wall into one corner. */
+.jw { display: block; width: 100%; max-width: 26rem; height: auto; }
+.jw .jw-glass { stroke: var(--fg-3); fill: none; }
+.jw .is-empty .jw-glass { stroke: var(--fg-4); }
+.jw .jw-fill { fill: var(--tomato); stroke: none; opacity: .88; }
+.jw .is-full .jw-glass { stroke: var(--tomato-2); }
+.jw .is-fallen .jw-fill { fill: var(--fg-3); opacity: .5; }
+.jw .is-fallen .jw-glass { stroke: var(--fg-3); }
+/* the crack is the g's only direct path child — the jar itself lives in <use> */
+.jw .is-fallen > path { stroke: var(--bg); stroke-width: 1.1; }
+.jw .jw-n { font: 400 8px var(--m); fill: var(--bg); stroke: none; text-anchor: middle; }
+.jw.ghost .jw-glass { stroke: var(--fg-4); stroke-dasharray: 2 2; }
+.jw .jw-cell.in { animation: jwin .3s var(--e) both; }
+@keyframes jwin { from { opacity: 0; } }

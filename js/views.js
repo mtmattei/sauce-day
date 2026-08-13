@@ -12,6 +12,7 @@ import { stackedBars, bars, line } from "./charts.js";
 import { bottle } from "./icons.js";
 import { SHORTLIST, perLitre, shortlistVerdict } from "./grappas.js";
 import { mountStack } from "./stack.js";
+import { jarWall } from "./jars.js";
 
 const SERIES_COLORS = ["var(--series-1)", "var(--series-2)", "var(--series-3)"];
 
@@ -298,7 +299,15 @@ export function viewSauce() {
 
   return frag(
     inputs,
-    card("Jars, bands and lids on hand", "Recount before the day — these carry over from last year.", ...jarRows),
+    card("Jars, bands and lids on hand", "Recount before the day — these carry over from last year.",
+      // the wall: what the plan calls for, drawn a pack to a row
+      h("div", { class: "jarwallwrap" },
+        jarWall({ total: y.jarsRequired, full: y.onHand.jars }),
+        h("p", { class: "note" },
+          y.jarsRequired
+            ? `${y.onHand.jars} of ${y.jarsRequired} on hand — a row is a pack of 12`
+            : "Set the bushel count above and the wall draws itself.")),
+      ...jarRows),
     card("What to buy", "Jar packs ship with bands and lids, so the maths cascades.",
       buyPlan, prices,
       h("div", { class: "bigline" }, "Total jar kit cost ", h("b", {}, money(y.cost))),
