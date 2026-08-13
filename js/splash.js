@@ -21,7 +21,7 @@
   "use strict";
 
   var COLS = 6, ROWS = 6, FRAMES = 36;
-  var FRAME_MS = 125;               // 36 x 125 = 4.5s
+  var FRAME_MS = 75;                // 36 x 75 = 2.7s
   var FAILSAFE_MS = 8000;           // hard ceiling, whatever happens
 
   var LABELS = [
