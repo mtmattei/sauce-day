@@ -70,9 +70,11 @@ create table public.items (
   id           uuid primary key default gen_random_uuid(),
   year         int  not null,
   category     text not null check (category in ('toolkit','ingredients','food')),
+  subcategory  text,                      -- Toolkit grouping; null for ungrouped items
   sort_index   int  not null default 0,
   name         text not null,
   kind         text,                      -- Need / Owned / Costco / description
+  locked       boolean not null default false, -- DB-backed UI lock; used for owned toolkit items
   qty          text,
   budget       numeric default 0,
   assigned_to  text,
@@ -85,6 +87,9 @@ create table public.items (
   updated_by   text
 );
 create index items_year_cat_idx on public.items (year, category, sort_index);
+create index items_year_subcat_idx on public.items (year, category, subcategory, sort_index);
+comment on column public.items.locked is
+  'When true, the UI should treat the item as locked/read-only unless the user explicitly unlocks it.';
 
 -- ---------------------------------------------------------------- money in
 create table public.expenses (

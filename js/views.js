@@ -95,12 +95,27 @@ export function viewLedger() {
     addRow("items", { category: cat, sort_index: nextSort(rows), name: "New item",
       kind: "Need", budget: 0 }, "Item added") }, "+ Add item");
 
+  // toolkit rows carry a subcategory ("Cooking & Heat", "Jarring & Canning");
+  // group under section bars where they do, stay flat where they don't
+  const bySub = new Map();
+  rows.forEach(i => {
+    const k = i.subcategory || "";
+    if (!bySub.has(k)) bySub.set(k, []);
+    bySub.get(k).push(i);
+  });
+  const blocks = [];
+  bySub.forEach((list, sub) => {
+    blocks.push(h("div", { class: "store" },
+      sub ? sectionBar(sub) : null,
+      ...list.map(ledgerRow)));
+  });
+
   return frag(
     card(meta.label, "Everything in this category, and what we plan to spend on it.",
       tabs,
       h("div", { class: "btnrow spread" },
         h("span", { class: "mono big" }, money(total) + " budgeted"), add)),
-    ...rows.map(ledgerRow));
+    ...blocks);
 }
 
 function ledgerRow(i) {
@@ -109,7 +124,7 @@ function ledgerRow(i) {
   // Augusts, but a thumb on a phone changes them by accident. The lock is a
   // guard, not a wall — one tap opens it, and it closes itself next session.
   const unlocked = !!state.ui?.unlockedItems?.[i.id];
-  const locked = i.kind === "Owned" && !unlocked;
+  const locked = !!i.locked && !unlocked;
   const toggleLock = () => {
     const u = { ...(state.ui?.unlockedItems || {}) };
     if (unlocked) delete u[i.id]; else u[i.id] = true;
@@ -129,7 +144,7 @@ function ledgerRow(i) {
         || "tap to edit")),
     h("div", { class: "rowend" },
       h("span", { class: "mono" }, money(i.budget)),
-      i.kind === "Owned" ? h("button", {
+      i.locked ? h("button", {
         class: "icon lockbtn" + (unlocked ? " on" : ""),
         title: locked ? "Unlock to edit" : "Lock again",
         "aria-label": locked ? `Unlock ${i.name} for editing` : `Lock ${i.name}`,
@@ -146,6 +161,9 @@ function ledgerRow(i) {
       lbl("Use next year?", select("items", i, "repeat_next", ["Yes", "No", "Buy", "Refill", "Maybe"])),
       lbl("Link", field("items", i, "link", { placeholder: "https://" })),
       lbl("Notes", field("items", i, "comments")),
+      // writes the DB column, so the lock is shared: lock it here and it is
+      // locked on every phone. The padlock's unlock stays session-only.
+      check("items", i, "locked", "Locked — guard this row from stray edits"),
       h("div", { class: "btnrow spread" },
         h("button", { class: "btn", onClick: () => {
           state.ui = { ...(state.ui || {}), openItem: null }; render();
@@ -389,8 +407,13 @@ export function viewMenu() {
       dish: f.get("dish").trim(), who: me() });
     e.target.reset();
   } },
+    // the services come from the data itself, so Antipasto and Dessert exist
+    // the moment a row does — a hardcoded list here went stale once already
     h("select", { name: "service", class: "f" },
-      ...["Breakfast", "Snack", "Lunch", "Dinner", "Drinks"].map(s => h("option", {}, s))),
+      ...([...new Set(state.menu.map(m => m.service))].length
+        ? [...new Set(state.menu.map(m => m.service))]
+        : ["Breakfast", "Antipasto", "Lunch", "Dinner", "Dessert", "Drinks"])
+        .map(s => h("option", {}, s))),
     h("input", { name: "dish", class: "f grow", placeholder: "Add a dish or a drink" }),
     h("button", { class: "btn primary", type: "submit" }, "Add"));
 
