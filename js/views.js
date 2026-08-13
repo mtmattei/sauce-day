@@ -7,7 +7,7 @@ import {
   settlement, yieldPlan, seriesData, grappaRecord, daysToGo
 } from "./calc.js";
 import { h, frag, field, select, check, personSelect, delButton, card, stat,
-         sectionBar, empty, addRow, nextSort, me } from "./ui.js";
+         sectionBar, empty, addRow, nextSort, me, pressable } from "./ui.js";
 import { stackedBars, bars, line } from "./charts.js";
 import { bottle, icon } from "./icons.js";
 import { SHORTLIST, SUGGESTION, perLitre } from "./grappas.js";
@@ -93,7 +93,7 @@ function buyRow(i) {
     .filter(e => e.item_id && String(e.item_id) === String(i.id))
     .reduce((a, e) => a + Number(e.amount || 0), 0);
   return h("div", { class: "row buy" + (i.obtained ? " got" : "") + (locked ? " locked" : "") },
-    check("items", i, "obtained", null, { disabled: locked }),
+    check("items", i, "obtained", null, { disabled: locked, ariaLabel: "Got " + i.name }),
     h("div", { class: "rowmain" },
       h("div", { class: "rowtitle" }, i.name,
         i.link ? h("a", { href: i.link, target: "_blank", rel: "noopener", class: "link" }, "↗") : null),
@@ -191,11 +191,11 @@ function ledgerRow(i) {
   const locked = !!i.locked && !isUnlocked(i);
   return h("div", { class: "row item" + (open ? " open" : "")
       + (locked ? " locked" : "") + (i.obtained ? " got" : "") },
-    check("items", i, "obtained", null, { disabled: locked }),
-    h("div", { class: "rowmain", onClick: () => {
+    check("items", i, "obtained", null, { disabled: locked, ariaLabel: "Got " + i.name }),
+    h("div", { class: "rowmain", ...pressable(() => {
       if (locked) { flash("Locked — tap the padlock to edit"); return; }
       state.ui = { ...(state.ui || {}), openItem: open ? null : i.id }; render();
-    } },
+    }) },
       h("div", { class: "rowtitle" }, i.name),
       h("div", { class: "rowsub" },
         [i.kind, i.qty ? "qty " + i.qty : null, i.store, i.assigned_to].filter(Boolean).join(" · ")
@@ -212,10 +212,10 @@ function ownedRow(i) {
   const open = state.ui?.openItem === i.id;
   const locked = !!i.locked && !isUnlocked(i);
   return h("div", { class: "row owned" + (open ? " open" : "") + (locked ? " locked" : "") },
-    h("div", { class: "rowmain", onClick: () => {
+    h("div", { class: "rowmain", ...pressable(() => {
       if (locked) { flash("Owned kit is locked — tap the padlock to edit"); return; }
       state.ui = { ...(state.ui || {}), openItem: open ? null : i.id }; render();
-    } },
+    }) },
       h("span", { class: "oname" }, i.name),
       h("span", { class: "ometa" },
         [i.qty ? "× " + i.qty : null, i.assigned_to].filter(Boolean).join(" · "))),
@@ -477,10 +477,10 @@ export function viewMenu() {
 function menuRow(m) {
   const open = state.ui?.openMenu === m.id;
   return h("div", { class: "row item" + (m.confirmed ? " got" : "") + (open ? " open" : "") },
-    check("menu", m, "confirmed"),
-    h("div", { class: "rowmain", onClick: () => {
+    check("menu", m, "confirmed", null, { ariaLabel: "Confirmed: " + m.dish }),
+    h("div", { class: "rowmain", ...pressable(() => {
       state.ui = { ...(state.ui || {}), openMenu: open ? null : m.id }; render();
-    } },
+    }) },
       h("div", { class: "rowtitle" }, m.dish),
       h("div", { class: "rowsub" }, [m.source, m.qty ? "qty " + m.qty : null, m.notes].filter(Boolean).join(" · ") || "tap to edit")),
     h("div", { class: "rowend" }, personSelect("menu", m, "who")),
@@ -525,10 +525,10 @@ export function viewRun() {
 function runRow(r) {
   const open = state.ui?.openRun === r.id;
   return h("div", { class: "row item" + (r.done ? " got" : "") + (open ? " open" : "") },
-    check("runsheet", r, "done"),
-    h("div", { class: "rowmain", onClick: () => {
+    check("runsheet", r, "done", null, { ariaLabel: "Done: " + r.activity }),
+    h("div", { class: "rowmain", ...pressable(() => {
       state.ui = { ...(state.ui || {}), openRun: open ? null : r.id }; render();
-    } },
+    }) },
       h("div", { class: "rowtitle" }, h("span", { class: "time" }, r.time_label || ""), " ", r.activity),
       h("div", { class: "rowsub" }, [r.equipment, r.notes].filter(Boolean).join(" · "))),
     h("div", { class: "rowend" }, personSelect("runsheet", r, "lead")),

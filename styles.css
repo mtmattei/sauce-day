@@ -927,7 +927,7 @@ svg { display: block; width: 100%; height: auto; overflow: visible; }
   position: fixed; left: 50%; bottom: 1.5rem; transform: translate(-50%, .75rem);
   background: var(--fg); color: var(--bg); padding: .55rem .9rem;
   font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; font-weight: 600;
-  opacity: 0; pointer-events: none; transition: all .18s var(--e); z-index: 80;
+  opacity: 0; pointer-events: none; transition: opacity .18s var(--e), transform .18s var(--e); z-index: 80;
   max-width: 90vw; text-align: center;
 }
 .toast.show { opacity: 1; transform: translate(-50%, 0); }
@@ -1183,11 +1183,25 @@ svg { display: block; width: 100%; height: auto; overflow: visible; }
 .row.owned.locked .rowmain { cursor: default; }
 .row.owned .oname { font-size: .8125rem; font-weight: 400; color: var(--fg-2); white-space: nowrap; }
 .row.owned .ometa {
-  font-family: var(--m); font-size: .625rem; color: var(--fg-4);
+  /* content floor is --fg-3: measured 4.6:1 vs --fg-4's 2.42:1 */
+  font-family: var(--m); font-size: .625rem; color: var(--fg-3);
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 .row.owned:hover .oname { color: var(--fg); }
-.row.owned .mono.dim { font-size: .6875rem; color: var(--fg-4); }
+.row.owned .mono.dim { font-size: .6875rem; color: var(--fg-3); }
 .row.owned .lockbtn { border-color: transparent; }
 .row.owned .lockbtn:hover { border-color: var(--hair); }
 .row.owned.open { border-color: var(--tomato-2); background: var(--bg-2); }
+
+/* ---------------------------------------------------------------- a11y pass */
+/* The tick is the most-used control in the app and it was 18px square. The
+   visible box stays small; the finger's target does not. */
+.chk { position: relative; }
+.chk::before { content: ""; position: absolute; inset: -13px -9px; }
+.chk.off::before { content: none; }
+
+/* screen-reader-only: the shell's h1 and the Board's section headings */
+.vh {
+  position: absolute; width: 1px; height: 1px; margin: -1px;
+  clip-path: inset(50%); overflow: hidden; white-space: nowrap;
+}

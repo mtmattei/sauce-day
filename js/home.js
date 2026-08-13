@@ -75,7 +75,7 @@ export function viewBoard() {
       h("span", {}, myDishes.map(m => m.dish).join(" · ")), arrow()));
   }
   const you = section("byou",
-    h("div", { class: "k" }, name ? `Ciao ${name}` : "You"),
+    h("h2", { class: "k" }, name ? `Ciao ${name}` : "You"),
     yous.length ? frag(...yous)
       : h("p", { class: "bsquare" }, "You're square. Nothing on your list."));
 
@@ -90,6 +90,7 @@ export function viewBoard() {
                      : "all in hand")
       : "set the bushel count and the wall draws itself";
   const wall = section("bjars",
+    h("h2", { class: "vh" }, "The jars"),
     h("a", { class: "bhead", href: "#/sauce" },
       h("span", { class: "k" }, "The jars"),
       h("b", {}, wallHead), h("span", { class: "bsub" }, wallSub), arrow()),
@@ -100,7 +101,7 @@ export function viewBoard() {
 
   // ---- 4 · crew pulse: a dot per homie with something still to do
   const pulse = section("bpulse",
-    h("div", { class: "k" }, "The crew"),
+    h("h2", { class: "k" }, "The crew"),
     ...state.members.map(m => {
       const left = state.items.filter(i => buyable(i) && !i.obtained && assignedTo(i, m.display_name)).length;
       const net = st.net.find(p => p.name === m.display_name)?.net || 0;
@@ -121,6 +122,7 @@ export function viewBoard() {
         : { b: money0(g.price), s: `${money0(record - Number(g.price))} short of the record` })
     : { b: money0(record), s: "the line to clear — not bought yet" };
   const grappa = section("brecord",
+    h("h2", { class: "vh" }, "The grappa"),
     h("a", { class: "bhead", href: "#/grappa" },
       h("span", { class: "k" }, "The grappa"),
       h("b", { class: grappaLine.good ? "good" : "" }, grappaLine.b),
@@ -133,6 +135,7 @@ export function viewBoard() {
     h("span", { class: "track" },
       h("i", { style: `width:${d.total ? (d.done / d.total * 100).toFixed(1) : 0}%` })));
   const ready = section("bready",
+    h("h2", { class: "vh" }, "Readiness"),
     meter("Bought", "#/buy", r.buy),
     meter("Menu", "#/menu", r.menu),
     meter("Run sheet", "#/run", r.run));

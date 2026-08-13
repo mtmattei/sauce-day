@@ -24,6 +24,23 @@ export function h(tag, attrs = {}, ...kids) {
 
 export const frag = (...kids) => { const f = document.createDocumentFragment(); kids.flat().forEach(k => k && f.appendChild(k)); return f; };
 
+// column names carry underscores; a screen reader should not have to say them
+const humanize = col => col.replace(/_/g, " ");
+
+/**
+ * Attributes that make a non-button element act like one: reachable by tab,
+ * fired by Enter and Space. Every rowmain opener uses this — a div with only
+ * an onClick is invisible to the keyboard.
+ */
+export function pressable(onActivate) {
+  return {
+    role: "button", tabindex: "0", onClick: onActivate,
+    onKeydown: e => {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onActivate(e); }
+    }
+  };
+}
+
 /** Text/number input bound to one column of one row. Saves on change. */
 export function field(table, row, col, opts = {}) {
   const inp = h("input", {
@@ -33,7 +50,7 @@ export function field(table, row, col, opts = {}) {
     placeholder: opts.placeholder || "",
     inputmode: opts.type === "number" ? "decimal" : null,
     step: opts.step || (opts.type === "number" ? "0.01" : null),
-    "aria-label": opts.label || col
+    "aria-label": opts.label || humanize(col)
   });
   inp.addEventListener("change", async () => {
     let v = inp.value;
@@ -46,7 +63,7 @@ export function field(table, row, col, opts = {}) {
 
 /** Dropdown bound to one column. */
 export function select(table, row, col, options, opts = {}) {
-  const s = h("select", { class: "f " + (opts.class || ""), "aria-label": opts.label || col },
+  const s = h("select", { class: "f " + (opts.class || ""), "aria-label": opts.label || humanize(col) },
     h("option", { value: "" }, opts.blank || "—"),
     ...options.map(o => h("option", { value: o, selected: (row[col] || "") === o }, o)));
   s.value = row[col] ?? "";
@@ -56,11 +73,14 @@ export function select(table, row, col, options, opts = {}) {
 }
 
 /** Big tappable checkbox bound to a boolean column. opts.disabled renders it
-    inert — a locked row's tick must refuse the tap, not half-take it. */
+    inert — a locked row's tick must refuse the tap, not half-take it. When no
+    visible label is given, opts.ariaLabel names the box for screen readers;
+    "checkbox, unchecked" with no clue what for is not a control. */
 export function check(table, row, col, label, opts = {}) {
   const id = "c" + Math.random().toString(36).slice(2);
   const box = h("input", { type: "checkbox", id, checked: !!row[col],
-    disabled: opts.disabled || null });
+    disabled: opts.disabled || null,
+    "aria-label": label ? null : (opts.ariaLabel || humanize(col)) });
   box.addEventListener("change", () => update(table, row.id, { [col]: box.checked }));
   return h("label", { class: "chk" + (opts.disabled ? " off" : "") }, box, h("span", {}, label || ""));
 }
