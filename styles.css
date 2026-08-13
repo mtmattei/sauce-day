@@ -559,7 +559,12 @@ select.f { padding-right: .25rem; }
 
 /* ---------------------------------------------------------------- tables */
 .scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; border: 1px solid var(--hair); }
-table.grid { border-collapse: collapse; width: 100%; font-size: .8125rem; }
+/* Tables sit inside cards, which give every child side margins — width: 100%
+   ignores margins and hangs 1.7rem past the card's right edge. stretch (and
+   its prefixed elders) sizes the MARGIN box to the container instead; the
+   bare 100% stays as the fallback for anything too old to know better. */
+table.grid { border-collapse: collapse; width: 100%; width: -moz-available;
+             width: -webkit-fill-available; width: stretch; font-size: .8125rem; }
 table.grid.wide { min-width: 46rem; }
 table.grid th, table.grid td {
   padding: .44rem .6rem; text-align: right; border-bottom: 1px solid var(--hair-2);
