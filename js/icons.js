@@ -108,6 +108,16 @@ const P = {
   check:
     '<circle cx="12" cy="12" r="8.8"/><path d="m7.9 12.2 2.9 2.9 5.3-6"/>',
 
+  // owned kit is locked against fat fingers; the open one means "editing"
+  lock:
+    '<path d="M6.6 11.2h10.8v9.2H6.6z"/>' +
+    '<path d="M8.8 11.2V8.4a3.2 3.2 0 0 1 6.4 0v2.8"/>' +
+    '<circle cx="12" cy="15.6" r="1.15"/>',
+  lockopen:
+    '<path d="M6.6 11.2h10.8v9.2H6.6z"/>' +
+    '<path d="M8.8 11.2V8.4a3.2 3.2 0 0 1 6.3-.8"/>' +
+    '<circle cx="12" cy="15.6" r="1.15"/>',
+
   flame:
     '<path d="M12 3.2c3 4 5.1 5.6 5.1 9.1a5.1 5.1 0 0 1-10.2 0c0-1.6.8-2.9 1.7-3.9.4 1 1 1.6 1.8 2C10.1 8.3 11 5.7 12 3.2z"/>'
 };

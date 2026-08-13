@@ -9,7 +9,7 @@ import {
 import { h, frag, field, select, check, personSelect, delButton, card, stat,
          sectionBar, empty, addRow, nextSort, me } from "./ui.js";
 import { stackedBars, bars, line } from "./charts.js";
-import { bottle } from "./icons.js";
+import { bottle, icon } from "./icons.js";
 import { SHORTLIST, perLitre, shortlistVerdict } from "./grappas.js";
 import { mountStack } from "./stack.js";
 import { jarWall } from "./jars.js";
@@ -105,16 +105,37 @@ export function viewLedger() {
 
 function ledgerRow(i) {
   const open = state.ui?.openItem === i.id;
-  return h("div", { class: "row item" + (open ? " open" : "") },
+  // Owned kit is locked: the mill and the cauldrons don't change between
+  // Augusts, but a thumb on a phone changes them by accident. The lock is a
+  // guard, not a wall — one tap opens it, and it closes itself next session.
+  const unlocked = !!state.ui?.unlockedItems?.[i.id];
+  const locked = i.kind === "Owned" && !unlocked;
+  const toggleLock = () => {
+    const u = { ...(state.ui?.unlockedItems || {}) };
+    if (unlocked) delete u[i.id]; else u[i.id] = true;
+    state.ui = { ...(state.ui || {}), unlockedItems: u,
+                 openItem: unlocked && open ? null : state.ui?.openItem };
+    render();
+  };
+  return h("div", { class: "row item" + (open ? " open" : "") + (locked ? " locked" : "") },
     check("items", i, "obtained"),
     h("div", { class: "rowmain", onClick: () => {
+      if (locked) { flash("Owned kit is locked — tap the padlock to edit"); return; }
       state.ui = { ...(state.ui || {}), openItem: open ? null : i.id }; render();
     } },
       h("div", { class: "rowtitle" }, i.name),
       h("div", { class: "rowsub" },
         [i.kind, i.qty ? "qty " + i.qty : null, i.store, i.assigned_to].filter(Boolean).join(" · ")
         || "tap to edit")),
-    h("div", { class: "rowend" }, h("span", { class: "mono" }, money(i.budget))),
+    h("div", { class: "rowend" },
+      h("span", { class: "mono" }, money(i.budget)),
+      i.kind === "Owned" ? h("button", {
+        class: "icon lockbtn" + (unlocked ? " on" : ""),
+        title: locked ? "Unlock to edit" : "Lock again",
+        "aria-label": locked ? `Unlock ${i.name} for editing` : `Lock ${i.name}`,
+        "aria-pressed": unlocked ? "true" : "false",
+        onClick: toggleLock
+      }, icon(locked ? "lock" : "lockopen")) : null),
     open ? h("div", { class: "editor" },
       lbl("Name", field("items", i, "name")),
       lbl("Need / owned", field("items", i, "kind")),
