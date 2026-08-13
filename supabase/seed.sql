@@ -47,7 +47,6 @@ insert into public.items
   (2026, 'toolkit', 'Setup & Workspace', 6, 'Speakers', 'Owned', '1', 0, 'David', null, 'Yes', null, null),
 
   -- Toolkit · Wash & Prep
-  (2026, 'toolkit', 'Wash & Prep', 7, 'Kiddie pool', 'Owned', '1', 0, 'Matt', null, 'Yes', null, null),
   (2026, 'toolkit', 'Wash & Prep', 8, 'Buckets (Canadian Tire)', 'Owned', '6', 0, 'David', 'Canadian Tire', 'Buy', null, null),
   (2026, 'toolkit', 'Wash & Prep', 9, 'Buckets (Home Depot)', 'Owned', '7', 0, 'David / Matt', 'Home Depot', 'Yes', null, null),
   (2026, 'toolkit', 'Wash & Prep', 10, 'Cutting boards', 'Owned', '5', 0, 'Matt', null, 'Yes', null, null),
@@ -162,7 +161,7 @@ insert into public.runsheet
    'bushel', 90, '7 bushels of San Marzano', true, false, 'Get there early, best tomatoes go first'),
   (2026,  2, 'PREP', 'Fri PM', 'Wash and sterilise every jar', 'Matt', 'All', 'Jars, dishwasher, Barkeepers Friend',
    'jar', 120, null, true, false, 'Count as you go'),
-  (2026,  3, 'PREP', 'Fri PM', 'Set up tables, tent, chairs, kiddie pool', 'Matt', 'Chris', 'Tables, tent, chairs, pool',
+  (2026,  3, 'PREP', 'Fri PM', 'Set up tables, tent and chairs', 'Matt', 'Chris', 'Tables, tent, chairs',
    null, 45, null, false, false, null),
   (2026,  4, 'PREP', 'Fri PM', 'Fill and check propane tanks', 'Matt', 'Mike', '4 tanks',
    null, 30, null, false, false, 'Refill beats buying new'),
@@ -178,7 +177,7 @@ insert into public.runsheet
    null, 30, 'Egg, bacon, sausage, cheese', false, false, 'Breakfast before the main production push'),
   (2026,  9, 'DAY', '07:30', 'Fire up the burners', 'Matt', 'Mike', '3 burners, cauldrons, propane',
    'flame', 30, 'Propane', true, false, 'Wash water on at the same time'),
-  (2026, 10, 'DAY', '08:00', 'Wash tomatoes', 'All', 'All', 'Kiddie pool, buckets, strainer',
+  (2026, 10, 'DAY', '08:00', 'Wash tomatoes', 'All', 'All', 'Buckets, strainer',
    null, 60, '7 bushels', false, false, 'Two-stage rinse'),
   (2026, 11, 'DAY', '09:00', 'First batch cooking', 'Nate', 'David', 'Cauldrons, spider ladle',
    'cauldron', 90, 'Washed tomatoes', true, false, 'Blanch and cook'),
