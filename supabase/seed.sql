@@ -43,7 +43,7 @@ insert into public.items
   (2026, 'toolkit', 'Setup & Workspace', 2, 'Tables', 'Owned', '2', 0, 'Matt (1) / Chris (1)', null, 'Yes', null, null),
   (2026, 'toolkit', 'Setup & Workspace', 3, 'Chairs', 'Owned', '5', 0, 'David (4) / Matt (2)', null, 'Yes', null, null),
   (2026, 'toolkit', 'Setup & Workspace', 4, 'Pop-up tent', 'Owned', null, 0, 'Matt', null, 'Yes', null, null),
-  (2026, 'toolkit', 'Setup & Workspace', 5, 'Aprons', 'Owned', null, 0, 'Matt', null, 'Yes', null, null),
+  (2026, 'toolkit', 'Setup & Workspace', 5, 'Aprons', 'Owned', '5', 0, 'BYO — each brings his own', null, 'Yes', null, null),
   (2026, 'toolkit', 'Setup & Workspace', 6, 'Speakers', 'Owned', '1', 0, 'David', null, 'Yes', null, null),
 
   -- Toolkit · Wash & Prep
