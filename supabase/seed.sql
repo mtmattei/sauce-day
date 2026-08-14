@@ -88,13 +88,13 @@ insert into public.items
   (2026, 'toolkit', 'Serving & Extras', 36, 'Napkins', 'Owned', null, 0, 'Matt', null, 'Yes', null, null),
 
   -- Ingredients
-  (2026, 'ingredients', null, 1, 'Bushels of tomatoes', 'Need', '10', 175.0, 'Matt / David / Nate', 'Market', 'Yes', 'Recurring. Budget links to Yield & Jars tab', null),
+  (2026, 'ingredients', null, 1, 'Bushels of tomatoes', 'Need', '10', 175.0, 'Matt / David / Nate', 'Market', 'Yes', 'Pickup Fri Aug 28 at the market. Budget links to Yield & Jars tab', null),
   (2026, 'ingredients', null, 2, 'Basil', 'Need', null, 0, 'Matt / David / Nate', 'Market', 'Yes', 'Matt potentially has', null),
   (2026, 'ingredients', null, 3, 'Parsley', 'Need', null, 0, 'Matt / David / Nate', 'Market', 'Yes', 'Matt potentially has', null),
-  (2026, 'ingredients', null, 4, 'Onions', 'Costco', null, 0, 'Matt / David / Nate', 'Costco', 'Yes', null, null),
-  (2026, 'ingredients', null, 5, 'Garlic', 'Costco', null, 0, 'Matt / David / Nate', 'Costco', 'Yes', null, null),
-  (2026, 'ingredients', null, 6, 'Carrots', 'Costco', null, 0, 'Matt / David / Nate', 'Costco', 'Yes', null, null),
-  (2026, 'ingredients', null, 7, 'Celery', 'Costco', null, 0, 'Matt / David / Nate', 'Costco', 'Yes', null, null),
+  (2026, 'ingredients', null, 4, 'Onions', 'Need', '5 kg (~20)', 0, 'Matt / David / Nate', 'Market', 'Yes', 'Soffritto for ~98 L. Roughly one per 5 L.', null),
+  (2026, 'ingredients', null, 5, 'Garlic', 'Need', '12 heads', 0, 'Matt / David / Nate', 'Market', 'Yes', 'Soffritto for ~98 L. A head per 8 L.', null),
+  (2026, 'ingredients', null, 6, 'Carrots', 'Need', '2 kg (~15)', 0, 'Matt / David / Nate', 'Market', 'Yes', 'Soffritto for ~98 L. One per 7 L.', null),
+  (2026, 'ingredients', null, 7, 'Celery', 'Need', '2 bunches', 0, 'Matt / David / Nate', 'Market', 'Yes', 'Soffritto for ~98 L. A stalk per 7 L.', null),
   (2026, 'ingredients', null, 8, 'Salt', 'Have', null, 0, 'Matt / David / Nate', null, 'Yes', null, null),
   (2026, 'ingredients', null, 9, 'Sugar', 'Have', null, 0, 'Matt / David / Nate', null, 'Yes', null, null),
 
@@ -123,7 +123,9 @@ insert into public.items
   (2026, 'food', null, 22, 'Aperol', 'For spritzes', null, 0, 'David', 'SAQ', 'Yes', null, null),
   (2026, 'food', null, 23, 'Italian red wine', 'Chianti, Montepulciano or similar', '3', 0, 'David', 'SAQ', 'Yes', null, null),
   (2026, 'food', null, 24, 'Italian lager', 'Peroni, Moretti or similar', null, 0, null, 'Depanneur', 'Yes', null, null),
-  (2026, 'food', null, 25, 'San Pellegrino', 'Sparkling water for the day', null, 0, null, 'Costco', 'Yes', null, null);
+  (2026, 'food', null, 25, 'San Pellegrino', 'Sparkling water for the day', '12', 0, null, 'Costco', 'Yes', null, null),
+  (2026, 'food', null, 26, 'Bread for grilling', 'Crusty loaf for the parm & balsamic', '2 loaves', 0, 'Nate', 'Bakery', 'Yes', 'The menu serves the parm with grilled bread.', null),
+  (2026, 'food', null, 27, 'Ice', 'For the coolers', '4 bags', 0, 'David', 'Depanneur', 'Yes', 'Friday chill-down needs it and every party forgets it.', null);
 
 -- Lock in anything the crew already owns. `locked` is separate from `kind` so
 -- the UI can offer an explicit Unlock/Edit action later without changing status.
@@ -157,7 +159,7 @@ insert into public.runsheet
   (year, sort_index, section, time_label, activity, lead, crew, equipment,
    icon, duration_min, ingredients, milestone, critical, notes) values
   -- Friday night
-  (2026,  1, 'PREP', 'Fri PM', 'Pick up bushels from the market', 'Nate', 'David', 'Truck, buckets',
+  (2026,  1, 'PREP', 'Fri 28', 'Pick up bushels from the market', 'Nate', 'David', 'Truck, buckets',
    'bushel', 90, '7 bushels of San Marzano', true, false, 'Get there early, best tomatoes go first'),
   (2026,  2, 'PREP', 'Fri PM', 'Wash and sterilise every jar', 'Matt', 'All', 'Jars, dishwasher, Barkeepers Friend',
    'jar', 120, null, true, false, 'Count as you go'),
