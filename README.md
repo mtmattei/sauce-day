@@ -166,6 +166,12 @@ they can sign in immediately.
 Everything syncs live. If David ticks the grappa off at the SAQ, it goes grey on
 your phone a second later.
 
+This same map lives in the app: the **?** in the masthead opens the guide —
+every screen with what it's for, plus a "Where do I…" index that maps the thing
+you want to do to the screen that owns it. It opens itself the first time a
+phone loads the app, then stays behind the ?. Hovering a section on the
+graduated rule shows the same one-liner as a tooltip.
+
 ## Changing the grappa shortlist
 
 `js/grappas.js` is a plain list. To add a bottle: drop a photo in `img/grappa/`,

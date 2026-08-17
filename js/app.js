@@ -9,6 +9,7 @@ import { money0, settlement, yieldPlan, grappaRecord, daysToGo, readiness } from
 import { viewSauceDay, stopTimeline } from "./timeline.js";
 import * as V from "./views.js";
 import * as H from "./home.js";
+import { openGuide, maybeFirstRun } from "./guide.js";
 
 /**
  * The home route is context-aware. Seventeen days out the crew is asking
@@ -32,20 +33,33 @@ function viewHome() {
   return H.viewBoard();
 }
 
+// desc does double duty: the hover tooltip on each nav tick, and the line the
+// guide sheet prints under the screen's name.
 const ROUTES = [
-  { hash: "#/",        label: "Sauce Day", icon: "check", view: viewHome },
-  { hash: "#/buy",     label: "Buy",     icon: "list",   view: V.viewBuy },
-  { hash: "#/spend",   label: "Spend",   icon: "split",  view: V.viewSpend },
-  { hash: "#/sauce",   label: "Sauce",   icon: "jar",    view: V.viewSauce },
-  { hash: "#/menu",    label: "Menu",    icon: "fork",   view: V.viewMenu },
-  { hash: "#/run",     label: "Run",     icon: "clock",  view: V.viewRun },
-  { hash: "#/ledger",  label: "Ledger",  icon: "rows",   view: V.viewLedger },
-  { hash: "#/grappa",  label: "Grappa",  icon: "bottle", view: V.viewGrappa },
-  { hash: "#/photos",  label: "Photos",  icon: "plates", view: V.viewPhotos },
-  { hash: "#/history", label: "History", icon: "bars",   view: V.viewHistory },
+  { hash: "#/",        label: "Sauce Day", icon: "check", view: viewHome,
+    desc: "The board — countdown, what you owe, how ready we are. Becomes the live run of the day when it's close." },
+  { hash: "#/buy",     label: "Buy",     icon: "list",   view: V.viewBuy,
+    desc: "The shopping list, grouped by store. Claim an item, tick it when it's in the truck." },
+  { hash: "#/spend",   label: "Spend",   icon: "split",  view: V.viewSpend,
+    desc: "Log your receipts. The split and who-pays-whom recalculate for everyone." },
+  { hash: "#/sauce",   label: "Sauce",   icon: "jar",    view: V.viewSauce,
+    desc: "The maths — bushels to litres to jars, and how many jars, bands and lids to buy." },
+  { hash: "#/menu",    label: "Menu",    icon: "fork",   view: V.viewMenu,
+    desc: "Who brings what, by service. Confirm a dish once it's bought or made." },
+  { hash: "#/run",     label: "Run",     icon: "clock",  view: V.viewRun,
+    desc: "The order the day happens in. Tick each step as it happens." },
+  { hash: "#/ledger",  label: "Ledger",  icon: "rows",   view: V.viewLedger,
+    desc: "Every item we own or need — toolkit, ingredients, food. Add or edit anything here." },
+  { hash: "#/grappa",  label: "Grappa",  icon: "bottle", view: V.viewGrappa,
+    desc: "The shelf, the hall of fame, and the record this year's bottle has to beat." },
+  { hash: "#/photos",  label: "Photos",  icon: "plates", view: V.viewPhotos,
+    desc: "The photobook. Paste an image link and it's on everyone's phone." },
+  { hash: "#/history", label: "History", icon: "bars",   view: V.viewHistory,
+    desc: "Every year since 2020 — the charts and the permanent record." },
   // rail: not a section of the day, so it keeps its route but gives up its tick
   // on the graduated rule and lives at the foot of the readout instead.
-  { hash: "#/crew",    label: "Crew",    icon: "crew",   view: V.viewCrew, rail: true }
+  { hash: "#/crew",    label: "Crew",    icon: "crew",   view: V.viewCrew, rail: true,
+    desc: "Who can get in. Lives at the foot of the rail." }
 ];
 
 const SECTIONS = ROUTES.filter(r => !r.rail);
@@ -62,6 +76,7 @@ function renderNav() {
   nav().innerHTML = "";
   SECTIONS.forEach((x, i) => nav().appendChild(
     h("a", { href: x.hash, class: "navlink" + (x === r ? " on" : ""),
+             title: x.desc,
              "aria-current": x === r ? "page" : null },
       h("span", { class: "ni" }),
       h("span", { class: "nn" }, String(i + 1).padStart(2, "0")),
@@ -229,6 +244,15 @@ function renderSyncBar() {
   }
 }
 
+let helpWired = false;
+function wireHelp() {
+  if (helpWired) return;
+  const btn = document.getElementById("help");
+  if (!btn) return;
+  helpWired = true;
+  btn.addEventListener("click", () => openGuide(ROUTES));
+}
+
 function renderHead() {
   const ed = document.getElementById("edition");
   const now = document.getElementById("now");
@@ -251,6 +275,7 @@ export function render() {
   document.title = `Sauce Day ${YEAR} · ${r.label}`;
   renderNav();
   renderHead();
+  wireHelp();
   renderSyncBar();
   renderReadout();
   // the Board carries the rail's numbers full-width, so on #/ the rail stands
@@ -262,6 +287,9 @@ export function render() {
   el.innerHTML = "";
   el.appendChild(r.view());
   el.scrollTop = y;
+  // a device's very first signed-in render opens the guide as the welcome mat;
+  // guide.js remembers the visit, so this is a no-op ever after
+  maybeFirstRun(ROUTES);
 }
 V.setRender(render);
 H.setRender(render);
