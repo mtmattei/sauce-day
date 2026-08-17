@@ -646,13 +646,13 @@ export const DEMO_DATA = {
       "name": "Outdoor sink",
       "kind": "Prospect",
       "qty": "1",
-      "budget": 124.99,
+      "budget": 378,
       "assigned_to": null,
       "store": null,
       "obtained": false,
       "repeat_next": "Maybe",
-      "comments": "Prospect: PDG folding cleaning table with built-in sink & tap, $124.99 at Canadian Tire, in stock for pickup. Alt: CleanIT Riverstone wall-mount at Home Depot, $89.98, delivery only. Prices read 17 Aug 2026.",
-      "link": "https://www.canadiantire.ca/en/pdp/pdg-outdoor-portable-fish-game-cleaning-table-with-built-in-sink-tap-1784959p.html"
+      "comments": "Preferred: Glacier Bay all-in-one stainless freestanding sink, $378 at Home Depot, in stock Pointe-Claire (Aisle 48, Bay 006). Needs a hose-to-faucet adapter. Budget option: PDG folding table with sink & tap, $124.99 at Canadian Tire. Prices read 17 Aug 2026.",
+      "link": "https://www.homedepot.ca/product/glacier-bay-21-5-x-24-inch-all-in-one-freestanding-stainless-steel-utility-sink-with-pull-down-faucet/1001822307"
     },
     {
       "id": "demo-0035",
