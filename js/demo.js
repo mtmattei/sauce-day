@@ -646,13 +646,13 @@ export const DEMO_DATA = {
       "name": "Outdoor sink",
       "kind": "Prospect",
       "qty": "1",
-      "budget": 378,
+      "budget": 279.99,
       "assigned_to": null,
       "store": null,
       "obtained": false,
       "repeat_next": "Maybe",
-      "comments": "Preferred: Glacier Bay all-in-one stainless freestanding sink, $378 at Home Depot, in stock Pointe-Claire (Aisle 48, Bay 006). Needs a hose-to-faucet adapter. Budget option: PDG folding table with sink & tap, $124.99 at Canadian Tire. Prices read 17 Aug 2026.",
-      "link": "https://www.homedepot.ca/product/glacier-bay-21-5-x-24-inch-all-in-one-freestanding-stainless-steel-utility-sink-with-pull-down-faucet/1001822307"
+      "comments": "Preferred: 1 m stainless sink station — half countertop, half bowl, 304 restaurant steel, $279.99 on Amazon, in stock, 4.8/5. No faucet in the listing — plan on a hose tap. Budget option: PDG folding table with sink & tap, $124.99 at Canadian Tire. Prices read 17 Aug 2026.",
+      "link": "https://www.amazon.ca/dp/B0H397TB3K"
     },
     {
       "id": "demo-0035",

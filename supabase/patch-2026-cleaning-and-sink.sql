@@ -24,7 +24,7 @@ insert into public.items
   -- kind 'Prospect' + no store keeps the sink off the Buy list and out of the
   -- readiness count until the crew commits (a store would put it on the list).
   -- Committing = set kind to 'Need' and store to 'Canadian Tire'.
-  (2026, 'toolkit', 'Wash & Prep', 7, 'Outdoor sink', 'Prospect', '1', 378.00, null, null, 'Maybe', 'Preferred: Glacier Bay all-in-one stainless freestanding sink, $378 at Home Depot, in stock Pointe-Claire (Aisle 48, Bay 006). Needs a hose-to-faucet adapter. Budget option: PDG folding table with sink & tap, $124.99 at Canadian Tire. Prices read 17 Aug 2026.', 'https://www.homedepot.ca/product/glacier-bay-21-5-x-24-inch-all-in-one-freestanding-stainless-steel-utility-sink-with-pull-down-faucet/1001822307');
+  (2026, 'toolkit', 'Wash & Prep', 7, 'Outdoor sink', 'Prospect', '1', 279.99, null, null, 'Maybe', 'Preferred: 1 m stainless sink station — half countertop, half bowl, 304 restaurant steel, $279.99 on Amazon, in stock, 4.8/5. No faucet in the listing — plan on a hose tap. Budget option: PDG folding table with sink & tap, $124.99 at Canadian Tire. Prices read 17 Aug 2026.', 'https://www.amazon.ca/dp/B0H397TB3K');
 
 -- Matt recounted: 55 jars on hand.
 update public.jar_inventory set jars = 55 where year = 2026 and person = 'Matt';

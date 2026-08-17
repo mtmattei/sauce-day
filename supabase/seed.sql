@@ -52,7 +52,7 @@ insert into public.items
   -- No store on purpose: a store would put the row on the Buy list and into
   -- the readiness count. The store lives in the comment until the crew commits;
   -- committing = set kind to 'Need' and store to 'Canadian Tire'.
-  (2026, 'toolkit', 'Wash & Prep', 7, 'Outdoor sink', 'Prospect', '1', 378.00, null, null, 'Maybe', 'Preferred: Glacier Bay all-in-one stainless freestanding sink, $378 at Home Depot, in stock Pointe-Claire (Aisle 48, Bay 006). Needs a hose-to-faucet adapter. Budget option: PDG folding table with sink & tap, $124.99 at Canadian Tire. Prices read 17 Aug 2026.', 'https://www.homedepot.ca/product/glacier-bay-21-5-x-24-inch-all-in-one-freestanding-stainless-steel-utility-sink-with-pull-down-faucet/1001822307'),
+  (2026, 'toolkit', 'Wash & Prep', 7, 'Outdoor sink', 'Prospect', '1', 279.99, null, null, 'Maybe', 'Preferred: 1 m stainless sink station — half countertop, half bowl, 304 restaurant steel, $279.99 on Amazon, in stock, 4.8/5. No faucet in the listing — plan on a hose tap. Budget option: PDG folding table with sink & tap, $124.99 at Canadian Tire. Prices read 17 Aug 2026.', 'https://www.amazon.ca/dp/B0H397TB3K'),
   (2026, 'toolkit', 'Wash & Prep', 8, 'Buckets (Canadian Tire)', 'Owned', '6', 0, 'David', 'Canadian Tire', 'Buy', null, null),
   (2026, 'toolkit', 'Wash & Prep', 9, 'Buckets (Home Depot)', 'Owned', '7', 0, 'David (5) / Matt (2)', 'Home Depot', 'Yes', null, null),
   (2026, 'toolkit', 'Wash & Prep', 10, 'Cutting boards', 'Owned', '5', 0, 'Matt', null, 'Yes', null, null),
