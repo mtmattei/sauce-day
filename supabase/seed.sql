@@ -47,6 +47,9 @@ insert into public.items
   (2026, 'toolkit', 'Setup & Workspace', 6, 'Speakers', 'Owned', '1', 0, 'David', null, 'Yes', null, null),
 
   -- Toolkit · Wash & Prep
+  -- The sink is a prospect, not a purchase: kind 'Prospect' keeps it off the
+  -- Buy list and out of the readiness count until the crew commits.
+  (2026, 'toolkit', 'Wash & Prep', 7, 'Outdoor sink', 'Prospect', '1', 0, null, null, 'Maybe', 'Prospect for this year: a portable outdoor sink would take the wash station off the buckets. Price one out before committing.', null),
   (2026, 'toolkit', 'Wash & Prep', 8, 'Buckets (Canadian Tire)', 'Owned', '6', 0, 'David', 'Canadian Tire', 'Buy', null, null),
   (2026, 'toolkit', 'Wash & Prep', 9, 'Buckets (Home Depot)', 'Owned', '7', 0, 'David (5) / Matt (2)', 'Home Depot', 'Yes', null, null),
   (2026, 'toolkit', 'Wash & Prep', 10, 'Cutting boards', 'Owned', '5', 0, 'Matt', null, 'Yes', null, null),
@@ -80,12 +83,15 @@ insert into public.items
   (2026, 'toolkit', 'Cleaning & Sanitation', 30, 'Garbage bags', 'Owned', null, 0, 'Matt', null, 'Yes', null, null),
   (2026, 'toolkit', 'Cleaning & Sanitation', 31, 'Metal sponges', 'Owned', null, 0, 'Matt', null, 'Yes', null, null),
   (2026, 'toolkit', 'Cleaning & Sanitation', 32, 'Cleaning brush', 'Owned', null, 0, 'Matt', null, 'Yes', null, null),
-  (2026, 'toolkit', 'Cleaning & Sanitation', 33, 'Dawn dish soap', 'Owned', null, 0, 'David', null, 'Yes', null, null),
-  (2026, 'toolkit', 'Cleaning & Sanitation', 34, 'Scrub pads', 'Owned', null, 0, 'David', null, 'Yes', null, null),
-  (2026, 'toolkit', 'Cleaning & Sanitation', 35, 'Barkeepers Friend', 'Owned', null, 0, 'David', null, 'Yes', null, null),
+  -- Dawn and the sponge pack are bought fresh this year, so they are 'Need',
+  -- carry a store and a budget, and land on the Buy list under Grocery.
+  (2026, 'toolkit', 'Cleaning & Sanitation', 33, 'Dawn dish soap', 'Need', '1', 6.00, 'David', 'Grocery', 'Buy', 'Fresh bottle for this year.', null),
+  (2026, 'toolkit', 'Cleaning & Sanitation', 34, 'Sponges (pack)', 'Need', '1 pack', 5.00, 'David', 'Grocery', 'Buy', 'New this year — kitchen sponges for the wash station.', null),
+  (2026, 'toolkit', 'Cleaning & Sanitation', 35, 'Scrub pads', 'Owned', null, 0, 'David', null, 'Yes', null, null),
+  (2026, 'toolkit', 'Cleaning & Sanitation', 36, 'Barkeepers Friend', 'Owned', null, 0, 'David', null, 'Yes', null, null),
 
   -- Toolkit · Serving & Extras
-  (2026, 'toolkit', 'Serving & Extras', 36, 'Napkins', 'Owned', null, 0, 'Matt', null, 'Yes', null, null),
+  (2026, 'toolkit', 'Serving & Extras', 37, 'Napkins', 'Owned', null, 0, 'Matt', null, 'Yes', null, null),
 
   -- Ingredients
   (2026, 'ingredients', null, 1, 'Bushels of tomatoes', 'Need', '10', 175.0, 'Matt / David / Nate', 'Market', 'Yes', 'Pickup Fri Aug 28 at the market. Budget links to Yield & Jars tab', null),
