@@ -21,9 +21,13 @@ insert into public.items
   (year, category, subcategory, sort_index, name, kind, qty, budget, assigned_to, store,
    repeat_next, comments, link) values
   (2026, 'toolkit', 'Cleaning & Sanitation', 34, 'Sponges (pack)', 'Need', '1 pack', 5.00, 'David', 'Grocery', 'Buy', 'New this year — kitchen sponges for the wash station.', null),
-  -- kind 'Prospect' keeps the sink off the Buy list and out of the readiness
-  -- count until the crew commits; it reads as "to get" on the Ledger only.
-  (2026, 'toolkit', 'Wash & Prep', 7, 'Outdoor sink', 'Prospect', '1', 0, null, null, 'Maybe', 'Prospect for this year: a portable outdoor sink would take the wash station off the buckets. Price one out before committing.', null);
+  -- kind 'Prospect' + no store keeps the sink off the Buy list and out of the
+  -- readiness count until the crew commits (a store would put it on the list).
+  -- Committing = set kind to 'Need' and store to 'Canadian Tire'.
+  (2026, 'toolkit', 'Wash & Prep', 7, 'Outdoor sink', 'Prospect', '1', 124.99, null, null, 'Maybe', 'Prospect: PDG folding cleaning table with built-in sink & tap, $124.99 at Canadian Tire, in stock for pickup. Alt: CleanIT Riverstone wall-mount at Home Depot, $89.98, delivery only. Prices read 17 Aug 2026.', 'https://www.canadiantire.ca/en/pdp/pdg-outdoor-portable-fish-game-cleaning-table-with-built-in-sink-tap-1784959p.html');
+
+-- Matt recounted: 55 jars on hand.
+update public.jar_inventory set jars = 55 where year = 2026 and person = 'Matt';
 
 -- Keep the section's ordering in step with the reseeded numbering.
 update public.items set sort_index = 35 where year = 2026 and name = 'Scrub pads';

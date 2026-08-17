@@ -646,13 +646,13 @@ export const DEMO_DATA = {
       "name": "Outdoor sink",
       "kind": "Prospect",
       "qty": "1",
-      "budget": 0,
+      "budget": 124.99,
       "assigned_to": null,
       "store": null,
       "obtained": false,
       "repeat_next": "Maybe",
-      "comments": "Prospect for this year: a portable outdoor sink would take the wash station off the buckets. Price one out before committing.",
-      "link": null
+      "comments": "Prospect: PDG folding cleaning table with built-in sink & tap, $124.99 at Canadian Tire, in stock for pickup. Alt: CleanIT Riverstone wall-mount at Home Depot, $89.98, delivery only. Prices read 17 Aug 2026.",
+      "link": "https://www.canadiantire.ca/en/pdp/pdg-outdoor-portable-fish-game-cleaning-table-with-built-in-sink-tap-1784959p.html"
     },
     {
       "id": "demo-0035",
