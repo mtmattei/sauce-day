@@ -142,6 +142,49 @@ const WX = c =>
   c === 0 ? "Clear" : c <= 3 ? "Cloud" : c <= 48 ? "Fog" :
   c <= 67 ? "Rain" : c <= 77 ? "Snow" : c <= 82 ? "Showers" : "Storm";
 
+/* ---------------------------------------------------------------- wake lock */
+/**
+ * On the day the phone is propped against a bucket with tomato on everyone's
+ * hands, and a screen that sleeps every thirty seconds is a screen nobody
+ * reads. Hold the wake lock while the timeline is the live view, and only
+ * then — a February peek at the run of the day has no business keeping a
+ * screen alive.
+ *
+ * The OS drops the lock whenever the tab is hidden (a call, a lock button, a
+ * switch to the camera), and it never comes back on its own, so re-request it
+ * when the page becomes visible again. Unsupported browsers no-op: this is a
+ * comfort, never a dependency.
+ */
+let wakeLock = null;
+let wantWake = false;
+
+async function acquireWake() {
+  if (!wantWake || wakeLock || !("wakeLock" in navigator) || document.hidden) return;
+  try {
+    const l = await navigator.wakeLock.request("screen");
+    // Identity check, not a bare null: render() releases and re-acquires around
+    // every repaint, and a late release event from the OLD lock would otherwise
+    // drop our reference to the NEW one — leaving a lock held with no way back
+    // to it. Only the current lock may clear the slot.
+    l.addEventListener("release", () => { if (wakeLock === l) wakeLock = null; });
+    if (wantWake) wakeLock = l;
+    else l.release().catch(() => {});      // gave up while we were waiting
+  } catch {
+    wakeLock = null;              // denied (battery saver, no user gesture yet)
+  }
+}
+
+function releaseWake() {
+  wantWake = false;
+  const l = wakeLock;
+  wakeLock = null;
+  l?.release?.().catch(() => {});
+}
+
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden) acquireWake();
+});
+
 /* ---------------------------------------------------------------- writes */
 async function toggleStep(step, on) {
   await update("runsheet", step.id, { done: on, done_at: on ? new Date().toISOString() : null });
@@ -160,6 +203,11 @@ export function viewSauceDay() {
 
   const day = buildDay();
   const root = h("div", { class: "sday" });
+
+  // the prep evening counts: Friday night is jars and propane, also read off a
+  // propped-up phone. Anything further out is planning, and planning can sleep.
+  wantWake = day.daysOut !== null && day.daysOut <= 1;
+  if (wantWake) acquireWake(); else releaseWake();
 
   // ---- the head: clock, next up, how the day is running
   root.appendChild(dayHead(day));
@@ -334,4 +382,7 @@ function retick(root) {
   root.classList.toggle("is-sealed", day.done === day.total && day.total > 0);
 }
 
-export function stopTimeline() { if (ticker) { clearInterval(ticker); ticker = null; } }
+export function stopTimeline() {
+  if (ticker) { clearInterval(ticker); ticker = null; }
+  releaseWake();                  // navigating away gives the screen back
+}

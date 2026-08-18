@@ -79,7 +79,32 @@ export function viewBoard() {
     yous.length ? frag(...yous)
       : h("p", { class: "bsquare" }, "You're square. Nothing on your list."));
 
-  // ---- 3 · the jar wall: prep until the year is counted, then yield
+  // ---- 3 · what nobody has claimed. The crew pulse tells each man what he
+  // owes; work with no name on it belongs to everyone, which in practice means
+  // it belongs to nobody until someone goes looking. This is that someone.
+  const openItems = state.items.filter(i => buyable(i) && !i.obtained && !i.assigned_to);
+  const openDishes = state.menu.filter(m => !m.confirmed && !m.who);
+  const opens = [];
+  if (openItems.length) {
+    opens.push(h("a", { class: "bline", href: "#/buy", onClick: () => {
+      // land on the full list, not on whatever "mine" filter was left behind
+      state.ui = { ...(state.ui || {}), buyMine: false };
+    } },
+      h("b", { class: "hot" }, `${openItems.length} thing${openItems.length === 1 ? "" : "s"} to buy`),
+      h("span", {}, openItems.slice(0, 3).map(i => i.name).join(" · ")
+        + (openItems.length > 3 ? " …" : "")), arrow()));
+  }
+  if (openDishes.length) {
+    opens.push(h("a", { class: "bline", href: "#/menu" },
+      h("b", { class: "hot" }, `${openDishes.length} dish${openDishes.length === 1 ? "" : "es"}`),
+      h("span", {}, openDishes.slice(0, 3).map(m => m.dish).join(" · ")
+        + (openDishes.length > 3 ? " …" : "")), arrow()));
+  }
+  const unclaimed = opens.length
+    ? section("bopen", h("h2", { class: "k" }, "Nobody's name on it"), ...opens)
+    : null;
+
+  // ---- 4 · the jar wall: prep until the year is counted, then yield
   const wallHead = closed
     ? `${closed.jars_filled} jars filled`
     : y.jarsRequired ? `${y.jarsRequired} jars` : "the jar plan";
@@ -99,7 +124,7 @@ export function viewBoard() {
           full: closed.jars_filled || 0, fallen: closed.fallen_soldiers || 0, mode: "yield" }
       : { total: y.jarsRequired, full: y.onHand.jars }));
 
-  // ---- 4 · crew pulse: a dot per homie with something still to do
+  // ---- 5 · crew pulse: a dot per homie with something still to do
   const pulse = section("bpulse",
     h("h2", { class: "k" }, "The crew"),
     ...state.members.map(m => {
@@ -115,7 +140,7 @@ export function viewBoard() {
         ].filter(Boolean).join(" · ")));
     }));
 
-  // ---- 5 · the record
+  // ---- 6 · the record
   const grappaLine = g?.price
     ? (Number(g.price) > record
         ? { b: money0(g.price), s: `beats the record by ${money0(Number(g.price) - record)}`, good: true }
@@ -128,7 +153,7 @@ export function viewBoard() {
       h("b", { class: grappaLine.good ? "good" : "" }, grappaLine.b),
       h("span", { class: "bsub" }, grappaLine.s), arrow()));
 
-  // ---- 6 · readiness: three thin meters, each a door
+  // ---- 7 · readiness: three thin meters, each a door
   const meter = (label, hash, d) => h("a", { class: "bmeter", href: hash },
     h("span", { class: "k" }, label),
     h("b", {}, `${d.done}`, h("small", {}, `/ ${d.total}`)),
@@ -140,7 +165,7 @@ export function viewBoard() {
     meter("Menu", "#/menu", r.menu),
     meter("Run sheet", "#/run", r.run));
 
-  return frag(h("div", { class: "board" }, hero, you, wall, pulse, grappa, ready));
+  return frag(h("div", { class: "board" }, hero, you, unclaimed, wall, pulse, grappa, ready));
 }
 
 const arrow = () => h("span", { class: "barrow", "aria-hidden": "true" }, "→");

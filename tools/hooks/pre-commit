@@ -1,0 +1,30 @@
+#!/bin/sh
+# ============================================================================
+#  Stamp the cache version whenever a commit touches something the browser
+#  caches. Forgetting Bump-Version.ps1 is the one deploy foot-gun this repo
+#  has: GitHub Pages holds files for ten minutes and phones hold them longer,
+#  so an un-stamped deploy can hand someone a new index.html with last week's
+#  JavaScript. The hook makes that impossible to forget.
+#
+#  Install with: .\tools\Install-Hooks.ps1
+#  Skip once with: git commit --no-verify
+# ============================================================================
+staged=$(git diff --cached --name-only --diff-filter=ACMR)
+
+# only asset changes need a new stamp; SQL, images and prose do not
+echo "$staged" | grep -Eq '^(js/.*\.js|styles\.css|manifest\.json|index\.html)$' || exit 0
+
+pwsh=$(command -v pwsh || command -v powershell)
+if [ -z "$pwsh" ]; then
+  echo "pre-commit: no PowerShell found, skipping the cache stamp." >&2
+  exit 0
+fi
+
+"$pwsh" -NoProfile -ExecutionPolicy Bypass -File tools/Bump-Version.ps1 || {
+  echo "pre-commit: Bump-Version.ps1 failed." >&2
+  exit 1
+}
+
+# the bump rewrote index.html; carry it into this very commit
+git add index.html
+exit 0

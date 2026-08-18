@@ -1,0 +1,23 @@
+{
+  "name": "Sauce Day",
+  "short_name": "Sauce Day",
+  "description": "The shared planner for the annual sauce day: the buy list, the split, the jars and the run of the day.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#000000",
+  "theme_color": "#1a1a18",
+  "lang": "en-CA",
+  "categories": ["food", "productivity", "utilities"],
+  "icons": [
+    { "src": "img/icon/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "img/icon/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "img/icon/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Buy list", "url": "./#/buy" },
+    { "name": "Log a receipt", "url": "./#/spend" },
+    { "name": "Run of the day", "url": "./#/run" }
+  ]
+}

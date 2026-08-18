@@ -1074,8 +1074,10 @@ svg { display: block; width: 100%; height: auto; overflow: visible; }
 @media (min-width: 60rem) {
   .board { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
   .bhero, .bready { grid-column: 1 / -1; }
-  .bjars { grid-column: 2; grid-row: 2 / span 3; border-left: 1px solid var(--hair); }
-  .byou, .bpulse, .brecord { grid-column: 1; }
+  /* span 4, not 3: the unclaimed section joins the left stack when there is
+     anything unclaimed, and the wall has to reach the bottom of it either way */
+  .bjars { grid-column: 2; grid-row: 2 / span 4; border-left: 1px solid var(--hair); }
+  .byou, .bopen, .bpulse, .brecord { grid-column: 1; }
 }
 
 /* the board carries its own numbers, so the rail stands down on this one route */
