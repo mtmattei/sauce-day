@@ -76,7 +76,7 @@ insert into public.items
   (2026, 'toolkit', 'Milling & Straining', 24, 'Strainer for sauce pot', 'Need', '1', 0, null, null, 'Buy', 'Carried over from 2025 notes', null),
 
   -- Toolkit · Jarring & Canning
-  (2026, 'toolkit', 'Jarring & Canning', 25, 'Mason jars', 'Owned', null, 39.98, 'Chris', 'Canadian Tire', 'Yes', 'Chris brings the difference: 53 jars (5 packs) at today''s counts — Matt has 55, everyone else 0. The live number is on the Yield & Jars tab.', null),
+  (2026, 'toolkit', 'Jarring & Canning', 25, 'Mason jars', 'Owned', null, 39.98, 'Chris', 'Canadian Tire', 'Yes', 'Chris brings the difference — whatever the Yield & Jars tab still shows to buy.', null),
   (2026, 'toolkit', 'Jarring & Canning', 26, 'Funnel (wide mouth)', 'Owned', '3', 0, 'Matt', null, 'Yes', null, null),
   (2026, 'toolkit', 'Jarring & Canning', 27, 'Rims', 'Need', null, 0, 'David / Matt', 'Canadian Tire', 'No', 'All new sets of rims', null),
   (2026, 'toolkit', 'Jarring & Canning', 28, 'Lids', 'Need', '2', 14.97, 'David', 'Canadian Tire', 'No', 'See Yield & Jars tab', null),
@@ -154,7 +154,7 @@ insert into public.bushels (year, person, count) values
 -- ---------------------------------------------------------------- jars on hand
 insert into public.jar_inventory (year, person, jars, bands, lids) values
   (2026, 'Matt', 55, 66, 0),
-  (2026, 'David', 0,0, 0),
+  (2026, 'David', 9, 0, 0),
   (2026, 'Nate', 0, 0, 0),
   (2026, 'Chris', 0, 0, 0),
   (2026, 'Mike', 0, 0, 0);

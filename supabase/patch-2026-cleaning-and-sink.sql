@@ -29,13 +29,13 @@ insert into public.items
 -- Matt recounted: 55 jars on hand.
 update public.jar_inventory set jars = 55 where year = 2026 and person = 'Matt';
 
--- Jar counts are in: Nate and Mike have none, and Chris brings whatever the
--- forecast still needs (53 jars / 5 packs at today's counts — the Yield & Jars
--- tab carries the live number). The purchase line goes on Chris.
+-- Jar counts are in: Nate and Mike have none (David's live count stands), and
+-- Chris brings whatever the forecast still needs. No frozen arithmetic in the
+-- comment — the Yield & Jars tab carries the live number.
 update public.jar_inventory set jars = 0 where year = 2026 and person in ('Nate', 'Mike');
 update public.items set
   assigned_to = 'Chris',
-  comments = 'Chris brings the difference: 53 jars (5 packs) at today''s counts — Matt has 55, everyone else 0. The live number is on the Yield & Jars tab.'
+  comments = 'Chris brings the difference — whatever the Yield & Jars tab still shows to buy.'
 where year = 2026 and name = 'Mason jars';
 
 -- Keep the section's ordering in step with the reseeded numbering.
