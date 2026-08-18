@@ -111,7 +111,7 @@ export const DEMO_DATA = {
       "locked": true,
       "qty": null,
       "budget": 39.98,
-      "assigned_to": "David / Matt",
+      "assigned_to": "Chris",
       "store": "Canadian Tire",
       "obtained": false,
       "repeat_next": "Yes",
