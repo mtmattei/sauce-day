@@ -23,6 +23,10 @@ js/grappas.js       the grappa shortlist — real SAQ products, prices, photos
 js/ui.js            DOM helpers and the bound-field editors
 js/views.js         the ten screens
 js/app.js           boot, sign-in, router, the readout rail
+js/guide.js         the ? sheet: every screen and where to do what
+manifest.json       web app manifest — add to home screen
+img/icon/           app icons, the cut-tomato mark
+tools/hooks/        git hooks; install with tools/Install-Hooks.ps1
 js/demo.js          offline demo data (used until config.js is filled in)
 img/grappa/         bottle photographs
 supabase/schema.sql tables, row-level security, realtime
@@ -133,6 +137,17 @@ without an email on the crew list.
 The `.nojekyll` file in the root stops GitHub from doing anything clever to the
 `js/` folder. Leave it there.
 
+**Install the git hooks once per clone:**
+
+```powershell
+.\tools\Install-Hooks.ps1
+```
+
+That puts a `pre-commit` hook in place which stamps the cache version for you
+whenever a commit touches `js/`, `styles.css`, `manifest.json` or `index.html`.
+With it installed you can ignore the next paragraph — it happens by itself.
+`git commit --no-verify` skips it if you ever need to.
+
 **When you change any code**, run `.\tools\Bump-Version.ps1` before you commit.
 It rewrites the version stamp in `index.html`, which pins every script and the
 stylesheet to one version. Pages caches files for ten minutes and phones cache
@@ -165,6 +180,12 @@ they can sign in immediately.
 
 Everything syncs live. If David ticks the grappa off at the SAQ, it goes grey on
 your phone a second later.
+
+**Put it on your home screen.** The app ships a web manifest and icons, so
+"Add to Home Screen" (iOS Share menu, Android's install prompt) gives you a
+full-screen app instead of a browser tab with a URL bar over the run sheet.
+On sauce day itself — and from the Friday prep evening — the run-of-day screen
+holds a wake lock so the phone stops sleeping between steps.
 
 This same map lives in the app: the **?** in the masthead opens the guide —
 every screen with what it's for, plus a "Where do I…" index that maps the thing
