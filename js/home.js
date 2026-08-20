@@ -6,16 +6,14 @@
 //  actually open the app with: how long, what do I owe, are we ready.
 // ============================================================================
 import { state, YEAR } from "./db.js";
-import { money0, settlement, yieldPlan, readiness, daysToGo, grappaRecord } from "./calc.js";
+import { money0, settlement, yieldPlan, readiness, daysToGo, grappaRecord,
+         assignedTo } from "./calc.js";
 import { h, frag, me } from "./ui.js";
 import { icon } from "./icons.js";
 import { jarWall } from "./jars.js";
 
 // items that belong on the buy list at all — same test viewBuy applies
 const buyable = i => i.store || ["Need", "Buy", "Refill", "Costco"].includes(i.kind);
-// assigned_to is free text ("Matt / David", "David (4) / Matt (2)"), so
-// membership is a substring test, not equality
-const assignedTo = (i, name) => !!name && !!i.assigned_to && i.assigned_to.includes(name);
 
 function section(cls, ...kids) {
   return h("section", { class: "bsec " + cls }, ...kids);

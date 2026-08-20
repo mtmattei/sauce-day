@@ -168,7 +168,7 @@ they can sign in immediately.
 | Screen | What it's for |
 |---|---|
 | **Today** | Countdown, what you owe, budget vs actual, how ready we are |
-| **Buy** | Grouped by store. Claim an item, tick it when you've got it |
+| **Buy** | Grouped by store. Claim an item — or leave it to the group shopping day — and tick it when you've got it |
 | **Spend** | Log your own receipts. The split recalculates for everyone |
 | **Sauce** | Bushels → litres → jars, bands and lids to buy |
 | **Menu** | Who's bringing what, by service |

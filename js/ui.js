@@ -2,7 +2,7 @@
 //  Tiny DOM helpers and the bound-field editors every screen uses.
 // ============================================================================
 import { update, insert, remove, state, flash } from "./db.js";
-import { crewNames } from "./calc.js";
+import { crewNames, EVERYONE } from "./calc.js";
 
 export function h(tag, attrs = {}, ...kids) {
   const e = document.createElement(tag);
@@ -85,8 +85,13 @@ export function check(table, row, col, label, opts = {}) {
   return h("label", { class: "chk" + (opts.disabled ? " off" : "") }, box, h("span", {}, label || ""));
 }
 
-export function personSelect(table, row, col) {
-  return select(table, row, col, crewNames(), { blank: "unassigned" });
+/** Crew dropdown. `opts.everyone` puts the group shopping day at the top of
+    the list — for the columns that name a buyer, where the answer can be "all
+    of us in one car". The columns that name a man (a run-sheet lead, whoever
+    is bringing a dish) leave it off: those are one person or nobody. */
+export function personSelect(table, row, col, opts = {}) {
+  const names = opts.everyone ? [EVERYONE, ...crewNames()] : crewNames();
+  return select(table, row, col, names, { blank: "unassigned" });
 }
 
 export function delButton(table, row, what) {

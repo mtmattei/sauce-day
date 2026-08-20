@@ -19,6 +19,21 @@ export const num = (v, d = 0) => (Number(v) || 0).toLocaleString("en-CA",
 
 export const crewNames = () => state.members.map(m => m.display_name);
 
+// The one assignee that is not a man. A row carrying it belongs to the whole
+// crew: it answers to everybody's "mine" filter, it sits on everybody's board,
+// and it never reads as unclaimed. Deliberately NOT in crewNames() — the
+// settlement divides money between people, and a shopping day cannot be owed.
+export const EVERYONE = "Group shopping day";
+
+// assigned_to is free text — "Matt / David", "David (4) / Matt (2)" — so
+// membership is a substring test, not equality. Equality showed Matt 2 of his
+// 14 items. EVERYONE matches whoever is asking.
+export const assignedTo = (item, name) => {
+  const who = item?.assigned_to;
+  if (!who) return false;
+  return who.includes(EVERYONE) || (!!name && who.includes(name));
+};
+
 // ---------------------------------------------------------------- money
 export function budgetByCat() {
   const out = { toolkit: 0, ingredients: 0, food: 0 };

@@ -3,7 +3,7 @@
 // ============================================================================
 import { sb, state, YEAR, update, insert, remove, upsert, flash, signOut } from "./db.js";
 import {
-  CATS, money, money0, num, crewNames,
+  CATS, money, money0, num, crewNames, assignedTo,
   settlement, yieldPlan, seriesData, grappaRecord, daysToGo
 } from "./calc.js";
 import { h, frag, field, select, check, personSelect, delButton, card, stat,
@@ -34,9 +34,9 @@ export function viewBuy() {
   const only = state.ui?.buyMine ? me() : null;
   const blocks = [];
   byStore.forEach((list, store) => {
-    // assigned_to is free text — "Matt / David", "David (4) / Matt (2)" — so
-    // "mine" is a substring test. Equality showed 2 of Matt's 14 items.
-    const shown = only ? list.filter(i => i.assigned_to && i.assigned_to.includes(only)) : list;
+    // assignedTo does the substring match, and hands every man the rows
+    // marked for the group shopping day as well as the ones with his name on.
+    const shown = only ? list.filter(i => assignedTo(i, only)) : list;
     if (!shown.length) return;
     const total = shown.reduce((a, i) => a + (Number(i.budget) || 0), 0);
     const todo = shown.filter(i => !i.obtained);
@@ -103,7 +103,7 @@ function buyRow(i) {
     h("div", { class: "rowend" },
       locked
         ? h("span", { class: "rowsub" }, i.assigned_to || "")
-        : personSelect("items", i, "assigned_to"),
+        : personSelect("items", i, "assigned_to", { everyone: true }),
       locked
         ? null
         : field("items", i, "budget", { type: "number", class: "w80", placeholder: "$" }),
@@ -170,7 +170,7 @@ function itemEditor(i) {
     lbl("Need / owned", field("items", i, "kind")),
     lbl("Qty", field("items", i, "qty")),
     lbl("Budget", field("items", i, "budget", { type: "number" })),
-    lbl("Assigned to", personSelect("items", i, "assigned_to")),
+    lbl("Assigned to", personSelect("items", i, "assigned_to", { everyone: true })),
     lbl("Store", field("items", i, "store")),
     lbl("Use next year?", select("items", i, "repeat_next", ["Yes", "No", "Buy", "Refill", "Maybe"])),
     lbl("Link", field("items", i, "link", { placeholder: "https://" })),
