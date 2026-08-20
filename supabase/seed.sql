@@ -99,42 +99,57 @@ insert into public.items
   -- Ingredients
   (2026, 'ingredients', null, 1, 'Bushels of tomatoes', 'Need', '10', 175.0, 'Matt / David / Nate', 'Market', 'Yes', 'Pickup Fri Aug 28 at the market. Budget links to Yield & Jars tab', null),
   (2026, 'ingredients', null, 2, 'Basil', 'Need', null, 0, 'Matt / David / Nate', 'Market', 'Yes', 'Matt potentially has', null),
-  (2026, 'ingredients', null, 3, 'Parsley', 'Need', null, 0, 'Matt / David / Nate', 'Market', 'Yes', 'Matt potentially has', null),
+  (2026, 'ingredients', null, 3, 'Parsley', 'Need', null, 0, 'Matt / David / Nate', 'Market', 'Yes', 'Matt potentially has. The marinated mushrooms and the fennel salad draw on it too.', null),
   (2026, 'ingredients', null, 4, 'Onions', 'Need', '5 kg (~20)', 0, 'Matt / David / Nate', 'Market', 'Yes', 'Soffritto for ~98 L. Roughly one per 5 L.', null),
-  (2026, 'ingredients', null, 5, 'Garlic', 'Need', '12 heads', 0, 'Matt / David / Nate', 'Market', 'Yes', 'Soffritto for ~98 L. A head per 8 L.', null),
+  (2026, 'ingredients', null, 5, 'Garlic', 'Need', '14 heads', 0, 'Matt / David / Nate', 'Market', 'Yes', 'Soffritto for ~98 L is 12, a head per 8 L. Two more for the marinated mushrooms.', null),
   (2026, 'ingredients', null, 6, 'Carrots', 'Need', '2 kg (~15)', 0, 'Matt / David / Nate', 'Market', 'Yes', 'Soffritto for ~98 L. One per 7 L.', null),
   (2026, 'ingredients', null, 7, 'Celery', 'Need', '2 bunches', 0, 'Matt / David / Nate', 'Market', 'Yes', 'Soffritto for ~98 L. A stalk per 7 L.', null),
   (2026, 'ingredients', null, 8, 'Salt', 'Have', null, 0, 'Matt / David / Nate', null, 'Yes', null, null),
   (2026, 'ingredients', null, 9, 'Sugar', 'Have', null, 0, 'Matt / David / Nate', null, 'Yes', null, null),
 
   -- Food
-  (2026, 'food', null, 1, 'Breakfast Sandwiches', 'Egg, bacon, sausage, cheese', null, 0, null, 'Market', 'Yes', null, null),
-  (2026, 'food', null, 2, 'Espresso', 'Grind fresh before Sauce Day', null, 0, 'David', 'Roastery', 'Yes', null, null),
-  (2026, 'food', null, 3, 'Cornetti', 'Morning pastries with espresso', null, 0, 'Nate', 'Bakery', 'Yes', null, null),
-  (2026, 'food', null, 4, 'Blood orange juice', 'For morning mimosas', null, 0, null, 'Grocery', 'Yes', null, null),
-  (2026, 'food', null, 5, 'Parm & Balsamic glaze', 'Serve with olive oil and grilled bread', null, 0, null, 'Market', 'Yes', null, null),
-  (2026, 'food', null, 6, 'Grilled artichokes', 'For the antipasto table', null, 0, null, 'Market', 'Yes', null, null),
-  (2026, 'food', null, 7, 'Giardiniera', 'Pickled vegetables for antipasto', null, 0, 'Chris', 'Italian Market', 'Yes', null, null),
-  (2026, 'food', null, 8, 'Marinated mushrooms', 'Garlic, parsley and olive oil', null, 0, 'Chris', 'Market', 'Yes', null, null),
-  (2026, 'food', null, 9, 'Soppressata', 'For the antipasto board', null, 0, null, 'Italian Market', 'Yes', null, null),
-  (2026, 'food', null, 10, 'Bresaola', 'Serve with arugula, lemon and Parmigiano', null, 0, null, 'Italian Market', 'Yes', null, null),
-  (2026, 'food', null, 11, 'Taralli', 'Crunchy snack for the table', null, 0, null, 'Italian Market', 'Yes', null, null),
-  (2026, 'food', null, 12, 'Steak, Pepperoni & Capicollo Subs', 'Steak, pepperoni and capicollo subs', null, 0, null, 'Butcher', 'Yes', null, null),
-  (2026, 'food', null, 13, 'Italian rolls', 'For subs', null, 0, 'Nate', 'Bakery', 'Yes', null, null),
-  (2026, 'food', null, 14, 'Melon and prosciutto', 'Cold afternoon snack', null, 0, null, 'Market', 'Yes', null, null),
-  (2026, 'food', null, 15, 'Fennel and orange salad', 'Fennel, orange, parsley and olive oil', null, 0, null, 'Market', 'Yes', null, null),
-  (2026, 'food', null, 16, 'Rigatoni', 'Dinner pasta for the fresh sauce', null, 0, null, 'Italian Market', 'Yes', null, null),
-  (2026, 'food', null, 17, 'Braciole', 'Beef rolls braised in the new sauce', null, 0, null, 'Butcher', 'Yes', null, null),
-  (2026, 'food', null, 18, 'Cannoli', 'Dessert', null, 0, null, 'Little Italy', 'Yes', null, null),
-  (2026, 'food', null, 19, 'Affogato', 'Vanilla gelato and espresso', null, 0, null, 'Grocery', 'Yes', null, null),
-  (2026, 'food', null, 20, 'Grappa', 'The annual bottle - beat last year', '1', 0, 'David', 'SAQ', 'Yes', 'See Grappa Hall of Fame tab', 'https://www.saq.com/en/11849106'),
-  (2026, 'food', null, 21, 'Prosecco', 'Morning mimosas and aperitivo', null, 0, 'David', 'SAQ', 'Yes', null, null),
-  (2026, 'food', null, 22, 'Aperol', 'For spritzes', null, 0, 'David', 'SAQ', 'Yes', null, null),
-  (2026, 'food', null, 23, 'Italian red wine', 'Chianti, Montepulciano or similar', '3', 0, 'David', 'SAQ', 'Yes', null, null),
-  (2026, 'food', null, 24, 'Italian lager', 'Peroni, Moretti or similar', null, 0, null, 'Depanneur', 'Yes', null, null),
-  (2026, 'food', null, 25, 'San Pellegrino', 'Sparkling water for the day', '12', 0, null, 'Costco', 'Yes', null, null),
-  (2026, 'food', null, 26, 'Bread for grilling', 'Crusty loaf for the parm & balsamic', '2 loaves', 0, 'Nate', 'Bakery', 'Yes', 'The menu serves the parm with grilled bread.', null),
-  (2026, 'food', null, 27, 'Ice', 'For the coolers', '4 bags', 0, 'David', 'Depanneur', 'Yes', 'Friday chill-down needs it and every party forgets it.', null);
+  -- Menu order, so the Ledger reads down the day. Where a dish is more than
+  -- one purchase it is listed as its purchases: "Breakfast Sandwiches" is a
+  -- dish, not a thing you can put in a basket, and listing it as one line
+  -- left the eggs, the meat, the cheese and the muffins with nobody buying
+  -- them. The Menu tab still carries the dish; this table carries the run.
+  (2026, 'food', null, 1, 'Eggs', 'For the breakfast sandwiches', '2 dozen', 0, 'Chris', 'Market', 'Yes', 'Two each, plus spares.', null),
+  (2026, 'food', null, 2, 'Bacon', 'For the breakfast sandwiches', '1 kg', 0, 'Chris', 'Butcher', 'Yes', null, null),
+  (2026, 'food', null, 3, 'Breakfast sausage', 'For the breakfast sandwiches', '1 kg', 0, 'Chris', 'Butcher', 'Yes', null, null),
+  (2026, 'food', null, 4, 'Sliced cheese', 'For the breakfast sandwiches', '1 pack', 0, 'Chris', 'Market', 'Yes', 'Provolone or cheddar — whatever melts.', null),
+  (2026, 'food', null, 5, 'English muffins', 'For the breakfast sandwiches', '12', 0, 'Nate', 'Bakery', 'Yes', 'Nate is at the bakery anyway for the cornetti and the rolls.', null),
+  (2026, 'food', null, 6, 'Espresso', 'Grind fresh before Sauce Day', null, 0, 'David', 'Roastery', 'Yes', 'Also the affogato and the coffee break.', null),
+  (2026, 'food', null, 7, 'Cornetti', 'Morning pastries with espresso', null, 0, 'Nate', 'Bakery', 'Yes', null, null),
+  (2026, 'food', null, 8, 'Blood orange juice', 'For morning mimosas', null, 0, null, 'Grocery', 'Yes', 'Mimosas are this and the Prosecco.', null),
+  (2026, 'food', null, 9, 'Parm & Balsamic glaze', 'Serve with olive oil and grilled bread', null, 0, null, 'Market', 'Yes', 'One wedge covers this and the shaving over the bresaola.', null),
+  (2026, 'food', null, 10, 'Bread for grilling', 'Crusty loaf for the parm & balsamic', '2 loaves', 0, 'Nate', 'Bakery', 'Yes', 'The menu serves the parm with grilled bread.', null),
+  -- Four antipasto dishes call for olive oil and not one line bought any.
+  -- Separate from the sauce: this is the bottle you finish a plate with.
+  (2026, 'food', null, 11, 'Olive oil', 'The good bottle, for finishing', '1 L', 0, null, 'Market', 'Yes', 'The parm, the artichokes, the mushrooms and the fennel salad all want it.', null),
+  (2026, 'food', null, 12, 'Grilled artichokes', 'For the antipasto table', null, 0, null, 'Market', 'Yes', null, null),
+  (2026, 'food', null, 13, 'Giardiniera', 'Pickled vegetables for antipasto', null, 0, 'Chris', 'Italian Market', 'Yes', null, null),
+  (2026, 'food', null, 14, 'Marinated mushrooms', 'Garlic, parsley and olive oil', null, 0, 'Chris', 'Market', 'Yes', 'Garlic and parsley come off the Ingredients list — the counts there are sized for the sauce, so take the extra.', null),
+  (2026, 'food', null, 15, 'Soppressata', 'For the antipasto board', null, 0, null, 'Italian Market', 'Yes', null, null),
+  (2026, 'food', null, 16, 'Bresaola', 'Serve with arugula, lemon and Parmigiano', null, 0, null, 'Italian Market', 'Yes', null, null),
+  (2026, 'food', null, 17, 'Arugula', 'The bed under the bresaola', '1 bag', 0, null, 'Market', 'Yes', null, null),
+  (2026, 'food', null, 18, 'Lemons', 'Squeezed over the bresaola', '3', 0, null, 'Market', 'Yes', null, null),
+  (2026, 'food', null, 19, 'Taralli', 'Crunchy snack for the table', null, 0, null, 'Italian Market', 'Yes', null, null),
+  (2026, 'food', null, 20, 'Steak, Pepperoni & Capicollo Subs', 'Steak, pepperoni and capicollo subs', null, 0, null, 'Butcher', 'Yes', 'One counter, three meats — ordered together.', null),
+  (2026, 'food', null, 21, 'Italian rolls', 'For subs', null, 0, 'Nate', 'Bakery', 'Yes', null, null),
+  (2026, 'food', null, 22, 'Melon and prosciutto', 'Cold afternoon snack', null, 0, null, 'Market', 'Yes', null, null),
+  (2026, 'food', null, 23, 'Fennel and orange salad', 'Fennel, orange, parsley and olive oil', null, 0, null, 'Market', 'Yes', 'Parsley off the Ingredients list; the oil is the finishing bottle above.', null),
+  (2026, 'food', null, 24, 'Rigatoni', 'Dinner pasta for the fresh sauce', null, 0, null, 'Italian Market', 'Yes', null, null),
+  (2026, 'food', null, 25, 'Braciole', 'Beef rolls braised in the new sauce', null, 0, null, 'Butcher', 'Yes', 'Rolled at the counter. Rolling them at home would add breadcrumbs and string to this list.', null),
+  (2026, 'food', null, 26, 'Cannoli', 'Dessert', null, 0, null, 'Little Italy', 'Yes', null, null),
+  -- An affogato is not sold in a shop. The gelato is.
+  (2026, 'food', null, 27, 'Vanilla gelato', 'The affogato, with the espresso poured over', '1 L', 0, null, 'Grocery', 'Yes', 'Menu calls it Affogato; this is the half of it you buy.', null),
+  (2026, 'food', null, 28, 'Grappa', 'The annual bottle - beat last year', '1', 0, 'David', 'SAQ', 'Yes', 'See Grappa Hall of Fame tab', 'https://www.saq.com/en/11849106'),
+  (2026, 'food', null, 29, 'Prosecco', 'Morning mimosas and aperitivo', null, 0, 'David', 'SAQ', 'Yes', 'Carries the mimosas and the spritzes both.', null),
+  (2026, 'food', null, 30, 'Aperol', 'For spritzes', null, 0, 'David', 'SAQ', 'Yes', 'Spritz is this, the Prosecco and the San Pellegrino.', null),
+  (2026, 'food', null, 31, 'Italian red wine', 'Chianti, Montepulciano or similar', '3', 0, 'David', 'SAQ', 'Yes', null, null),
+  (2026, 'food', null, 32, 'Italian lager', 'Peroni, Moretti or similar', null, 0, null, 'Depanneur', 'Yes', null, null),
+  (2026, 'food', null, 33, 'San Pellegrino', 'Sparkling water for the day', '12', 0, null, 'Costco', 'Yes', null, null),
+  (2026, 'food', null, 34, 'Ice', 'For the coolers', '4 bags', 0, 'David', 'Depanneur', 'Yes', 'Friday chill-down needs it and every party forgets it.', null);
 
 -- Lock in anything the crew already owns. `locked` is separate from `kind` so
 -- the UI can offer an explicit Unlock/Edit action later without changing status.
@@ -185,7 +200,7 @@ insert into public.runsheet
   (2026,  7, 'DAY', '06:30', 'Start sauce prep', 'Matt', 'All', 'Espresso, moka',
    'tomato', 60, 'Espresso', true, false, 'Crew arrives. Coffee before anything else.'),
   (2026,  8, 'DAY', '07:00', 'Breakfast sandwiches', null, 'All', 'Breakfast setup',
-   null, 30, 'Egg, bacon, sausage, cheese', false, false, 'Breakfast before the main production push'),
+   null, 30, 'Eggs, bacon, sausage, cheese, muffins', false, false, 'Breakfast before the main production push'),
   (2026,  9, 'DAY', '07:30', 'Fire up the burners', 'Matt', 'Mike', '3 burners, cauldrons, propane',
    'flame', 30, 'Propane', true, false, 'Wash water on at the same time'),
   (2026, 10, 'DAY', '08:00', 'Wash tomatoes', 'All', 'All', 'Buckets, strainer',
@@ -226,7 +241,7 @@ insert into public.runsheet
 -- ---------------------------------------------------------------- menu
 insert into public.menu (year, sort_index, service, dish, who, source, qty, notes) values
   -- Breakfast
-  (2026, 1, 'Breakfast', 'Breakfast Sandwiches', null, 'Market', '-', 'Egg, bacon, sausage, cheese'),
+  (2026, 1, 'Breakfast', 'Breakfast Sandwiches', null, 'Market', '-', 'Eggs, bacon, sausage, cheese, muffins — each its own line on the Buy list'),
   (2026, 2, 'Breakfast', 'Espresso', 'David', 'Roastery', '-', 'Grind fresh before Sauce Day'),
   (2026, 3, 'Breakfast', 'Cornetti', 'Nate', 'Bakery', '-', 'Morning pastries with espresso'),
   (2026, 4, 'Breakfast', 'Blood orange juice / mimosas', null, 'Grocery', '-', null),

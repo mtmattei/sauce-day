@@ -29,8 +29,10 @@ img/icon/           app icons, the cut-tomato mark
 tools/hooks/        git hooks; install with tools/Install-Hooks.ps1
 js/demo.js          offline demo data (used until config.js is filled in)
 img/grappa/         bottle photographs
-supabase/schema.sql tables, row-level security, realtime
-supabase/seed.sql   2020-2025 history plus the 2026 starting plan
+supabase/schema.sql               tables, row-level security, realtime
+supabase/seed.sql                 2020-2025 history plus the 2026 plan
+supabase/patch-*.sql              a change to a live year, ticks intact
+supabase/check-menu-coverage.sql  does the buy list cook the menu?
 _backup/            the pre-Counter stylesheet and shell, kept for reference
 ```
 
@@ -202,6 +204,19 @@ leading slash works locally and 404s on GitHub Pages.
 
 Prices were read off the SAQ on **5 August 2026**. They move. Re-check before
 anyone drives to the store.
+
+## Changing the plan once the year is live
+
+`seed.sql` clears the year before it fills it, so running it again wipes every
+obtained tick and every logged receipt. Once the crew is using the app, changes
+go in as a `supabase/patch-*.sql` instead: named rows only, safe to run twice.
+Make the same change in `seed.sql` as well, so next year starts from the truth.
+
+Before a shop, run `supabase/check-menu-coverage.sql`. It holds the map from
+each dish to the things you actually put in a basket — a breakfast sandwich is
+five purchases, not one — and names anything on the menu that nothing on the
+buy list will produce. It reads and changes nothing. When the menu changes,
+update the map in the same commit.
 
 ## Next August
 
