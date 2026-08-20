@@ -10,6 +10,7 @@ import { viewSauceDay, stopTimeline } from "./timeline.js";
 import * as V from "./views.js";
 import * as H from "./home.js";
 import { openGuide, maybeFirstRun } from "./guide.js";
+import { toggleMenu, closeMenu, syncMenu } from "./menu.js";
 
 /**
  * The home route is context-aware. Seventeen days out the crew is asking
@@ -84,6 +85,25 @@ function renderNav() {
   const on = nav().querySelector(".navlink.on");
   if (on) on.scrollIntoView({ block: "nearest", inline: "center", behavior: "smooth" });
   wireRipple(nav());
+  renderMenuBtn(r);
+  syncMenu(r.hash);
+}
+
+/**
+ * The phone's nav is one control, so it has to do the rule's other job too:
+ * say where you are. It carries the section's number and name, which is the
+ * graduated rule reduced to the single tick you are standing on.
+ */
+function renderMenuBtn(r) {
+  const b = document.getElementById("menubtn");
+  if (!b) return;
+  const i = SECTIONS.indexOf(r);
+  b.innerHTML = "";
+  b.append(
+    h("span", { class: "mbb", "aria-hidden": "true" }, h("i"), h("i"), h("i")),
+    h("span", { class: "mbn" }, i < 0 ? "\u00b7\u00b7" : String(i + 1).padStart(2, "0")),
+    h("span", { class: "mbl" }, r.label));
+  b.setAttribute("aria-label", `Sections \u2014 you are on ${r.label}`);
 }
 
 /**
@@ -216,6 +236,28 @@ function renderReadout() {
     class: "railcrew" + (location.hash === crew.hash ? " on" : ""),
     "aria-current": location.hash === crew.hash ? "page" : null
   }, icon(crew.icon), h("span", {}, crew.label)));
+
+  // On a phone the rail is not a rail — it is a slab of six readings sitting
+  // between the masthead and the screen you actually opened, and it cost two
+  // thirds of the glass before a single row of the Buy list. So it folds, and
+  // the one line it leaves behind carries the two readings that make somebody
+  // open it: what you owe and what is still to buy.
+  const railOpen = !!state.ui?.railOpen;
+  host.classList.toggle("open", railOpen);
+  host.prepend(h("button", {
+    class: "rotoggle", type: "button", "aria-expanded": String(railOpen),
+    onClick: () => {
+      state.ui = { ...(state.ui || {}), railOpen: !railOpen };
+      renderReadout();
+    }
+  },
+    h("span", { class: "k" }, "The numbers"),
+    h("span", { class: "rosum" },
+      mine ? (mine.net >= 0 ? "you're owed " + money0(mine.net) : "you owe " + money0(Math.abs(mine.net)))
+           : money0(st.share) + " each",
+      h("i", {}, "·"),
+      y.jarsToBuy ? y.jarsToBuy + " jars to buy" : "jars in hand"),
+    h("span", { class: "roc", "aria-hidden": "true" }, railOpen ? "\u2212" : "+")));
 }
 
 /**
@@ -253,6 +295,19 @@ function wireHelp() {
   btn.addEventListener("click", () => openGuide(ROUTES));
 }
 
+let menuWired = false;
+function wireMenu() {
+  if (menuWired) return;
+  const btn = document.getElementById("menubtn");
+  if (!btn) return;
+  menuWired = true;
+  btn.addEventListener("click", () => toggleMenu(ROUTES, currentRoute().hash, btn));
+  // the rule comes back at 60rem and takes the navigation with it; an open
+  // sheet left hanging under a masthead that no longer has a button to close
+  // it would be a trap
+  matchMedia("(min-width: 60.0625rem)").addEventListener("change", e => { if (e.matches) closeMenu(); });
+}
+
 function renderHead() {
   const ed = document.getElementById("edition");
   const now = document.getElementById("now");
@@ -260,9 +315,12 @@ function renderHead() {
   if (sig && !sig.firstChild) sig.appendChild(icon("cut"));
   if (ed) ed.textContent = String(YEAR);
   const d = daysToGo();
+  // wrapped in spans, not one string: a phone has no room for the date as
+  // well as the countdown, and the stylesheet drops the half it can spare
   if (now) now.innerHTML = state.settings?.sauce_date
-    ? `SAUCE DAY <b>${state.settings.sauce_date}</b>` +
-      (d === null ? "" : ` · T MINUS <b>${d}</b> DAY${d === 1 ? "" : "S"}`)
+    ? `<span class="nowdate">SAUCE DAY <b>${state.settings.sauce_date}</b></span>` +
+      (d === null ? "" : `<span class="nowsep"> · </span>` +
+        `<span class="nowto">T MINUS <b>${d}</b> DAY${d === 1 ? "" : "S"}</span>`)
     : "";
 }
 
@@ -276,6 +334,7 @@ export function render() {
   renderNav();
   renderHead();
   wireHelp();
+  wireMenu();
   renderSyncBar();
   renderReadout();
   // the Board carries the rail's numbers full-width, so on #/ the rail stands

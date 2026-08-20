@@ -24,6 +24,7 @@ js/ui.js            DOM helpers and the bound-field editors
 js/views.js         the ten screens
 js/app.js           boot, sign-in, router, the readout rail
 js/guide.js         the ? sheet: every screen and where to do what
+js/menu.js          the phone's nav: the masthead button and the sheet it drops
 manifest.json       web app manifest — add to home screen
 img/icon/           app icons, the cut-tomato mark
 tools/hooks/        git hooks; install with tools/Install-Hooks.ps1
@@ -192,6 +193,14 @@ every screen with what it's for, plus a "Where do I…" index that maps the thin
 you want to do to the screen that owns it. It opens itself the first time a
 phone loads the app, then stays behind the ?. Hovering a section on the
 graduated rule shows the same one-liner as a tooltip.
+
+**Getting around on a phone.** The graduated rule is a desk instrument — ten
+ticks want a metre of glass. Below 960px it stands down, and the masthead
+carries one button instead: it names the screen you are on, and tapping it
+drops the whole list of screens down underneath. Tap one to go, tap anywhere
+else (or press Escape) to put it away. The readout rail folds on a phone too —
+one line with what you owe and what is still to buy, and a tap opens the other
+six readings.
 
 ## Changing the grappa shortlist
 

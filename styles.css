@@ -387,6 +387,80 @@ b, strong { font-weight: 600; }
   .grads.rip .navlink .nl, .grads.rip .navlink .nn { transform: none; }
 }
 
+/* ---------------------------------------------------------------- the phone's nav
+   Ten sections do not fit across a phone, and the strip that tried scrolled
+   sideways with no edge to say so — half the app lived off the side of the
+   glass. Below 60rem the rule stands down and this takes over: one control
+   that names the screen you are on, and drops the list of them underneath.
+
+   The button is drawn in the same hairlines as everything else, and its three
+   bars fold into a cross while the sheet is down, so the control that opened
+   the menu is also the one that closes it. */
+.menubtn {
+  display: none;                       /* the rule has the job above 60rem */
+  align-items: center; gap: .55rem;
+  min-height: 2.9rem; padding: 0;
+  font: inherit; text-align: left; cursor: pointer;
+  background: none; border: 0; border-top: 1px solid var(--hair-2);
+  color: var(--fg-2); transition: color .18s var(--e);
+}
+.menubtn:hover, .menubtn.on { color: var(--fg); }
+.mbb { display: grid; gap: 4px; width: 1.125rem; flex: none; }
+.mbb i { display: block; height: 1px; background: currentColor;
+         transition: transform .22s var(--e), opacity .16s var(--e); }
+.menubtn.on .mbb i:nth-child(1) { transform: translateY(5px) rotate(45deg); }
+.menubtn.on .mbb i:nth-child(2) { opacity: 0; }
+.menubtn.on .mbb i:nth-child(3) { transform: translateY(-5px) rotate(-45deg); }
+/* the tick you are standing on, reduced to its number and its name */
+.mbn { font-family: var(--m); font-size: .625rem; letter-spacing: .06em; color: var(--tomato); }
+.mbl { font-size: .8125rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase;
+       color: var(--fg); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* The sheet hangs off the sticky masthead, so it stays pinned under it however
+   far down the page has been scrolled. It scrolls itself if a short phone
+   cannot take eleven rows, and never hands that scroll back to the page. */
+.msheet {
+  position: absolute; top: 100%; left: 0; right: 0; z-index: 21;
+  background: var(--bg); border-bottom: 1px solid var(--hair);
+  max-height: calc(100dvh - 7.5rem);
+  overflow-y: auto; overscroll-behavior: contain;
+  padding-bottom: env(safe-area-inset-bottom);
+  opacity: 0; transform: translateY(-.5rem);
+  transition: opacity .2s var(--e), transform .22s var(--e);
+}
+.msheet.is-in { opacity: 1; transform: none; }
+.mscrim { position: fixed; inset: 0; z-index: 15; background: oklch(0% 0 0 / .45); touch-action: none; }
+.mrow {
+  position: relative; display: flex; align-items: center; gap: .75rem;
+  min-height: 2.875rem; padding: .4rem var(--pad);
+  border-bottom: 1px solid var(--hair-2);
+  text-decoration: none; color: var(--fg-2);
+}
+.mrow:last-child { border-bottom: 0; }
+/* the crew door is not a section of the day, so it sits below the rule the
+   way it sits below the readings on the rail */
+.mrow.rail { border-top: 1px solid var(--hair); }
+.mrow .mn { flex: none; width: 1.25rem; font-family: var(--m); font-size: .625rem;
+            letter-spacing: .06em; color: var(--fg-4); }
+.mrow .mi { display: flex; color: var(--fg-4); }
+.mrow .mi .ico { width: 1rem; height: 1rem; stroke-width: 1.5; }
+.mrow .ml { font-size: .9375rem; letter-spacing: .01em; }
+.mrow:active { background: var(--bg-2); }
+.mrow.on { color: var(--fg); }
+.mrow.on .mn, .mrow.on .mi { color: var(--tomato); }
+.mrow.on .ml { font-weight: 600; }
+/* the row you are on keeps the rule's own graduation, drawn down its edge */
+.mrow.on::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0;
+                   width: 2px; background: var(--tomato); }
+/* A phone on its side has no vertical room and plenty of width, so the list
+   takes two columns rather than making the crew scroll for History. */
+@media (orientation: landscape) and (max-height: 32rem) {
+  .msheet-in { display: grid; grid-template-columns: 1fr 1fr; }
+  .mrow { min-height: 2.4rem; }
+  .mrow:nth-child(odd) { border-right: 1px solid var(--hair-2); }
+  .mrow.rail { grid-column: 1 / -1; border-right: 0; }
+}
+
 /* ---------------------------------------------------------------- frame */
 .frame { display: grid; grid-template-columns: var(--rail) minmax(0, 1fr); align-items: start; }
 
@@ -410,6 +484,8 @@ b, strong { font-weight: 600; }
 }
 .railcrew .ico { width: .9375rem; height: .9375rem; stroke-width: 1.5; }
 .railcrew:hover, .railcrew.on { color: var(--fg); }
+/* the rail folds on a phone only — a desk has the column to spare */
+.rotoggle { display: none; }
 .ro .k { font-size: .625rem; letter-spacing: .19em; text-transform: uppercase; color: var(--fg-3); margin-bottom: .3rem; }
 .ro .v { font-size: 1.875rem; font-weight: 200; letter-spacing: -.035em; line-height: 1; }
 .ro .v small { font-size: .75rem; font-weight: 400; letter-spacing: 0; color: var(--fg-3); margin-left: .3rem; vertical-align: .4em; }
@@ -934,6 +1010,20 @@ svg { display: block; width: 100%; height: auto; overflow: visible; }
 .toast.bad { background: var(--tomato); color: #fff; }
 
 /* ---------------------------------------------------------------- narrow */
+/* Three widths, three navigations. Above 75rem the graduated rule sits inline
+   with the wordmark, which is the design and needs about a metre of glass.
+   Between 60 and 75rem it takes its own full line — inline at 1000px the ten
+   labels overlapped each other and the icons. Below 60rem it stands down
+   altogether and the masthead button is the nav. */
+@media (max-width: 75rem) {
+  .rulehead { gap: .6rem; padding-bottom: .35rem; }
+  .now { width: 100%; margin-left: 0; order: 3; }
+  /* no room to spread ten ticks beside the wordmark: the rule takes its own
+     line and scrolls again */
+  .grads { flex: 1 0 100%; order: 4; gap: 1.1rem; scroll-snap-type: x proximity; }
+  .navlink { flex: none; }
+  .brand { padding-bottom: 0; }
+}
 @media (max-width: 60rem) {
   .frame { grid-template-columns: 1fr; }
   .readout {
@@ -947,15 +1037,60 @@ svg { display: block; width: 100%; height: auto; overflow: visible; }
   /* the rail is a strip of cells here, so the crew door becomes one of them */
   .railcrew { grid-column: 1 / -1; margin-top: 0; padding: .6rem var(--pad);
               border-top: 1px solid var(--hair-2); }
-  .rulehead { gap: .6rem; padding-bottom: .35rem; }
-  .now { width: 100%; margin-left: 0; order: 3; }
-  /* no room to spread ten ticks: the rule takes its own line and scrolls again */
-  .grads { flex: 1 0 100%; order: 4; gap: 1.1rem; scroll-snap-type: x proximity; }
-  .navlink { flex: none; }
-  .brand { padding-bottom: 0; }
   main.panel { padding-bottom: 4rem; }
   .row { gap: .5rem; }
   .rowend { flex-wrap: wrap; justify-content: flex-end; }
+
+  /* ---- masthead, phone ----
+     Two lines and nothing wasted: the wordmark and the ? on top, the section
+     you are on and the countdown underneath. The rule's job — say where you
+     are, offer everywhere else — is done by the button on the second line. */
+  .rulehead {
+    display: grid; grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center; gap: 0;
+    padding: calc(.5rem + env(safe-area-inset-top)) var(--pad) 0;
+  }
+  .brand { grid-area: 1 / 1; padding-bottom: .5rem; }
+  .helpbtn { grid-area: 1 / 2; }
+  .menubtn { grid-area: 2 / 1; display: flex; }
+  .now {
+    grid-area: 2 / 2; width: auto; justify-self: end; order: 0;
+    border-top: 1px solid var(--hair-2); align-self: stretch;
+    display: flex; align-items: center; padding-left: .6rem;
+  }
+  /* the date is on the Board in type you can read across a kitchen; here the
+     countdown is the half that earns its width */
+  .nowdate, .nowsep { display: none; }
+  .grads { display: none; }
+
+  /* ---- the rail, folded ----
+     Six readings, a season scale and a crew door used to stand between the
+     masthead and the screen you actually opened — two thirds of the glass
+     before the first row of the Buy list. Folded, it leaves one line carrying
+     the two readings that make anyone open it. */
+  .rotoggle {
+    display: flex; align-items: baseline; gap: .5rem;
+    grid-column: 1 / -1; width: 100%; min-height: 2.75rem;
+    padding: .55rem var(--pad);
+    background: none; border: 0; border-bottom: 1px solid var(--hair-2);
+    font: inherit; color: var(--fg-3); text-align: left; cursor: pointer;
+  }
+  .rotoggle .k { flex: none; font-size: .625rem; letter-spacing: .19em;
+                 text-transform: uppercase; color: var(--fg-3); }
+  .rotoggle .rosum { min-width: 0; font-size: .75rem; color: var(--fg-2);
+                     white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .rotoggle .rosum i { font-style: normal; color: var(--fg-4); margin: 0 .35rem; }
+  .rotoggle .roc { flex: none; margin-left: auto; font-family: var(--m);
+                   font-size: .875rem; color: var(--fg-4); }
+  .rotoggle:hover .roc, .rotoggle:hover .k { color: var(--fg-2); }
+  .readout:not(.open) .ro,
+  .readout:not(.open) .season,
+  .readout:not(.open) .railcrew { display: none; }
+  .readout:not(.open) .rotoggle { border-bottom: 0; }
+}
+@media (max-width: 34rem) {
+  /* three cells across a phone wrapped every label onto two lines */
+  .readout { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 30rem) {
   .card > *:not(h2):not(.sub) { margin-left: .625rem; margin-right: .625rem; }
@@ -1218,9 +1353,14 @@ svg { display: block; width: 100%; height: auto; overflow: visible; }
   transition: color .18s var(--e), border-color .18s var(--e);
 }
 .helpbtn:hover { color: var(--fg); border-color: var(--fg-4); }
-@media (max-width: 56rem) {
-  /* the rule takes its own line down here, so the ? sits beside the wordmark */
+@media (max-width: 75rem) {
+  /* the rule is on its own line from here down, so the ? sits beside the
+     wordmark instead of at the far end of the ticks */
   .helpbtn { margin-left: auto; margin-bottom: 0; align-self: center; }
+}
+@media (max-width: 60rem) {
+  /* on a phone it also grows to a size a thumb can actually hit */
+  .helpbtn { width: 2.25rem; height: 2.25rem; font-size: .875rem; }
 }
 
 /* The find-your-way sheet. Same graphite, same hairlines: it must read as a
