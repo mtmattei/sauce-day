@@ -24,7 +24,12 @@ export const crewNames = () => state.members.map(m => m.display_name);
 // drifted in one of them — readiness() counted a kind of "Costco" as nothing to
 // buy while the buy list showed it, so the meter could never reach full.
 export const BUYABLE_KINDS = ["Need", "Buy", "Refill", "Costco"];
-export const buyable = i => !!i.store || BUYABLE_KINDS.includes(i.kind);
+// Food is the menu's, so a `food` item never belongs here — not even one left
+// behind by a database that has not had the patch run against it yet. Without
+// this the buy list shows the dish twice, once from each table, which is the
+// exact duplication the merge was for.
+export const buyable = i =>
+  i.category !== "food" && (!!i.store || BUYABLE_KINDS.includes(i.kind));
 
 // Food and drink live in `menu`, the kit and the ingredients in `items`, so the
 // person responsible is `who` on one and `assigned_to` on the other.
