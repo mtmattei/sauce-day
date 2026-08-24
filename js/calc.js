@@ -19,6 +19,20 @@ export const num = (v, d = 0) => (Number(v) || 0).toLocaleString("en-CA",
 
 export const crewNames = () => state.members.map(m => m.display_name);
 
+// ---------------------------------------------------------------- the buy list
+// One rule, stated once. It was written out in four places and had already
+// drifted in one of them — readiness() counted a kind of "Costco" as nothing to
+// buy while the buy list showed it, so the meter could never reach full.
+export const BUYABLE_KINDS = ["Need", "Buy", "Refill", "Costco"];
+export const buyable = i => !!i.store || BUYABLE_KINDS.includes(i.kind);
+
+// Food and drink live in `menu`, the kit and the ingredients in `items`, so the
+// person responsible is `who` on one and `assigned_to` on the other.
+export const ownerOf = r => r.assigned_to ?? r.who ?? null;
+// That field is free text ("Matt / David", "David (4) / Matt (2)"), so
+// membership is a substring test, not equality.
+export const assignedTo = (r, name) => !!name && !!ownerOf(r) && ownerOf(r).includes(name);
+
 // ---------------------------------------------------------------- money
 export function budgetByCat() {
   const out = { toolkit: 0, ingredients: 0, food: 0 };
@@ -136,8 +150,9 @@ export function daysToGo() {
 export function readiness() {
   const done = (arr, f) => ({ done: arr.filter(f).length, total: arr.length });
   return {
-    buy: done(state.items.filter(i => i.store || i.kind === "Need" || i.kind === "Buy" || i.kind === "Refill"),
-              i => i.obtained),
+    // kit and ingredients here; food and drink are the menu's tracker, so
+    // nothing is counted twice
+    buy: done(state.items.filter(buyable), i => i.obtained),
     run: done(state.runsheet, r => r.done),
     menu: done(state.menu, m => m.confirmed)
   };

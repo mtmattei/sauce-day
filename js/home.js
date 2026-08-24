@@ -6,16 +6,11 @@
 //  actually open the app with: how long, what do I owe, are we ready.
 // ============================================================================
 import { state, YEAR } from "./db.js";
-import { money0, settlement, yieldPlan, readiness, daysToGo, grappaRecord } from "./calc.js";
+import { money0, settlement, yieldPlan, readiness, daysToGo, grappaRecord,
+         buyable, assignedTo } from "./calc.js";
 import { h, frag, me } from "./ui.js";
 import { icon } from "./icons.js";
 import { jarWall } from "./jars.js";
-
-// items that belong on the buy list at all — same test viewBuy applies
-const buyable = i => i.store || ["Need", "Buy", "Refill", "Costco"].includes(i.kind);
-// assigned_to is free text ("Matt / David", "David (4) / Matt (2)"), so
-// membership is a substring test, not equality
-const assignedTo = (i, name) => !!name && !!i.assigned_to && i.assigned_to.includes(name);
 
 function section(cls, ...kids) {
   return h("section", { class: "bsec " + cls }, ...kids);
@@ -128,7 +123,10 @@ export function viewBoard() {
   const pulse = section("bpulse",
     h("h2", { class: "k" }, "The crew"),
     ...state.members.map(m => {
-      const left = state.items.filter(i => buyable(i) && !i.obtained && assignedTo(i, m.display_name)).length;
+      // his kit and his dishes both count — a man down for the SAQ run has a
+      // list, even when nothing in `items` has his name on it
+      const left = state.items.filter(i => buyable(i) && !i.obtained && assignedTo(i, m.display_name)).length
+                 + state.menu.filter(d => !d.confirmed && assignedTo(d, m.display_name)).length;
       const net = st.net.find(p => p.name === m.display_name)?.net || 0;
       const square = !left && Math.abs(net) < 0.005;
       return h("a", { class: "bcrewrow" + (square ? " clear" : ""), href: "#/buy" },

@@ -34,6 +34,11 @@ insert into public.app_settings
 -- ---------------------------------------------------------------- ledger
 -- Toolkit rows use `subcategory` so the UI can group the equipment into clear
 -- sections without overloading `kind`, which remains the Owned / Need / Refill state.
+--
+-- Two categories only. Food and drink live in `menu`, one row per dish, which
+-- owns who is bringing it and where it comes from; the buy list and the spend
+-- screen read both tables. The `food` category still exists for `expenses`,
+-- which is where food money has always been booked.
 insert into public.items
   (year, category, subcategory, sort_index, name, kind, qty, budget, assigned_to, store,
    repeat_next, comments, link) values
@@ -108,36 +113,7 @@ insert into public.items
   (2026, 'ingredients', null, 6, 'Carrots', 'Need', '2 kg (~15)', 0, 'Matt / David / Nate', 'Market', 'Yes', 'Soffritto — one per 7 L of sauce.', null),
   (2026, 'ingredients', null, 7, 'Celery', 'Need', '2 bunches', 0, 'Matt / David / Nate', 'Market', 'Yes', 'Soffritto — a stalk per 7 L of sauce.', null),
   (2026, 'ingredients', null, 8, 'Salt', 'Owned', null, 0, 'Matt / David / Nate', null, 'Yes', null, null),
-  (2026, 'ingredients', null, 9, 'Sugar', 'Owned', null, 0, 'Matt / David / Nate', null, 'Yes', null, null),
-
-  -- Food
-  (2026, 'food', null, 1, 'Breakfast Sandwiches', 'Egg, bacon, sausage, cheese', null, 0, null, 'Market', 'Yes', null, null),
-  (2026, 'food', null, 2, 'Espresso', 'Grind fresh before Sauce Day', null, 0, 'David', 'Roastery', 'Yes', null, null),
-  (2026, 'food', null, 3, 'Cornetti', 'Morning pastries with espresso', null, 0, 'Nate', 'Bakery', 'Yes', null, null),
-  (2026, 'food', null, 4, 'Blood orange juice', 'For morning mimosas', null, 0, null, 'Grocery', 'Yes', null, null),
-  (2026, 'food', null, 5, 'Parm & Balsamic glaze', 'Serve with olive oil and grilled bread', null, 0, null, 'Market', 'Yes', null, null),
-  (2026, 'food', null, 6, 'Grilled artichokes', 'For the antipasto table', null, 0, null, 'Market', 'Yes', null, null),
-  (2026, 'food', null, 7, 'Giardiniera', 'Pickled vegetables for antipasto', null, 0, 'Chris', 'Italian Market', 'Yes', null, null),
-  (2026, 'food', null, 8, 'Marinated mushrooms', 'Garlic, parsley and olive oil', null, 0, 'Chris', 'Market', 'Yes', null, null),
-  (2026, 'food', null, 9, 'Soppressata', 'For the antipasto board', null, 0, null, 'Italian Market', 'Yes', null, null),
-  (2026, 'food', null, 10, 'Bresaola', 'Serve with arugula, lemon and Parmigiano', null, 0, null, 'Italian Market', 'Yes', null, null),
-  (2026, 'food', null, 11, 'Taralli', 'Crunchy snack for the table', null, 0, null, 'Italian Market', 'Yes', null, null),
-  (2026, 'food', null, 12, 'Steak, Pepperoni & Capicollo Subs', 'Steak, pepperoni and capicollo subs', null, 0, null, 'Butcher', 'Yes', null, null),
-  (2026, 'food', null, 13, 'Italian rolls', 'For subs', null, 0, 'Nate', 'Bakery', 'Yes', null, null),
-  (2026, 'food', null, 14, 'Melon and prosciutto', 'Cold afternoon snack', null, 0, null, 'Market', 'Yes', null, null),
-  (2026, 'food', null, 15, 'Fennel and orange salad', 'Fennel, orange, parsley and olive oil', null, 0, null, 'Market', 'Yes', null, null),
-  (2026, 'food', null, 16, 'Rigatoni', 'Dinner pasta for the fresh sauce', null, 0, null, 'Italian Market', 'Yes', null, null),
-  (2026, 'food', null, 17, 'Braciole', 'Beef rolls braised in the new sauce', null, 0, null, 'Butcher', 'Yes', null, null),
-  (2026, 'food', null, 18, 'Cannoli', 'Dessert', null, 0, null, 'Little Italy', 'Yes', null, null),
-  (2026, 'food', null, 19, 'Affogato', 'Vanilla gelato and espresso', null, 0, null, 'Grocery', 'Yes', null, null),
-  (2026, 'food', null, 20, 'Grappa', 'The annual bottle - beat last year', '1', 0, 'David', 'SAQ', 'Yes', 'See Grappa Hall of Fame tab', 'https://www.saq.com/en/11849106'),
-  (2026, 'food', null, 21, 'Prosecco', 'Morning mimosas and aperitivo', null, 0, 'David', 'SAQ', 'Yes', null, null),
-  (2026, 'food', null, 22, 'Aperol', 'For spritzes', null, 0, 'David', 'SAQ', 'Yes', null, null),
-  (2026, 'food', null, 23, 'Italian red wine', 'Chianti, Montepulciano or similar', '3', 0, 'David', 'SAQ', 'Yes', null, null),
-  (2026, 'food', null, 24, 'Italian lager', 'Peroni, Moretti or similar', null, 0, null, 'Depanneur', 'Yes', null, null),
-  (2026, 'food', null, 25, 'San Pellegrino', 'Sparkling water for the day', '12', 0, null, 'Costco', 'Yes', null, null),
-  (2026, 'food', null, 26, 'Bread for grilling', 'Crusty loaf for the parm & balsamic', '2 loaves', 0, 'Nate', 'Bakery', 'Yes', 'The menu serves the parm with grilled bread.', null),
-  (2026, 'food', null, 27, 'Ice', 'For the coolers', '4 bags', 0, 'David', 'Depanneur', 'Yes', 'Friday chill-down needs it and every party forgets it.', null);
+  (2026, 'ingredients', null, 9, 'Sugar', 'Owned', null, 0, 'Matt / David / Nate', null, 'Yes', null, null);
 
 -- Lock in anything the crew already owns. `locked` is separate from `kind` so
 -- the UI can offer an explicit Unlock/Edit action later without changing status.
@@ -258,43 +234,47 @@ insert into public.runsheet
    'check', null, null, true, true, 'Settle up, then bed. Settlement says who pays whom.');
 
 -- ---------------------------------------------------------------- menu
+-- The food and drink list, and the only one: the ledger carries no food rows.
+-- sort_index runs in tens so a dish slips in without renumbering the service.
 insert into public.menu (year, sort_index, service, dish, who, source, qty, notes) values
   -- Breakfast
-  (2026, 1, 'Breakfast', 'Breakfast Sandwiches', null, 'Market', null, 'Egg, bacon, sausage, cheese'),
-  (2026, 2, 'Breakfast', 'Espresso', 'David', 'Roastery', null, 'Grind fresh before Sauce Day'),
-  (2026, 3, 'Breakfast', 'Cornetti', 'Nate', 'Bakery', null, 'Morning pastries with espresso'),
-  (2026, 4, 'Breakfast', 'Blood orange juice / mimosas', null, 'Grocery', null, null),
+  (2026, 10, 'Breakfast', 'Breakfast Sandwiches', null, 'Market', null, 'Egg, bacon, sausage, cheese'),
+  (2026, 20, 'Breakfast', 'Espresso', 'David', 'Roastery', null, 'Grind fresh before Sauce Day'),
+  (2026, 30, 'Breakfast', 'Cornetti', 'Nate', 'Bakery', null, 'Morning pastries with espresso'),
+  (2026, 40, 'Breakfast', 'Blood orange juice / mimosas', null, 'Grocery', null, null),
 
   -- Antipasto
-  (2026, 5, 'Antipasto', 'Parm & Balsamic glaze', null, 'Market', null, 'Serve with olive oil and grilled bread'),
-  (2026, 6, 'Antipasto', 'Grilled artichokes', null, 'Market', null, null),
-  (2026, 7, 'Antipasto', 'Giardiniera', 'Chris', 'Italian Market', null, null),
-  (2026, 8, 'Antipasto', 'Marinated mushrooms', 'Chris', 'Market', null, 'Garlic, parsley and olive oil'),
-  (2026, 9, 'Antipasto', 'Soppressata', null, 'Italian Market', null, null),
-  (2026, 10, 'Antipasto', 'Bresaola', null, 'Italian Market', null, 'Serve with arugula, lemon and Parmigiano'),
-  (2026, 11, 'Antipasto', 'Taralli', null, 'Italian Market', null, 'Crunchy snack for the table'),
+  (2026, 50, 'Antipasto', 'Parm & Balsamic glaze', null, 'Market', null, 'Serve with olive oil and grilled bread'),
+  (2026, 55, 'Antipasto', 'Bread for grilling', 'Nate', 'Bakery', '2 loaves', 'Crusty loaf for the parm & balsamic.'),
+  (2026, 60, 'Antipasto', 'Grilled artichokes', null, 'Market', null, null),
+  (2026, 70, 'Antipasto', 'Giardiniera', 'Chris', 'Italian Market', null, 'Pickled vegetables for the antipasto.'),
+  (2026, 80, 'Antipasto', 'Marinated mushrooms', 'Chris', 'Market', null, 'Garlic, parsley and olive oil'),
+  (2026, 90, 'Antipasto', 'Soppressata', null, 'Italian Market', null, null),
+  (2026, 100, 'Antipasto', 'Bresaola', null, 'Italian Market', null, 'Serve with arugula, lemon and Parmigiano'),
+  (2026, 110, 'Antipasto', 'Taralli', null, 'Italian Market', null, 'Crunchy snack for the table'),
 
   -- Lunch
-  (2026, 12, 'Lunch', 'Steak, Pepperoni & Capicollo Subs', null, 'Butcher', null, null),
-  (2026, 13, 'Lunch', 'Italian rolls', 'Nate', 'Bakery', null, 'For the subs'),
-  (2026, 14, 'Lunch', 'Melon and prosciutto', null, 'Market', null, 'Cold afternoon snack'),
-  (2026, 15, 'Lunch', 'Fennel and orange salad', null, 'Market', null, 'Fennel, orange, parsley and olive oil'),
+  (2026, 120, 'Lunch', 'Steak, Pepperoni & Capicollo Subs', null, 'Butcher', null, null),
+  (2026, 130, 'Lunch', 'Italian rolls', 'Nate', 'Bakery', null, 'For the subs'),
+  (2026, 140, 'Lunch', 'Melon and prosciutto', null, 'Market', null, 'Cold afternoon snack'),
+  (2026, 150, 'Lunch', 'Fennel and orange salad', null, 'Market', null, 'Fennel, orange, parsley and olive oil'),
 
   -- Dinner
-  (2026, 16, 'Dinner', 'Rigatoni with this year''s sauce', null, 'Italian Market', null, 'Dinner pasta with the fresh sauce'),
-  (2026, 17, 'Dinner', 'Braciole', null, 'Butcher', null, 'Beef rolls braised in the new sauce'),
+  (2026, 160, 'Dinner', 'Rigatoni with this year''s sauce', null, 'Italian Market', null, 'Dinner pasta with the fresh sauce'),
+  (2026, 170, 'Dinner', 'Braciole', null, 'Butcher', null, 'Beef rolls braised in the new sauce'),
 
   -- Dessert
-  (2026, 18, 'Dessert', 'Cannoli', null, 'Little Italy', null, null),
-  (2026, 19, 'Dessert', 'Affogato', null, 'Grocery', null, 'Vanilla gelato and espresso'),
+  (2026, 180, 'Dessert', 'Cannoli', null, 'Little Italy', null, null),
+  (2026, 190, 'Dessert', 'Affogato', null, 'Grocery', null, 'Vanilla gelato and espresso'),
 
   -- Drinks
-  (2026, 20, 'Drinks', 'Grappa - the annual bottle', 'David', 'SAQ', '1', 'Must beat last year'),
-  (2026, 21, 'Drinks', 'Prosecco', 'David', 'SAQ', null, 'Morning mimosas and aperitivo'),
-  (2026, 22, 'Drinks', 'Aperol', 'David', 'SAQ', null, 'For spritzes'),
-  (2026, 23, 'Drinks', 'Italian red wine', 'David', 'SAQ', '3', 'Chianti, Montepulciano or similar'),
-  (2026, 24, 'Drinks', 'Italian lager', null, 'Depanneur', null, 'Peroni, Moretti or similar'),
-  (2026, 25, 'Drinks', 'San Pellegrino', null, 'Costco', null, 'Sparkling water for the day');
+  (2026, 200, 'Drinks', 'Grappa - the annual bottle', 'David', 'SAQ', '1', 'Must beat last year'),
+  (2026, 210, 'Drinks', 'Prosecco', 'David', 'SAQ', null, 'Morning mimosas and aperitivo'),
+  (2026, 220, 'Drinks', 'Aperol', 'David', 'SAQ', null, 'For spritzes'),
+  (2026, 230, 'Drinks', 'Italian red wine', 'David', 'SAQ', '3', 'Chianti, Montepulciano or similar'),
+  (2026, 240, 'Drinks', 'Italian lager', null, 'Depanneur', null, 'Peroni, Moretti or similar'),
+  (2026, 250, 'Drinks', 'San Pellegrino', null, 'Costco', '12', 'Sparkling water for the day'),
+  (2026, 255, 'Drinks', 'Ice', 'David', 'Depanneur', '4 bags', 'Friday chill-down needs it and every party forgets it.');
 
 -- ---------------------------------------------------------------- grappa
 insert into public.grappa (year, bottle, producer, region, price, bought_by, rating, notes) values

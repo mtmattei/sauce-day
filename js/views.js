@@ -3,7 +3,7 @@
 // ============================================================================
 import { sb, state, YEAR, update, insert, remove, upsert, flash, signOut } from "./db.js";
 import {
-  CATS, money, money0, num, crewNames,
+  CATS, money, money0, num, crewNames, buyable, assignedTo, spentByCat,
   settlement, yieldPlan, seriesData, grappaRecord, daysToGo
 } from "./calc.js";
 import { h, frag, field, select, check, personSelect, delButton, card, stat,
@@ -17,36 +17,52 @@ import { jarWall } from "./jars.js";
 const SERIES_COLORS = ["var(--series-1)", "var(--series-2)", "var(--series-3)"];
 
 // ============================================================ BUY LIST
-export function viewBuy() {
-  const items = state.items
-    .filter(i => i.store || ["Need", "Buy", "Refill", "Costco"].includes(i.kind))
-    .sort((a, b) => (a.store || "zzz").localeCompare(b.store || "zzz")
-      || a.category.localeCompare(b.category)
-      || a.sort_index - b.sort_index);
+// Two tables, one shopping trip. The kit and the ingredients are `items`; food
+// and drink are `menu`, which owns the dish, who is bringing it and where it
+// comes from. Only the grouping by store is shared, and that is the part that
+// makes the list worth carrying into a shop.
+const CAT_RANK = { toolkit: 0, ingredients: 1, food: 2 };
 
+/** Everything on the shopping list, from whichever table it lives in. */
+function buyEntries() {
+  return [
+    ...state.items.filter(buyable).map(i => ({
+      table: "items", row: i, store: i.store, rank: CAT_RANK[i.category] ?? 3,
+      sort: i.sort_index, got: i.obtained, budget: Number(i.budget) || 0
+    })),
+    ...state.menu.map(m => ({
+      table: "menu", row: m, store: m.source, rank: CAT_RANK.food,
+      sort: m.sort_index, got: m.confirmed, budget: 0
+    }))
+  ].sort((a, b) => (a.store || "zzz").localeCompare(b.store || "zzz")
+    || a.rank - b.rank || a.sort - b.sort);
+}
+
+const entryRow = e => e.table === "menu" ? dishRow(e.row) : buyRow(e.row);
+
+export function viewBuy() {
   const byStore = new Map();
-  items.forEach(i => {
-    const k = i.store || "No store yet";
+  buyEntries().forEach(e => {
+    const k = e.store || "No store yet";
     if (!byStore.has(k)) byStore.set(k, []);
-    byStore.get(k).push(i);
+    byStore.get(k).push(e);
   });
 
   const only = state.ui?.buyMine ? me() : null;
   const blocks = [];
   byStore.forEach((list, store) => {
-    // assigned_to is free text — "Matt / David", "David (4) / Matt (2)" — so
-    // "mine" is a substring test. Equality showed 2 of Matt's 14 items.
-    const shown = only ? list.filter(i => i.assigned_to && i.assigned_to.includes(only)) : list;
+    const shown = only ? list.filter(e => assignedTo(e.row, only)) : list;
     if (!shown.length) return;
-    const total = shown.reduce((a, i) => a + (Number(i.budget) || 0), 0);
-    const todo = shown.filter(i => !i.obtained);
-    const got = shown.filter(i => i.obtained);
+    const total = shown.reduce((a, e) => a + e.budget, 0);
+    const todo = shown.filter(e => !e.got);
+    const got = shown.filter(e => e.got);
     blocks.push(h("div", { class: "store" },
       sectionBar(store),
       h("div", { class: "storemeta" },
-        `${got.length} of ${shown.length} got · est. ${money(total)}`),
-      ...todo.map(buyRow),
-      ...foldDone("buy:" + store, got, "got", buyRow)));
+        `${got.length} of ${shown.length} got`
+        + (total ? ` · est. ${money(total)}` : "")),
+      ...todo.map(entryRow),
+      ...foldDone("buy:" + store, got, "got", entryRow)));
   });
 
   const filter = h("div", { class: "btnrow" },
@@ -110,6 +126,18 @@ function buyRow(i) {
       i.locked ? lockBtn(i) : null));
 }
 
+// A dish on the buy list. Same shape as an item row, but it ticks `confirmed`
+// on the menu — one dish, one tick, wherever you happen to be looking at it.
+function dishRow(m) {
+  return h("div", { class: "row buy" + (m.confirmed ? " got" : "") },
+    check("menu", m, "confirmed", null, { ariaLabel: "Got " + m.dish }),
+    h("div", { class: "rowmain" },
+      h("div", { class: "rowtitle" }, m.dish),
+      h("div", { class: "rowsub" },
+        [m.service, m.qty ? "qty " + m.qty : null, m.notes].filter(Boolean).join(" · "))),
+    h("div", { class: "rowend" }, personSelect("menu", m, "who")));
+}
+
 // ============================================================ LEDGER
 export function viewLedger() {
   const cat = state.ui?.cat || "toolkit";
@@ -122,9 +150,15 @@ export function viewLedger() {
     } }, c.short)));
 
   const total = rows.reduce((a, i) => a + (Number(i.budget) || 0), 0);
-  const add = h("button", { class: "btn primary", onClick: () =>
-    addRow("items", { category: cat, sort_index: nextSort(rows), name: "New item",
-      kind: "Need", budget: 0 }, "Item added") }, "+ Add item");
+  // Food and drink are the Menu's, dish by dish — the ledger used to carry a
+  // second copy of every one of them, so a cannoli had to be ticked twice and
+  // whoever changed his mind about bringing it had to say so in two places.
+  // What is left here is the money: food spend still books to this category.
+  const add = cat === "food"
+    ? h("a", { class: "btn primary", href: "#/menu" }, "Open the menu →")
+    : h("button", { class: "btn primary", onClick: () =>
+        addRow("items", { category: cat, sort_index: nextSort(rows), name: "New item",
+          kind: "Need", budget: 0 }, "Item added") }, "+ Add item");
 
   // toolkit rows carry a subcategory ("Cooking & Heat", "Jarring & Canning");
   // group under section bars where they do, stay flat where they don't.
@@ -156,12 +190,20 @@ export function viewLedger() {
       ...foldDone(`ledger:${cat}:${sub}`, got, "got", ledgerRow)));
   });
 
+  const spent = spentByCat()[cat] || 0;
   return frag(
-    card(meta.label, "Everything in this category, and what we plan to spend on it.",
+    card(meta.label,
+      cat === "food"
+        ? "Every dish and every bottle lives on the Menu, with one tick each. This tab keeps the money."
+        : "Everything in this category, and what we plan to spend on it.",
       tabs,
       h("div", { class: "btnrow spread" },
-        h("span", { class: "mono big" }, money(total) + " budgeted"), add)),
-    ...blocks);
+        h("span", { class: "mono big" },
+          cat === "food" ? money(spent) + " spent" : money(total) + " budgeted"), add)),
+    ...(blocks.length ? blocks
+      : [empty(cat === "food"
+          ? "Nothing here — the food and drink list is the Menu."
+          : "Nothing in this category yet.")]));
 }
 
 function itemEditor(i) {
@@ -252,37 +294,47 @@ export function viewSpend() {
   const st = settlement();
 
   // The receipt is the moment you know both facts — that it is paid for and
-  // that it is in the truck — so picking the item here does both jobs at once.
-  const outstanding = state.items
-    .filter(i => !i.obtained && (i.store || ["Need", "Buy", "Refill", "Costco"].includes(i.kind)))
-    .sort((a, b) => (a.store || "zzz").localeCompare(b.store || "zzz")
-      || a.name.localeCompare(b.name));
+  // that it is in the truck — so picking the line here does both jobs at once.
+  // It reads the same two tables the buy list does, so a dish can be ticked
+  // off by paying for it exactly like a bucket can.
+  const outstanding = buyEntries().filter(e => !e.got).map(e => ({
+    value: `${e.table}:${e.row.id}`,
+    store: e.store,
+    name: e.table === "menu" ? e.row.dish : e.row.name,
+    category: e.table === "menu" ? "food" : e.row.category,
+    budget: e.budget
+  }));
 
   const form = h("form", { class: "spendform", onSubmit: async (e) => {
     e.preventDefault();
     const f = new FormData(e.target);
     const amount = Number(f.get("amount"));
     if (!amount || amount <= 0) { flash("Put an amount in", true); return; }
-    const itemId = f.get("item_id") || null;
+    // "items:<id>" or "menu:<id>" — expenses.item_id is a foreign key into
+    // items, so a dish logs its receipt without one and gets ticked on its
+    // own table instead.
+    const [table, id] = (f.get("item_id") || "").split(":");
     await insert("expenses", {
       category: f.get("category"), paid_by: f.get("paid_by"),
-      amount, label: f.get("label") || null, item_id: itemId,
+      amount, label: f.get("label") || null,
+      item_id: table === "items" ? id : null,
       spent_on: f.get("spent_on") || new Date().toISOString().slice(0, 10),
       created_by: state.session?.user?.email || null
     });
-    // one action, both books: the receipt is logged and the item is ticked off
-    if (itemId) await update("items", itemId, { obtained: true });
+    // one action, both books: the receipt is logged and the line is ticked off
+    if (table === "items") await update("items", id, { obtained: true });
+    if (table === "menu")  await update("menu", id, { confirmed: true });
     e.target.reset();
     e.target.querySelector('[name=paid_by]').value = me() || "";
-    flash(itemId ? "Logged " + money(amount) + " and ticked it off"
-                 : "Logged " + money(amount));
+    flash(table ? "Logged " + money(amount) + " and ticked it off"
+                : "Logged " + money(amount));
   } },
     lbl("Who paid", h("select", { name: "paid_by", class: "f", required: true },
       ...crewNames().map(n => h("option", { value: n, selected: n === me() }, n)))),
     lbl("What did it pay for", h("select", { name: "item_id", class: "f", onChange: e => {
-      const it = outstanding.find(x => String(x.id) === e.target.value);
+      const it = outstanding.find(x => x.value === e.target.value);
       if (!it) return;
-      // the category follows the item; the amount does not — items.budget is an
+      // the category follows the line; the amount does not — a budget is an
       // estimate and logging an estimate as a receipt is how a split goes wrong
       const fm = e.target.form;
       fm.querySelector("[name=category]").value = it.category;
@@ -291,7 +343,7 @@ export function viewSpend() {
       }
     } },
       h("option", { value: "" }, "— nothing on the buy list —"),
-      ...outstanding.map(i => h("option", { value: i.id },
+      ...outstanding.map(i => h("option", { value: i.value },
         `${i.store ? i.store + " · " : ""}${i.name}${i.budget ? " · est. " + money(i.budget) : ""}`)))),
     lbl("Category", h("select", { name: "category", class: "f" },
       ...CATS.map(c => h("option", { value: c.key }, c.label)))),

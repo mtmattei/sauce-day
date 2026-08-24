@@ -49,7 +49,7 @@ const ROUTES = [
   { hash: "#/run",     label: "Run",     icon: "clock",  view: V.viewRun,
     desc: "The order the day happens in. Tick each step as it happens." },
   { hash: "#/ledger",  label: "Ledger",  icon: "rows",   view: V.viewLedger,
-    desc: "Every item we own or need — toolkit, ingredients, food. Add or edit anything here." },
+    desc: "The kit and the ingredients — what we own, what we still need. Food lives on the Menu." },
   { hash: "#/grappa",  label: "Grappa",  icon: "bottle", view: V.viewGrappa,
     desc: "The shelf, the hall of fame, and the record this year's bottle has to beat." },
   { hash: "#/photos",  label: "Photos",  icon: "plates", view: V.viewPhotos,

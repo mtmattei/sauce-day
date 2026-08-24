@@ -168,12 +168,12 @@ they can sign in immediately.
 | Screen | What it's for |
 |---|---|
 | **Today** | Countdown, what you owe, budget vs actual, how ready we are |
-| **Buy** | Grouped by store. Claim an item, tick it when you've got it |
+| **Buy** | Kit, ingredients and dishes in one list, grouped by store. Claim it, tick it |
 | **Spend** | Log your own receipts. The split recalculates for everyone |
 | **Sauce** | Bushels → litres → jars, bands and lids to buy |
-| **Menu** | Who's bringing what, by service |
+| **Menu** | Who's bringing what, by service — the food list, and the only one |
 | **Run** | The order the day happens in, tick as you go |
-| **Ledger** | The full item list, three categories, add and edit anything |
+| **Ledger** | The kit and the ingredients, add and edit anything. Food money only |
 | **Grappa** | The shelf, the shortlist with photos, and whether it beat last year |
 | **History** | Every year since 2020, plus six charts |
 | **Crew** | Who can get in (admin only) |
@@ -209,7 +209,7 @@ anyone drives to the store.
 2. On the **History** screen, hit **Close out 2026** first — that writes the
    finished year into the permanent record.
 3. Run a copy of `seed.sql` with `2026` swapped for `2027` to carry the item
-   list forward, or add items by hand from the Ledger screen.
+   list forward, or add items by hand from the Ledger and Menu screens.
 
 ## Troubleshooting
 
