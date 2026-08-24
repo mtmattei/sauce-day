@@ -52,11 +52,9 @@ insert into public.items
   (2026, 'toolkit', 'Setup & Workspace', 68, 'TV', 'Owned', '1', 0, 'Matt', null, 'Yes', 'Set up Friday with the work area. Extension cord and a spot out of the splash zone.', null),
 
   -- Toolkit · Wash & Prep
-  -- The sink is a prospect, not a purchase: kind 'Prospect' keeps it off the
-  -- Buy list and out of the readiness count until the crew commits.
-  -- No store on purpose: a store would put the row on the Buy list and into
-  -- the readiness count. The store lives in the comment until the crew commits;
-  -- committing = set kind to 'Need' and store to 'Canadian Tire'.
+  -- The sink is a prospect, not a purchase: kind 'Prospect' and no store keep
+  -- it off the Buy list and out of the readiness count. How to commit it is on
+  -- the run sheet task that does the committing.
   (2026, 'toolkit', 'Wash & Prep', 70, 'Outdoor sink', 'Prospect', '1', 279.99, null, null, 'Maybe', 'Preferred: 1 m stainless sink station — half countertop, half bowl, 304 restaurant steel, $279.99 on Amazon, in stock, 4.8/5. No faucet in the listing — plan on a hose tap. Budget option: PDG folding table with sink & tap, $124.99 at Canadian Tire. Prices read 17 Aug 2026.', 'https://www.amazon.ca/dp/B0H397TB3K'),
   (2026, 'toolkit', 'Wash & Prep', 80, 'Buckets (Canadian Tire)', 'Owned', '6', 0, 'David', 'Canadian Tire', 'Buy', null, null),
   (2026, 'toolkit', 'Wash & Prep', 90, 'Buckets (Home Depot)', 'Owned', '7', 0, 'David (5) / Matt (2)', 'Home Depot', 'Yes', null, null),
@@ -102,15 +100,15 @@ insert into public.items
   (2026, 'toolkit', 'Serving & Extras', 370, 'Napkins', 'Owned', null, 0, 'Matt', null, 'Yes', null, null),
 
   -- Ingredients
-  (2026, 'ingredients', null, 1, 'Bushels of tomatoes', 'Need', '10', 175.0, 'Matt / David / Nate', 'Market', 'Yes', 'Pickup Fri Aug 28 at the market. Budget links to Yield & Jars tab', null),
+  (2026, 'ingredients', null, 1, 'Bushels of tomatoes', 'Need', null, 175.0, 'Matt / David / Nate', 'Market', 'Yes', 'Pickup Fri Aug 28 at the market. Count and budget live on the Yield & Jars tab.', null),
   (2026, 'ingredients', null, 2, 'Basil', 'Need', null, 0, 'Matt / David / Nate', 'Market', 'Yes', 'Matt potentially has', null),
   (2026, 'ingredients', null, 3, 'Parsley', 'Need', null, 0, 'Matt / David / Nate', 'Market', 'Yes', 'Matt potentially has', null),
-  (2026, 'ingredients', null, 4, 'Onions', 'Need', '5 kg (~20)', 0, 'Matt / David / Nate', 'Market', 'Yes', 'Soffritto for ~98 L. Roughly one per 5 L.', null),
-  (2026, 'ingredients', null, 5, 'Garlic', 'Need', '12 heads', 0, 'Matt / David / Nate', 'Market', 'Yes', 'Soffritto for ~98 L. A head per 8 L.', null),
-  (2026, 'ingredients', null, 6, 'Carrots', 'Need', '2 kg (~15)', 0, 'Matt / David / Nate', 'Market', 'Yes', 'Soffritto for ~98 L. One per 7 L.', null),
-  (2026, 'ingredients', null, 7, 'Celery', 'Need', '2 bunches', 0, 'Matt / David / Nate', 'Market', 'Yes', 'Soffritto for ~98 L. A stalk per 7 L.', null),
-  (2026, 'ingredients', null, 8, 'Salt', 'Have', null, 0, 'Matt / David / Nate', null, 'Yes', null, null),
-  (2026, 'ingredients', null, 9, 'Sugar', 'Have', null, 0, 'Matt / David / Nate', null, 'Yes', null, null),
+  (2026, 'ingredients', null, 4, 'Onions', 'Need', '5 kg (~20)', 0, 'Matt / David / Nate', 'Market', 'Yes', 'Soffritto — roughly one per 5 L of sauce.', null),
+  (2026, 'ingredients', null, 5, 'Garlic', 'Need', '12 heads', 0, 'Matt / David / Nate', 'Market', 'Yes', 'Soffritto — a head per 8 L of sauce.', null),
+  (2026, 'ingredients', null, 6, 'Carrots', 'Need', '2 kg (~15)', 0, 'Matt / David / Nate', 'Market', 'Yes', 'Soffritto — one per 7 L of sauce.', null),
+  (2026, 'ingredients', null, 7, 'Celery', 'Need', '2 bunches', 0, 'Matt / David / Nate', 'Market', 'Yes', 'Soffritto — a stalk per 7 L of sauce.', null),
+  (2026, 'ingredients', null, 8, 'Salt', 'Owned', null, 0, 'Matt / David / Nate', null, 'Yes', null, null),
+  (2026, 'ingredients', null, 9, 'Sugar', 'Owned', null, 0, 'Matt / David / Nate', null, 'Yes', null, null),
 
   -- Food
   (2026, 'food', null, 1, 'Breakfast Sandwiches', 'Egg, bacon, sausage, cheese', null, 0, null, 'Market', 'Yes', null, null),
@@ -183,7 +181,7 @@ insert into public.runsheet
   (2026,  20, 'PREP', 'This week', 'Confirm Chris is bringing his table', 'Matt', 'Chris', null,
    null, null, null, false, false, 'The Tables row counts two: Matt''s plastic one and Chris''s.'),
   (2026,  30, 'PREP', 'This week', 'Sort out the grappa', 'David', null, null,
-   null, null, null, false, false, 'It has to beat last year''s $135. See the Grappa tab.'),
+   null, null, null, false, false, 'It has to beat last year. See the Grappa tab.'),
 
   -- Friday
   (2026,  40, 'PREP', 'Fri 28', 'Pick up bushels from the market', 'Nate', 'David', 'Truck, buckets',
@@ -192,20 +190,18 @@ insert into public.runsheet
    'jar', 120, null, true, false, 'Count as you go. Sterilising happens Saturday, close to canning.'),
   (2026,  60, 'PREP', 'Fri AM', 'Wash the tomato mill', 'Matt', null, 'Food mill, cleaning brush, Barkeepers Friend',
    null, 20, null, false, false, 'Strip it down. Last year''s pulp lives in the hopper threads.'),
-  (2026,  70, 'PREP', 'Fri PM', 'Pull out and organise the gear', 'Matt', 'Chris', 'Burners, pop-up tent, plastic table',
-   null, 30, null, false, false, 'Burners, tent, plastic table — everything out of the garage in one pass.'),
-  (2026,  80, 'PREP', 'Fri PM', 'Clean and check each piece as it comes out', 'Matt', 'All', 'Dawn, scrub pads, Barkeepers Friend',
-   null, 30, null, false, false, 'Cracked, rusted or missing gets found now, not at 07:00.'),
-  (2026,  90, 'PREP', 'Fri PM', 'Set up tables, tent and chairs', 'Matt', 'Chris', 'Tables, tent, chairs',
-   null, 45, null, false, false, null),
+  (2026,  70, 'PREP', 'Fri PM', 'Pull out the gear, cleaning and checking each piece', 'Matt', 'Chris', 'Burners, tent, plastic table, Dawn, scrub pads',
+   null, 45, null, false, false, 'Everything out of the garage in one pass. Cracked, rusted or missing gets found now, not at 07:00.'),
+  -- The setup block carries its own milestone, so the sink, the burners and
+  -- the barbecue fold under it rather than under the jar washing.
+  (2026,  90, 'PREP', 'Fri PM', 'Set up the work area — tables, tent and chairs', 'Matt', 'Chris', 'Tables, tent, chairs',
+   null, 45, null, true, false, 'The whole work area goes up in this block: tables first, then the sink, the burners and the barbecue.'),
   (2026, 100, 'PREP', 'Fri PM', 'Set up the utility sink/counter', 'Matt', 'David', 'Sink, hose',
-   null, 30, null, false, false, 'No faucet in the listing — plan on a hose tap and somewhere for the water to drain.'),
+   null, 30, null, false, false, 'Hose tap, and somewhere for the water to drain.'),
   (2026, 110, 'PREP', 'Fri PM', 'Set up the burners', 'Matt', 'Mike', '3 burners, propane',
    null, 20, null, false, false, 'Placed and hooked up Friday. Lighting them is a Saturday job.'),
-  (2026, 120, 'PREP', 'Fri PM', 'Set up the barbecue', 'Matt', null, 'BBQ, propane',
-   null, 20, null, false, false, null),
-  (2026, 130, 'PREP', 'Fri PM', 'Set up the TV', 'Matt', null, 'TV, extension cord',
-   null, 20, null, false, false, 'Out of the splash zone.'),
+  (2026, 120, 'PREP', 'Fri PM', 'Set up the barbecue and the TV', 'Matt', null, 'BBQ, propane, TV, extension cord',
+   null, 30, null, false, false, 'TV out of the splash zone.'),
   (2026, 140, 'PREP', 'Fri PM', 'Fill and check propane tanks', 'Matt', 'Mike', '4 tanks',
    null, 30, null, false, false, 'Refill beats buying new'),
   (2026, 150, 'PREP', 'Fri PM', 'Prep all food', 'Matt', 'All', 'Boards, knives, containers',
@@ -215,7 +211,7 @@ insert into public.runsheet
   (2026, 170, 'PREP', 'Fri PM', 'Grind the espresso', 'David', null, 'Grinder',
    null, 10, 'Beans from the roastery', false, false, '2025 lesson: do this the night before'),
   (2026, 180, 'PREP', 'Fri PM', 'Stage jars, mill, tools and supplies for the morning', 'Matt', 'All', 'Jars, mill, tools',
-   null, 30, null, false, false, 'Everything where it will be used, so 06:30 starts with coffee and not a search party.'),
+   null, 30, null, true, false, 'Everything where it will be used, so 06:30 starts with coffee and not a search party.'),
 
   -- The day
   (2026, 190, 'DAY', '06:30', 'Start sauce prep', 'Matt', 'All', 'Espresso, moka',
@@ -264,41 +260,41 @@ insert into public.runsheet
 -- ---------------------------------------------------------------- menu
 insert into public.menu (year, sort_index, service, dish, who, source, qty, notes) values
   -- Breakfast
-  (2026, 1, 'Breakfast', 'Breakfast Sandwiches', null, 'Market', '-', 'Egg, bacon, sausage, cheese'),
-  (2026, 2, 'Breakfast', 'Espresso', 'David', 'Roastery', '-', 'Grind fresh before Sauce Day'),
-  (2026, 3, 'Breakfast', 'Cornetti', 'Nate', 'Bakery', '-', 'Morning pastries with espresso'),
-  (2026, 4, 'Breakfast', 'Blood orange juice / mimosas', null, 'Grocery', '-', null),
+  (2026, 1, 'Breakfast', 'Breakfast Sandwiches', null, 'Market', null, 'Egg, bacon, sausage, cheese'),
+  (2026, 2, 'Breakfast', 'Espresso', 'David', 'Roastery', null, 'Grind fresh before Sauce Day'),
+  (2026, 3, 'Breakfast', 'Cornetti', 'Nate', 'Bakery', null, 'Morning pastries with espresso'),
+  (2026, 4, 'Breakfast', 'Blood orange juice / mimosas', null, 'Grocery', null, null),
 
   -- Antipasto
-  (2026, 5, 'Antipasto', 'Parm & Balsamic glaze', null, 'Market', '-', 'Serve with olive oil and grilled bread'),
-  (2026, 6, 'Antipasto', 'Grilled artichokes', null, 'Market', '-', null),
-  (2026, 7, 'Antipasto', 'Giardiniera', 'Chris', 'Italian Market', '-', null),
-  (2026, 8, 'Antipasto', 'Marinated mushrooms', 'Chris', 'Market', '-', 'Garlic, parsley and olive oil'),
-  (2026, 9, 'Antipasto', 'Soppressata', null, 'Italian Market', '-', null),
-  (2026, 10, 'Antipasto', 'Bresaola', null, 'Italian Market', '-', 'Serve with arugula, lemon and Parmigiano'),
-  (2026, 11, 'Antipasto', 'Taralli', null, 'Italian Market', '-', 'Crunchy snack for the table'),
+  (2026, 5, 'Antipasto', 'Parm & Balsamic glaze', null, 'Market', null, 'Serve with olive oil and grilled bread'),
+  (2026, 6, 'Antipasto', 'Grilled artichokes', null, 'Market', null, null),
+  (2026, 7, 'Antipasto', 'Giardiniera', 'Chris', 'Italian Market', null, null),
+  (2026, 8, 'Antipasto', 'Marinated mushrooms', 'Chris', 'Market', null, 'Garlic, parsley and olive oil'),
+  (2026, 9, 'Antipasto', 'Soppressata', null, 'Italian Market', null, null),
+  (2026, 10, 'Antipasto', 'Bresaola', null, 'Italian Market', null, 'Serve with arugula, lemon and Parmigiano'),
+  (2026, 11, 'Antipasto', 'Taralli', null, 'Italian Market', null, 'Crunchy snack for the table'),
 
   -- Lunch
-  (2026, 12, 'Lunch', 'Steak, Pepperoni & Capicollo Subs', null, 'Butcher', '-', null),
-  (2026, 13, 'Lunch', 'Italian rolls', 'Nate', 'Bakery', '-', 'For the subs'),
-  (2026, 14, 'Lunch', 'Melon and prosciutto', null, 'Market', '-', 'Cold afternoon snack'),
-  (2026, 15, 'Lunch', 'Fennel and orange salad', null, 'Market', '-', 'Fennel, orange, parsley and olive oil'),
+  (2026, 12, 'Lunch', 'Steak, Pepperoni & Capicollo Subs', null, 'Butcher', null, null),
+  (2026, 13, 'Lunch', 'Italian rolls', 'Nate', 'Bakery', null, 'For the subs'),
+  (2026, 14, 'Lunch', 'Melon and prosciutto', null, 'Market', null, 'Cold afternoon snack'),
+  (2026, 15, 'Lunch', 'Fennel and orange salad', null, 'Market', null, 'Fennel, orange, parsley and olive oil'),
 
   -- Dinner
-  (2026, 16, 'Dinner', 'Rigatoni with this year''s sauce', null, 'Italian Market', '-', 'Dinner pasta with the fresh sauce'),
-  (2026, 17, 'Dinner', 'Braciole', null, 'Butcher', '-', 'Beef rolls braised in the new sauce'),
+  (2026, 16, 'Dinner', 'Rigatoni with this year''s sauce', null, 'Italian Market', null, 'Dinner pasta with the fresh sauce'),
+  (2026, 17, 'Dinner', 'Braciole', null, 'Butcher', null, 'Beef rolls braised in the new sauce'),
 
   -- Dessert
-  (2026, 18, 'Dessert', 'Cannoli', null, 'Little Italy', '-', null),
-  (2026, 19, 'Dessert', 'Affogato', null, 'Grocery', '-', 'Vanilla gelato and espresso'),
+  (2026, 18, 'Dessert', 'Cannoli', null, 'Little Italy', null, null),
+  (2026, 19, 'Dessert', 'Affogato', null, 'Grocery', null, 'Vanilla gelato and espresso'),
 
   -- Drinks
   (2026, 20, 'Drinks', 'Grappa - the annual bottle', 'David', 'SAQ', '1', 'Must beat last year'),
-  (2026, 21, 'Drinks', 'Prosecco', 'David', 'SAQ', '-', 'Morning mimosas and aperitivo'),
-  (2026, 22, 'Drinks', 'Aperol', 'David', 'SAQ', '-', 'For spritzes'),
+  (2026, 21, 'Drinks', 'Prosecco', 'David', 'SAQ', null, 'Morning mimosas and aperitivo'),
+  (2026, 22, 'Drinks', 'Aperol', 'David', 'SAQ', null, 'For spritzes'),
   (2026, 23, 'Drinks', 'Italian red wine', 'David', 'SAQ', '3', 'Chianti, Montepulciano or similar'),
-  (2026, 24, 'Drinks', 'Italian lager', null, 'Depanneur', '-', 'Peroni, Moretti or similar'),
-  (2026, 25, 'Drinks', 'San Pellegrino', null, 'Costco', '-', 'Sparkling water for the day');
+  (2026, 24, 'Drinks', 'Italian lager', null, 'Depanneur', null, 'Peroni, Moretti or similar'),
+  (2026, 25, 'Drinks', 'San Pellegrino', null, 'Costco', null, 'Sparkling water for the day');
 
 -- ---------------------------------------------------------------- grappa
 insert into public.grappa (year, bottle, producer, region, price, bought_by, rating, notes) values
@@ -308,7 +304,7 @@ insert into public.grappa (year, bottle, producer, region, price, bought_by, rat
   (2023, null, null, null, 0.0, null, null, 'No grappa recorded'),
   (2024, null, null, null, 82.25, 'David', null, 'Bottle not named on the sheet'),
   (2025, null, null, null, 135.0, 'David', null, 'SAQ product 11849106 - https://www.saq.com/en/11849106'),
-  (2026, null, null, null, null, 'David', null, 'Not bought yet. It has to beat $135.00.');
+  (2026, null, null, null, null, 'David', null, 'Not bought yet.');
 
 -- ---------------------------------------------------------------- history
 insert into public.history
