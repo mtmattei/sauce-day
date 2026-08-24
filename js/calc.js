@@ -24,12 +24,23 @@ export const crewNames = () => state.members.map(m => m.display_name);
 // drifted in one of them — readiness() counted a kind of "Costco" as nothing to
 // buy while the buy list showed it, so the meter could never reach full.
 export const BUYABLE_KINDS = ["Need", "Buy", "Refill", "Costco"];
-// Food is the menu's, so a `food` item never belongs here — not even one left
-// behind by a database that has not had the patch run against it yet. Without
-// this the buy list shows the dish twice, once from each table, which is the
-// exact duplication the merge was for.
-export const buyable = i =>
-  i.category !== "food" && (!!i.store || BUYABLE_KINDS.includes(i.kind));
+export const buyable = i => !!i.store || BUYABLE_KINDS.includes(i.kind);
+
+/**
+ * The dishes that have been broken into ingredients. A food item's
+ * `subcategory` names the dish it is for, the way a toolkit item's names its
+ * section.
+ */
+export const brokenOutDishes = () => new Set(
+  state.items.filter(i => i.category === "food" && i.subcategory).map(i => i.subcategory));
+
+/**
+ * A dish belongs on the shopping list only while nothing is listed under it.
+ * Bought whole — the cannoli, the taralli, the prosecco — it is itself the
+ * purchase. Broken into ingredients, it steps aside for them: you cannot hand
+ * a butcher the word "braciole", and nothing should appear on the list twice.
+ */
+export const shoppable = (m, broken = brokenOutDishes()) => !broken.has(m.dish);
 
 // Food and drink live in `menu`, the kit and the ingredients in `items`, so the
 // person responsible is `who` on one and `assigned_to` on the other.

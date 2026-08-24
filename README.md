@@ -171,9 +171,9 @@ they can sign in immediately.
 | **Buy** | Kit, ingredients and dishes in one list, grouped by store. Claim it, tick it |
 | **Spend** | Log your own receipts. The split recalculates for everyone |
 | **Sauce** | Bushels → litres → jars, bands and lids to buy |
-| **Menu** | Who's bringing what, by service — the food list, and the only one |
+| **Menu** | Who's bringing or making what, by service. Ingredients live in the Ledger |
 | **Run** | The order the day happens in, tick as you go |
-| **Ledger** | The kit and the ingredients, add and edit anything. Food money only |
+| **Ledger** | The kit, the sauce ingredients, and the shopping under each dish |
 | **Grappa** | The shelf, the shortlist with photos, and whether it beat last year |
 | **History** | Every year since 2020, plus six charts |
 | **Crew** | Who can get in (admin only) |

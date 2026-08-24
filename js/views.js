@@ -4,6 +4,7 @@
 import { sb, state, YEAR, update, insert, remove, upsert, flash, signOut } from "./db.js";
 import {
   CATS, money, money0, num, crewNames, buyable, assignedTo, spentByCat,
+  brokenOutDishes, shoppable,
   settlement, yieldPlan, seriesData, grappaRecord, daysToGo
 } from "./calc.js";
 import { h, frag, field, select, check, personSelect, delButton, card, stat,
@@ -25,12 +26,13 @@ const CAT_RANK = { toolkit: 0, ingredients: 1, food: 2 };
 
 /** Everything on the shopping list, from whichever table it lives in. */
 function buyEntries() {
+  const broken = brokenOutDishes();
   return [
     ...state.items.filter(buyable).map(i => ({
       table: "items", row: i, store: i.store, rank: CAT_RANK[i.category] ?? 3,
       sort: i.sort_index, got: i.obtained, budget: Number(i.budget) || 0
     })),
-    ...state.menu.map(m => ({
+    ...state.menu.filter(m => shoppable(m, broken)).map(m => ({
       table: "menu", row: m, store: m.source, rank: CAT_RANK.food,
       sort: m.sort_index, got: m.confirmed, budget: 0
     }))
@@ -114,8 +116,11 @@ function buyRow(i) {
       h("div", { class: "rowtitle" }, i.name,
         i.link ? h("a", { href: i.link, target: "_blank", rel: "noopener", class: "link" }, "↗") : null),
       h("div", { class: "rowsub" },
-        [i.qty ? "qty " + i.qty : null, i.kind, i.comments,
-         paid ? "paid " + money(paid) : null].filter(Boolean).join(" · "))),
+        // an ingredient says which dish it is for: at the counter "500 g" is
+        // a question until you know it is the capicollo for the subs
+        [i.qty ? "qty " + i.qty : null,
+         i.category === "food" && i.subcategory ? "for " + i.subcategory : i.kind,
+         i.comments, paid ? "paid " + money(paid) : null].filter(Boolean).join(" · "))),
     h("div", { class: "rowend" },
       locked
         ? h("span", { class: "rowsub" }, i.assigned_to || "")
@@ -150,15 +155,13 @@ export function viewLedger() {
     } }, c.short)));
 
   const total = rows.reduce((a, i) => a + (Number(i.budget) || 0), 0);
-  // Food and drink are the Menu's, dish by dish — the ledger used to carry a
-  // second copy of every one of them, so a cannoli had to be ticked twice and
-  // whoever changed his mind about bringing it had to say so in two places.
-  // What is left here is the money: food spend still books to this category.
-  const add = cat === "food"
-    ? h("a", { class: "btn primary", href: "#/menu" }, "Open the menu →")
-    : h("button", { class: "btn primary", onClick: () =>
-        addRow("items", { category: cat, sort_index: nextSort(rows), name: "New item",
-          kind: "Need", budget: 0 }, "Item added") }, "+ Add item");
+  // The food category holds the shopping, not the dishes: one row per thing
+  // that goes in the cart, filed under the dish it is for. The dishes live on
+  // the Menu, which is where a dish is claimed and confirmed.
+  const add = h("button", { class: "btn primary", onClick: () =>
+    addRow("items", { category: cat, sort_index: nextSort(rows), name: "New item",
+      kind: "Need", budget: 0 }, "Item added") },
+    cat === "food" ? "+ Add an ingredient" : "+ Add item");
 
   // toolkit rows carry a subcategory ("Cooking & Heat", "Jarring & Canning");
   // group under section bars where they do, stay flat where they don't.
@@ -194,7 +197,7 @@ export function viewLedger() {
   return frag(
     card(meta.label,
       cat === "food"
-        ? "Every dish and every bottle lives on the Menu, with one tick each. This tab keeps the money."
+        ? "What goes in the cart, under the dish it's for. A dish with ingredients under it leaves the buy list to them — the dishes themselves live on the Menu."
         : "Everything in this category, and what we plan to spend on it.",
       tabs,
       h("div", { class: "btnrow spread" },
@@ -202,13 +205,20 @@ export function viewLedger() {
           cat === "food" ? money(spent) + " spent" : money(total) + " budgeted"), add)),
     ...(blocks.length ? blocks
       : [empty(cat === "food"
-          ? "Nothing here — the food and drink list is the Menu."
+          ? "No ingredients listed yet — every dish is being bought whole."
           : "Nothing in this category yet.")]));
 }
 
 function itemEditor(i) {
   return h("div", { class: "editor" },
     lbl("Name", field("items", i, "name")),
+    // Which dish it is for, chosen from the menu itself so the two always
+    // agree — a dish with anything under it leaves the buy list to its
+    // ingredients, and that only works while the names match exactly.
+    i.category === "food"
+      ? lbl("For which dish", select("items", i, "subcategory",
+          state.menu.map(m => m.dish), { blank: "not for a dish in particular" }))
+      : null,
     lbl("Need / owned", field("items", i, "kind")),
     lbl("Qty", field("items", i, "qty")),
     lbl("Budget", field("items", i, "budget", { type: "number" })),

@@ -115,7 +115,50 @@ insert into public.items
   (2026, 'ingredients', null, 6, 'Carrots', 'Need', '2 kg (~15)', 0, 'Matt / David / Nate', 'Market', 'Yes', 'Soffritto — one per 7 L of sauce.', null),
   (2026, 'ingredients', null, 7, 'Celery', 'Need', '2 bunches', 0, 'Matt / David / Nate', 'Market', 'Yes', 'Soffritto — a stalk per 7 L of sauce.', null),
   (2026, 'ingredients', null, 8, 'Salt', 'Owned', null, 0, 'Matt / David / Nate', null, 'Yes', null, null),
-  (2026, 'ingredients', null, 9, 'Sugar', 'Owned', null, 0, 'Matt / David / Nate', null, 'Yes', null, null);
+  (2026, 'ingredients', null, 9, 'Sugar', 'Owned', null, 0, 'Matt / David / Nate', null, 'Yes', null, null),
+
+  -- Food · the shopping, filed under the dish it is for. A dish with rows
+  -- under it steps off the buy list and lets them stand in for it; the dishes
+  -- themselves are the Menu's. Quantities are a first pass for five men.
+
+
+  -- Breakfast
+  (2026, 'food', 'Breakfast Sandwiches', 10, 'Eggs', 'Need', '18', 0, null, 'Grocery', 'Yes', null, null),
+  (2026, 'food', 'Breakfast Sandwiches', 20, 'Bacon', 'Need', '1 kg', 0, null, 'Butcher', 'Yes', null, null),
+  (2026, 'food', 'Breakfast Sandwiches', 30, 'Breakfast sausage', 'Need', '1 kg', 0, null, 'Butcher', 'Yes', null, null),
+  (2026, 'food', 'Breakfast Sandwiches', 40, 'Sliced cheese', 'Need', '500 g', 0, null, 'Grocery', 'Yes', 'Provolone or cheddar, whatever the sandwich wants.', null),
+  (2026, 'food', 'Breakfast Sandwiches', 50, 'English muffins', 'Need', '12', 0, null, 'Bakery', 'Yes', null, null),
+  (2026, 'food', 'Blood orange juice / mimosas', 60, 'Blood orange juice', 'Need', '3 L', 0, null, 'Grocery', 'Yes', 'The prosecco is its own line under Drinks.', null),
+
+  -- Antipasto
+  (2026, 'food', 'Parm & Balsamic glaze', 70, 'Parmigiano Reggiano', 'Need', '1 kg wedge', 0, null, 'Italian Market', 'Yes', 'The same wedge grates over the bresaola.', null),
+  (2026, 'food', 'Parm & Balsamic glaze', 80, 'Balsamic glaze', 'Need', '1 bottle', 0, null, 'Italian Market', 'Yes', null, null),
+  (2026, 'food', 'Parm & Balsamic glaze', 90, 'Good olive oil', 'Need', '500 ml', 0, null, 'Italian Market', 'Yes', 'Also dresses the mushrooms and both salads. The cooking oil is a separate bottle.', null),
+  (2026, 'food', 'Grilled artichokes', 100, 'Artichokes', 'Need', '10', 0, null, 'Market', 'Yes', null, null),
+  (2026, 'food', 'Grilled artichokes', 110, 'Lemons', 'Need', '6', 0, null, 'Market', 'Yes', 'The bresaola wants one too.', null),
+  (2026, 'food', 'Marinated mushrooms', 120, 'Cremini mushrooms', 'Need', '1 kg', 0, 'Chris', 'Market', 'Yes', 'Garlic, parsley and oil come off the sauce table.', null),
+  (2026, 'food', 'Bresaola', 130, 'Bresaola', 'Need', '400 g', 0, null, 'Italian Market', 'Yes', 'Sliced thin, and not the day before.', null),
+  (2026, 'food', 'Bresaola', 140, 'Arugula', 'Need', '2 bunches', 0, null, 'Market', 'Yes', null, null),
+
+  -- Lunch
+  (2026, 'food', 'Steak, Pepperoni & Capicollo Subs', 150, 'Steak, thin sliced', 'Need', '1.5 kg', 0, null, 'Butcher', 'Yes', null, null),
+  (2026, 'food', 'Steak, Pepperoni & Capicollo Subs', 160, 'Pepperoni', 'Need', '500 g', 0, null, 'Italian Market', 'Yes', null, null),
+  (2026, 'food', 'Steak, Pepperoni & Capicollo Subs', 170, 'Capicollo', 'Need', '500 g', 0, null, 'Italian Market', 'Yes', null, null),
+  (2026, 'food', 'Steak, Pepperoni & Capicollo Subs', 180, 'Provolone', 'Need', '500 g', 0, null, 'Italian Market', 'Yes', null, null),
+  (2026, 'food', 'Steak, Pepperoni & Capicollo Subs', 190, 'Frying peppers', 'Need', '6', 0, null, 'Market', 'Yes', 'The rolls are their own line under Lunch.', null),
+  (2026, 'food', 'Melon and prosciutto', 200, 'Cantaloupe', 'Need', '2', 0, null, 'Market', 'Yes', null, null),
+  (2026, 'food', 'Melon and prosciutto', 210, 'Prosciutto', 'Need', '400 g', 0, null, 'Italian Market', 'Yes', 'Two stores, which is why the dish is two lines.', null),
+  (2026, 'food', 'Fennel and orange salad', 220, 'Fennel', 'Need', '3 bulbs', 0, null, 'Market', 'Yes', null, null),
+  (2026, 'food', 'Fennel and orange salad', 230, 'Oranges', 'Need', '6', 0, null, 'Market', 'Yes', null, null),
+
+  -- Dinner
+  (2026, 'food', 'Braciole', 240, 'Beef top round, sliced thin', 'Need', '2 kg', 0, null, 'Butcher', 'Yes', 'Ask for the braciole cut and he will do the slicing.', null),
+  (2026, 'food', 'Braciole', 250, 'Breadcrumbs', 'Need', '1 bag', 0, null, 'Italian Market', 'Yes', null, null),
+  (2026, 'food', 'Braciole', 260, 'Pecorino', 'Need', '300 g', 0, null, 'Italian Market', 'Yes', null, null),
+  (2026, 'food', 'Braciole', 270, 'Butcher''s twine', 'Need', '1 roll', 0, null, 'Butcher', 'Yes', null, null),
+
+  -- Dessert
+  (2026, 'food', 'Affogato', 280, 'Vanilla gelato', 'Need', '2 L', 0, null, 'Grocery', 'Yes', 'The espresso is its own line under Breakfast.', null);
 
 -- Lock in anything the crew already owns. `locked` is separate from `kind` so
 -- the UI can offer an explicit Unlock/Edit action later without changing status.
