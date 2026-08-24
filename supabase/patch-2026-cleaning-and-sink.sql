@@ -20,11 +20,11 @@ where year = 2026 and name in ('Sponges (pack)', 'Outdoor sink');
 insert into public.items
   (year, category, subcategory, sort_index, name, kind, qty, budget, assigned_to, store,
    repeat_next, comments, link) values
-  (2026, 'toolkit', 'Cleaning & Sanitation', 34, 'Sponges (pack)', 'Need', '1 pack', 5.00, 'David', 'Grocery', 'Buy', 'New this year — kitchen sponges for the wash station.', null),
+  (2026, 'toolkit', 'Cleaning & Sanitation', 340, 'Sponges (pack)', 'Need', '1 pack', 5.00, 'David', 'Grocery', 'Buy', 'New this year — kitchen sponges for the wash station.', null),
   -- kind 'Prospect' + no store keeps the sink off the Buy list and out of the
   -- readiness count until the crew commits (a store would put it on the list).
   -- Committing = set kind to 'Need' and store to 'Canadian Tire'.
-  (2026, 'toolkit', 'Wash & Prep', 7, 'Outdoor sink', 'Prospect', '1', 279.99, null, null, 'Maybe', 'Preferred: 1 m stainless sink station — half countertop, half bowl, 304 restaurant steel, $279.99 on Amazon, in stock, 4.8/5. No faucet in the listing — plan on a hose tap. Budget option: PDG folding table with sink & tap, $124.99 at Canadian Tire. Prices read 17 Aug 2026.', 'https://www.amazon.ca/dp/B0H397TB3K');
+  (2026, 'toolkit', 'Wash & Prep', 70, 'Outdoor sink', 'Prospect', '1', 279.99, null, null, 'Maybe', 'Preferred: 1 m stainless sink station — half countertop, half bowl, 304 restaurant steel, $279.99 on Amazon, in stock, 4.8/5. No faucet in the listing — plan on a hose tap. Budget option: PDG folding table with sink & tap, $124.99 at Canadian Tire. Prices read 17 Aug 2026.', 'https://www.amazon.ca/dp/B0H397TB3K');
 
 -- Matt recounted: 55 jars on hand.
 update public.jar_inventory set jars = 55 where year = 2026 and person = 'Matt';
@@ -39,6 +39,8 @@ update public.items set
 where year = 2026 and name = 'Mason jars';
 
 -- Keep the section's ordering in step with the reseeded numbering.
-update public.items set sort_index = 35 where year = 2026 and name = 'Scrub pads';
-update public.items set sort_index = 36 where year = 2026 and name = 'Barkeepers Friend';
-update public.items set sort_index = 37 where year = 2026 and name = 'Napkins';
+-- Renumbered to tens by patch-2026-friday-plan.sql, which is what makes
+-- room for new rows between existing ones.
+update public.items set sort_index = 350 where year = 2026 and name = 'Scrub pads';
+update public.items set sort_index = 360 where year = 2026 and name = 'Barkeepers Friend';
+update public.items set sort_index = 370 where year = 2026 and name = 'Napkins';

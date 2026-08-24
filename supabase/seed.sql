@@ -39,12 +39,17 @@ insert into public.items
    repeat_next, comments, link) values
 
   -- Toolkit · Setup & Workspace
-  (2026, 'toolkit', 'Setup & Workspace', 1, 'Table blanket', 'Owned', '1', 0, 'Matt', null, 'Yes', null, null),
-  (2026, 'toolkit', 'Setup & Workspace', 2, 'Tables', 'Owned', '2', 0, 'Matt (1) / Chris (1)', null, 'Yes', null, null),
-  (2026, 'toolkit', 'Setup & Workspace', 3, 'Chairs', 'Owned', '5', 0, 'David (4) / Matt (2)', null, 'Yes', null, null),
-  (2026, 'toolkit', 'Setup & Workspace', 4, 'Pop-up tent', 'Owned', null, 0, 'Matt', null, 'Yes', null, null),
-  (2026, 'toolkit', 'Setup & Workspace', 5, 'Aprons', 'Owned', '5', 0, 'BYO — each brings his own', null, 'Yes', null, null),
-  (2026, 'toolkit', 'Setup & Workspace', 6, 'Speakers', 'Owned', '1', 0, 'David', null, 'Yes', null, null),
+  (2026, 'toolkit', 'Setup & Workspace', 10, 'Table blanket', 'Owned', '1', 0, 'Matt', null, 'Yes', null, null),
+  (2026, 'toolkit', 'Setup & Workspace', 20, 'Tables', 'Owned', '2', 0, 'Matt (1) / Chris (1)', null, 'Yes', 'Matt''s plastic table plus Chris''s — confirm Chris''s before Friday.', null),
+  (2026, 'toolkit', 'Setup & Workspace', 30, 'Chairs', 'Owned', '5', 0, 'David (4) / Matt (2)', null, 'Yes', null, null),
+  (2026, 'toolkit', 'Setup & Workspace', 40, 'Pop-up tent', 'Owned', null, 0, 'Matt', null, 'Yes', null, null),
+  (2026, 'toolkit', 'Setup & Workspace', 50, 'Aprons', 'Owned', '5', 0, 'BYO — each brings his own', null, 'Yes', null, null),
+  (2026, 'toolkit', 'Setup & Workspace', 60, 'Speakers', 'Owned', '1', 0, 'David', null, 'Yes', null, null),
+  -- The barbecue and the TV are Friday-setup kit: they get pulled out and
+  -- set up with the tables, and the propane line already counts a tank for
+  -- the barbecue.
+  (2026, 'toolkit', 'Setup & Workspace', 65, 'Barbecue', 'Owned', '1', 0, 'Matt', null, 'Yes', 'Set up Friday. Propane row already counts its tank.', null),
+  (2026, 'toolkit', 'Setup & Workspace', 68, 'TV', 'Owned', '1', 0, 'Matt', null, 'Yes', 'Set up Friday with the work area. Extension cord and a spot out of the splash zone.', null),
 
   -- Toolkit · Wash & Prep
   -- The sink is a prospect, not a purchase: kind 'Prospect' keeps it off the
@@ -52,49 +57,49 @@ insert into public.items
   -- No store on purpose: a store would put the row on the Buy list and into
   -- the readiness count. The store lives in the comment until the crew commits;
   -- committing = set kind to 'Need' and store to 'Canadian Tire'.
-  (2026, 'toolkit', 'Wash & Prep', 7, 'Outdoor sink', 'Prospect', '1', 279.99, null, null, 'Maybe', 'Preferred: 1 m stainless sink station — half countertop, half bowl, 304 restaurant steel, $279.99 on Amazon, in stock, 4.8/5. No faucet in the listing — plan on a hose tap. Budget option: PDG folding table with sink & tap, $124.99 at Canadian Tire. Prices read 17 Aug 2026.', 'https://www.amazon.ca/dp/B0H397TB3K'),
-  (2026, 'toolkit', 'Wash & Prep', 8, 'Buckets (Canadian Tire)', 'Owned', '6', 0, 'David', 'Canadian Tire', 'Buy', null, null),
-  (2026, 'toolkit', 'Wash & Prep', 9, 'Buckets (Home Depot)', 'Owned', '7', 0, 'David (5) / Matt (2)', 'Home Depot', 'Yes', null, null),
-  (2026, 'toolkit', 'Wash & Prep', 10, 'Cutting boards', 'Owned', '5', 0, 'Matt', null, 'Yes', null, null),
-  (2026, 'toolkit', 'Wash & Prep', 11, 'Knives', 'Owned', '5', 0, 'BYOK / Matt', null, 'Yes', null, null),
-  (2026, 'toolkit', 'Wash & Prep', 12, 'Measuring pitcher', 'Owned', '1', 0, 'Matt', null, 'Yes', null, null),
+  (2026, 'toolkit', 'Wash & Prep', 70, 'Outdoor sink', 'Prospect', '1', 279.99, null, null, 'Maybe', 'Preferred: 1 m stainless sink station — half countertop, half bowl, 304 restaurant steel, $279.99 on Amazon, in stock, 4.8/5. No faucet in the listing — plan on a hose tap. Budget option: PDG folding table with sink & tap, $124.99 at Canadian Tire. Prices read 17 Aug 2026.', 'https://www.amazon.ca/dp/B0H397TB3K'),
+  (2026, 'toolkit', 'Wash & Prep', 80, 'Buckets (Canadian Tire)', 'Owned', '6', 0, 'David', 'Canadian Tire', 'Buy', null, null),
+  (2026, 'toolkit', 'Wash & Prep', 90, 'Buckets (Home Depot)', 'Owned', '7', 0, 'David (5) / Matt (2)', 'Home Depot', 'Yes', null, null),
+  (2026, 'toolkit', 'Wash & Prep', 100, 'Cutting boards', 'Owned', '5', 0, 'Matt', null, 'Yes', null, null),
+  (2026, 'toolkit', 'Wash & Prep', 110, 'Knives', 'Owned', '5', 0, 'BYOK / Matt', null, 'Yes', null, null),
+  (2026, 'toolkit', 'Wash & Prep', 120, 'Measuring pitcher', 'Owned', '1', 0, 'Matt', null, 'Yes', null, null),
 
   -- Toolkit · Cooking & Heat
-  (2026, 'toolkit', 'Cooking & Heat', 13, 'Cauldrons', 'Owned', '3', 0, 'Matt (2) / David (1) / Chris (2)', null, 'Yes', null, null),
-  (2026, 'toolkit', 'Cooking & Heat', 14, 'Burners', 'Owned', '3', 0, 'Matt', 'Home Depot', 'Buy', null, 'https://www.homedepot.ca/product/martin-r65-propane-burner/1000751079'),
-  (2026, 'toolkit', 'Cooking & Heat', 15, 'Propane', 'Refill', '4', 40.0, 'Matt (3) / Chris (1)', null, 'Yes', 'Recurring every year. 3 sauce burners + 1 BBQ.', null),
-  (2026, 'toolkit', 'Cooking & Heat', 16, 'Ladle', 'Owned', '1', 0, 'Matt', null, 'Yes', null, null),
-  (2026, 'toolkit', 'Cooking & Heat', 17, 'Spider ladle', 'Owned', '1', 0, 'Matt / Mike', null, 'Yes', null, null),
-  (2026, 'toolkit', 'Cooking & Heat', 18, 'Stainless deep dish pan', 'Owned', null, 0, 'Matt', null, 'Yes', null, null),
-  (2026, 'toolkit', 'Cooking & Heat', 19, 'Metal bowl', 'Owned', '1', 0, 'Matt', null, 'Yes', null, null),
-  (2026, 'toolkit', 'Cooking & Heat', 20, 'Wooden stirring paddle', 'Owned', '1', 0, 'Matt', null, 'Yes', null, null),
+  (2026, 'toolkit', 'Cooking & Heat', 130, 'Cauldrons', 'Owned', '3', 0, 'Matt (2) / David (1) / Chris (2)', null, 'Yes', null, null),
+  (2026, 'toolkit', 'Cooking & Heat', 140, 'Burners', 'Owned', '3', 0, 'Matt', 'Home Depot', 'Buy', null, 'https://www.homedepot.ca/product/martin-r65-propane-burner/1000751079'),
+  (2026, 'toolkit', 'Cooking & Heat', 150, 'Propane', 'Refill', '4', 40.0, 'Matt (3) / Chris (1)', null, 'Yes', 'Recurring every year. 3 sauce burners + 1 BBQ.', null),
+  (2026, 'toolkit', 'Cooking & Heat', 160, 'Ladle', 'Owned', '1', 0, 'Matt', null, 'Yes', null, null),
+  (2026, 'toolkit', 'Cooking & Heat', 170, 'Spider ladle', 'Owned', '1', 0, 'Matt / Mike', null, 'Yes', null, null),
+  (2026, 'toolkit', 'Cooking & Heat', 180, 'Stainless deep dish pan', 'Owned', null, 0, 'Matt', null, 'Yes', null, null),
+  (2026, 'toolkit', 'Cooking & Heat', 190, 'Metal bowl', 'Owned', '1', 0, 'Matt', null, 'Yes', null, null),
+  (2026, 'toolkit', 'Cooking & Heat', 200, 'Wooden stirring paddle', 'Owned', '1', 0, 'Matt', null, 'Yes', null, null),
 
   -- Toolkit · Milling & Straining
-  (2026, 'toolkit', 'Milling & Straining', 21, 'Food mill', 'Owned', '1', 0, 'Matt', null, 'Yes', '2025 note: consider a new mill', null),
-  (2026, 'toolkit', 'Milling & Straining', 22, 'Cheesecloth', 'Need', '4', 0, 'Matt', 'Market', 'No', null, null),
-  (2026, 'toolkit', 'Milling & Straining', 23, 'Cloth to strain water', 'Owned', null, 0, 'Matt', 'Amazon', 'Yes', 'David to check Amazon', null),
-  (2026, 'toolkit', 'Milling & Straining', 24, 'Strainer for sauce pot', 'Need', '1', 0, null, null, 'Buy', 'Carried over from 2025 notes', null),
+  (2026, 'toolkit', 'Milling & Straining', 210, 'Food mill', 'Owned', '1', 0, 'Matt', null, 'Yes', '2025 note: consider a new mill', null),
+  (2026, 'toolkit', 'Milling & Straining', 220, 'Cheesecloth', 'Need', '4', 0, 'Matt', 'Market', 'No', null, null),
+  (2026, 'toolkit', 'Milling & Straining', 230, 'Cloth to strain water', 'Owned', null, 0, 'Matt', 'Amazon', 'Yes', 'David to check Amazon', null),
+  (2026, 'toolkit', 'Milling & Straining', 240, 'Strainer for sauce pot', 'Need', '1', 0, null, null, 'Buy', 'Carried over from 2025 notes', null),
 
   -- Toolkit · Jarring & Canning
-  (2026, 'toolkit', 'Jarring & Canning', 25, 'Mason jars', 'Owned', null, 39.98, 'Chris', 'Canadian Tire', 'Yes', 'Chris brings the difference — whatever the Yield & Jars tab still shows to buy.', null),
-  (2026, 'toolkit', 'Jarring & Canning', 26, 'Funnel (wide mouth)', 'Owned', '3', 0, 'Matt', null, 'Yes', null, null),
-  (2026, 'toolkit', 'Jarring & Canning', 27, 'Rims', 'Need', null, 0, 'David / Matt', 'Canadian Tire', 'No', 'All new sets of rims', null),
-  (2026, 'toolkit', 'Jarring & Canning', 28, 'Lids', 'Need', '2', 14.97, 'David', 'Canadian Tire', 'No', 'See Yield & Jars tab', null),
-  (2026, 'toolkit', 'Jarring & Canning', 29, 'Mason jar lifters', 'Owned', '2', 0, 'Matt', null, 'Yes', null, null),
+  (2026, 'toolkit', 'Jarring & Canning', 250, 'Mason jars', 'Owned', null, 39.98, 'Chris', 'Canadian Tire', 'Yes', 'Chris brings the difference — whatever the Yield & Jars tab still shows to buy.', null),
+  (2026, 'toolkit', 'Jarring & Canning', 260, 'Funnel (wide mouth)', 'Owned', '3', 0, 'Matt', null, 'Yes', null, null),
+  (2026, 'toolkit', 'Jarring & Canning', 270, 'Rims', 'Need', null, 0, 'David / Matt', 'Canadian Tire', 'No', 'All new sets of rims', null),
+  (2026, 'toolkit', 'Jarring & Canning', 280, 'Lids', 'Need', '2', 14.97, 'David', 'Canadian Tire', 'No', 'See Yield & Jars tab', null),
+  (2026, 'toolkit', 'Jarring & Canning', 290, 'Mason jar lifters', 'Owned', '2', 0, 'Matt', null, 'Yes', null, null),
 
   -- Toolkit · Cleaning & Sanitation
-  (2026, 'toolkit', 'Cleaning & Sanitation', 30, 'Garbage bags', 'Owned', null, 0, 'Matt', null, 'Yes', null, null),
-  (2026, 'toolkit', 'Cleaning & Sanitation', 31, 'Metal sponges', 'Owned', null, 0, 'Matt', null, 'Yes', null, null),
-  (2026, 'toolkit', 'Cleaning & Sanitation', 32, 'Cleaning brush', 'Owned', null, 0, 'Matt', null, 'Yes', null, null),
+  (2026, 'toolkit', 'Cleaning & Sanitation', 300, 'Garbage bags', 'Owned', null, 0, 'Matt', null, 'Yes', null, null),
+  (2026, 'toolkit', 'Cleaning & Sanitation', 310, 'Metal sponges', 'Owned', null, 0, 'Matt', null, 'Yes', null, null),
+  (2026, 'toolkit', 'Cleaning & Sanitation', 320, 'Cleaning brush', 'Owned', null, 0, 'Matt', null, 'Yes', null, null),
   -- Dawn and the sponge pack are bought fresh this year, so they are 'Need',
   -- carry a store and a budget, and land on the Buy list under Grocery.
-  (2026, 'toolkit', 'Cleaning & Sanitation', 33, 'Dawn dish soap', 'Need', '1', 6.00, 'David', 'Grocery', 'Buy', 'Fresh bottle for this year.', null),
-  (2026, 'toolkit', 'Cleaning & Sanitation', 34, 'Sponges (pack)', 'Need', '1 pack', 5.00, 'David', 'Grocery', 'Buy', 'New this year — kitchen sponges for the wash station.', null),
-  (2026, 'toolkit', 'Cleaning & Sanitation', 35, 'Scrub pads', 'Owned', null, 0, 'David', null, 'Yes', null, null),
-  (2026, 'toolkit', 'Cleaning & Sanitation', 36, 'Barkeepers Friend', 'Owned', null, 0, 'David', null, 'Yes', null, null),
+  (2026, 'toolkit', 'Cleaning & Sanitation', 330, 'Dawn dish soap', 'Need', '1', 6.00, 'David', 'Grocery', 'Buy', 'Fresh bottle for this year.', null),
+  (2026, 'toolkit', 'Cleaning & Sanitation', 340, 'Sponges (pack)', 'Need', '1 pack', 5.00, 'David', 'Grocery', 'Buy', 'New this year — kitchen sponges for the wash station.', null),
+  (2026, 'toolkit', 'Cleaning & Sanitation', 350, 'Scrub pads', 'Owned', null, 0, 'David', null, 'Yes', null, null),
+  (2026, 'toolkit', 'Cleaning & Sanitation', 360, 'Barkeepers Friend', 'Owned', null, 0, 'David', null, 'Yes', null, null),
 
   -- Toolkit · Serving & Extras
-  (2026, 'toolkit', 'Serving & Extras', 37, 'Napkins', 'Owned', null, 0, 'Matt', null, 'Yes', null, null),
+  (2026, 'toolkit', 'Serving & Extras', 370, 'Napkins', 'Owned', null, 0, 'Matt', null, 'Yes', null, null),
 
   -- Ingredients
   (2026, 'ingredients', null, 1, 'Bushels of tomatoes', 'Need', '10', 175.0, 'Matt / David / Nate', 'Market', 'Yes', 'Pickup Fri Aug 28 at the market. Budget links to Yield & Jars tab', null),
@@ -164,63 +169,96 @@ insert into public.jar_inventory (year, person, jars, bands, lids) values
 -- own card on the Sauce Day timeline; the rest are the operational steps that
 -- sit underneath the milestone above them. Both live in one table so the Run
 -- tab stays a single editable list and there is one source of truth.
+--
+-- sort_index runs in tens so a step can be slipped between two others without
+-- renumbering the whole day.
 insert into public.runsheet
   (year, sort_index, section, time_label, activity, lead, crew, equipment,
    icon, duration_min, ingredients, milestone, critical, notes) values
-  -- Friday night
-  (2026,  1, 'PREP', 'Fri 28', 'Pick up bushels from the market', 'Nate', 'David', 'Truck, buckets',
+  -- Lead-up. No clock on purpose: `time_label` only parses "Fri…" and "HH:MM",
+  -- so these carry no scheduled time and never become the current step. They
+  -- are the decisions that have to land before Friday can happen at all.
+  (2026,  10, 'PREP', 'This week', 'Order the utility sink/counter', 'Matt', 'David', null,
+   null, null, null, false, false, 'Toolkit → Wash & Prep holds both options. Committing = set that row from Prospect to Need and give it a store. Order early enough to ship.'),
+  (2026,  20, 'PREP', 'This week', 'Confirm Chris is bringing his table', 'Matt', 'Chris', null,
+   null, null, null, false, false, 'The Tables row counts two: Matt''s plastic one and Chris''s.'),
+  (2026,  30, 'PREP', 'This week', 'Sort out the grappa', 'David', null, null,
+   null, null, null, false, false, 'It has to beat last year''s $135. See the Grappa tab.'),
+
+  -- Friday
+  (2026,  40, 'PREP', 'Fri 28', 'Pick up bushels from the market', 'Nate', 'David', 'Truck, buckets',
    'bushel', 90, '7 bushels of San Marzano', true, false, 'Get there early, best tomatoes go first'),
-  (2026,  2, 'PREP', 'Fri PM', 'Wash and sterilise every jar', 'Matt', 'All', 'Jars, dishwasher, Barkeepers Friend',
-   'jar', 120, null, true, false, 'Count as you go'),
-  (2026,  3, 'PREP', 'Fri PM', 'Set up tables, tent and chairs', 'Matt', 'Chris', 'Tables, tent, chairs',
+  (2026,  50, 'PREP', 'Fri AM', 'Wash every mason jar', 'Matt', 'All', 'Jars, dishwasher, Dawn, sponges',
+   'jar', 120, null, true, false, 'Count as you go. Sterilising happens Saturday, close to canning.'),
+  (2026,  60, 'PREP', 'Fri AM', 'Wash the tomato mill', 'Matt', null, 'Food mill, cleaning brush, Barkeepers Friend',
+   null, 20, null, false, false, 'Strip it down. Last year''s pulp lives in the hopper threads.'),
+  (2026,  70, 'PREP', 'Fri PM', 'Pull out and organise the gear', 'Matt', 'Chris', 'Burners, pop-up tent, plastic table',
+   null, 30, null, false, false, 'Burners, tent, plastic table — everything out of the garage in one pass.'),
+  (2026,  80, 'PREP', 'Fri PM', 'Clean and check each piece as it comes out', 'Matt', 'All', 'Dawn, scrub pads, Barkeepers Friend',
+   null, 30, null, false, false, 'Cracked, rusted or missing gets found now, not at 07:00.'),
+  (2026,  90, 'PREP', 'Fri PM', 'Set up tables, tent and chairs', 'Matt', 'Chris', 'Tables, tent, chairs',
    null, 45, null, false, false, null),
-  (2026,  4, 'PREP', 'Fri PM', 'Fill and check propane tanks', 'Matt', 'Mike', '4 tanks',
-   null, 30, null, false, false, 'Refill beats buying new'),
-  (2026,  5, 'PREP', 'Fri PM', 'Chill all beer, wine, prosecco, water', 'David', null, 'Coolers, ice',
+  (2026, 100, 'PREP', 'Fri PM', 'Set up the utility sink/counter', 'Matt', 'David', 'Sink, hose',
+   null, 30, null, false, false, 'No faucet in the listing — plan on a hose tap and somewhere for the water to drain.'),
+  (2026, 110, 'PREP', 'Fri PM', 'Set up the burners', 'Matt', 'Mike', '3 burners, propane',
+   null, 20, null, false, false, 'Placed and hooked up Friday. Lighting them is a Saturday job.'),
+  (2026, 120, 'PREP', 'Fri PM', 'Set up the barbecue', 'Matt', null, 'BBQ, propane',
    null, 20, null, false, false, null),
-  (2026,  6, 'PREP', 'Fri PM', 'Grind the espresso', 'David', null, 'Grinder',
+  (2026, 130, 'PREP', 'Fri PM', 'Set up the TV', 'Matt', null, 'TV, extension cord',
+   null, 20, null, false, false, 'Out of the splash zone.'),
+  (2026, 140, 'PREP', 'Fri PM', 'Fill and check propane tanks', 'Matt', 'Mike', '4 tanks',
+   null, 30, null, false, false, 'Refill beats buying new'),
+  (2026, 150, 'PREP', 'Fri PM', 'Prep all food', 'Matt', 'All', 'Boards, knives, containers',
+   'fork', 120, 'See the Menu tab', true, false, 'Everything that can be made the night before gets made the night before.'),
+  (2026, 160, 'PREP', 'Fri PM', 'Chill all beer, wine, prosecco, water', 'David', null, 'Coolers, ice',
+   null, 20, null, false, false, null),
+  (2026, 170, 'PREP', 'Fri PM', 'Grind the espresso', 'David', null, 'Grinder',
    null, 10, 'Beans from the roastery', false, false, '2025 lesson: do this the night before'),
+  (2026, 180, 'PREP', 'Fri PM', 'Stage jars, mill, tools and supplies for the morning', 'Matt', 'All', 'Jars, mill, tools',
+   null, 30, null, false, false, 'Everything where it will be used, so 06:30 starts with coffee and not a search party.'),
 
   -- The day
-  (2026,  7, 'DAY', '06:30', 'Start sauce prep', 'Matt', 'All', 'Espresso, moka',
+  (2026, 190, 'DAY', '06:30', 'Start sauce prep', 'Matt', 'All', 'Espresso, moka',
    'tomato', 60, 'Espresso', true, false, 'Crew arrives. Coffee before anything else.'),
-  (2026,  8, 'DAY', '07:00', 'Breakfast sandwiches', null, 'All', 'Breakfast setup',
+  (2026, 200, 'DAY', '06:45', 'Final equipment and setup check', 'Matt', 'All', 'Friday''s setup',
+   null, 15, null, false, false, 'Walk the work area: burners hooked up, sink draining, mill clamped, jars staged.'),
+  (2026, 210, 'DAY', '07:00', 'Breakfast sandwiches', null, 'All', 'Breakfast setup',
    null, 30, 'Egg, bacon, sausage, cheese', false, false, 'Breakfast before the main production push'),
-  (2026,  9, 'DAY', '07:30', 'Fire up the burners', 'Matt', 'Mike', '3 burners, cauldrons, propane',
+  (2026, 220, 'DAY', '07:30', 'Fire up the burners', 'Matt', 'Mike', '3 burners, cauldrons, propane',
    'flame', 30, 'Propane', true, false, 'Wash water on at the same time'),
-  (2026, 10, 'DAY', '08:00', 'Wash tomatoes', 'All', 'All', 'Buckets, strainer',
+  (2026, 230, 'DAY', '08:00', 'Wash tomatoes', 'All', 'All', 'Buckets, strainer',
    null, 60, '7 bushels', false, false, 'Two-stage rinse'),
-  (2026, 11, 'DAY', '09:00', 'First batch cooking', 'Nate', 'David', 'Cauldrons, spider ladle',
+  (2026, 240, 'DAY', '09:00', 'First batch cooking', 'Nate', 'David', 'Cauldrons, spider ladle',
    'cauldron', 90, 'Washed tomatoes', true, false, 'Blanch and cook'),
-  (2026, 12, 'DAY', '10:30', 'Coffee break', 'David', 'All', 'Moka, cornetti',
+  (2026, 250, 'DAY', '10:30', 'Coffee break', 'David', 'All', 'Moka, cornetti',
    'coffee', 20, 'Espresso, cornetti', true, false, 'Get the day off the tomatoes for ten minutes'),
-  (2026, 13, 'DAY', '10:45', 'First mill run', 'Chris', 'Matt', 'Food mill, deep dish pan',
+  (2026, 260, 'DAY', '10:45', 'First mill run', 'Chris', 'Matt', 'Food mill, deep dish pan',
    null, 45, null, false, false, 'Watch for skins clogging'),
-  (2026, 14, 'DAY', '11:30', 'Jars into hot water, lids ready', 'Matt', null, 'Jar lifters, cauldron',
-   null, 30, null, false, false, null),
-  (2026, 15, 'DAY', '12:00', 'Lunch break', 'Nate', 'All', 'Tables, boards',
+  (2026, 270, 'DAY', '12:00', 'Lunch break', 'Nate', 'All', 'Tables, boards',
    'fork', 60, 'Steak, pepperoni & capicollo subs', true, false, 'See the Menu tab'),
-  (2026, 16, 'DAY', '13:00', 'Milling continues, bottling line starts', 'All', 'All', 'Funnel, ladle, mill',
+  (2026, 280, 'DAY', '13:00', 'Milling continues, bottling line starts', 'All', 'All', 'Funnel, ladle, mill',
    null, 120, null, false, false, null),
-  (2026, 17, 'DAY', '15:00', 'Jarring begins', 'All', 'All', 'Funnel, rims, lids, bands',
+  (2026, 290, 'DAY', '14:00', 'Sterilise the jars and lids', 'Matt', null, 'Jar lifters, cauldron',
+   null, 60, null, false, true, 'Close to canning on purpose: jars go from hot water straight into filling. One that has gone cold gets done again.'),
+  (2026, 300, 'DAY', '15:00', 'Jarring begins', 'All', 'All', 'Funnel, rims, lids, bands',
    'jar', 90, 'Milled sauce, basil', true, true, 'Wipe every rim before capping. This is the one that matters.'),
-  (2026, 18, 'DAY', '16:30', 'Wine break', 'David', 'All', 'Glasses',
+  (2026, 310, 'DAY', '16:30', 'Wine break', 'David', 'All', 'Glasses',
    'glass', 30, 'Prosecco, the whites', true, false, 'Water bath goes on at the same time'),
-  (2026, 19, 'DAY', '16:30', 'Water bath — seal the jars', 'Matt', 'David', 'Cauldron, jar lifters',
+  (2026, 320, 'DAY', '16:30', 'Water bath — seal the jars', 'Matt', 'David', 'Cauldron, jar lifters',
    null, 60, null, false, true, 'Listen for the pops'),
-  (2026, 20, 'DAY', '18:00', 'Annual grappa toast', 'David', 'All', 'The bottle',
+  (2026, 330, 'DAY', '18:00', 'Annual grappa toast', 'David', 'All', 'The bottle',
    'bottle', 30, 'This year''s grappa', true, true, 'It has to beat last year. See the Grappa tab.'),
-  (2026, 21, 'DAY', '19:00', 'Dinner — rigatoni with this year''s sauce', 'Mike', 'All', 'Pots, rigatoni',
+  (2026, 340, 'DAY', '19:00', 'Dinner — rigatoni with this year''s sauce', 'Mike', 'All', 'Pots, rigatoni',
    'plate', 90, 'Rigatoni, this year''s sauce', true, false, 'The whole point'),
-  (2026, 22, 'DAY', '20:30', 'Pizza run', 'Chris', null, 'Cash, the truck',
+  (2026, 350, 'DAY', '20:30', 'Pizza run', 'Chris', null, 'Cash, the truck',
    'pizza', 45, null, true, false, 'Second wind. Nobody has ever regretted this.'),
-  (2026, 23, 'DAY', '21:00', 'Cooling and cleanup', 'All', 'All', 'Dawn, scrub pads, metal sponges',
+  (2026, 360, 'DAY', '21:00', 'Cooling and cleanup', 'All', 'All', 'Dawn, scrub pads, metal sponges',
    'cool', 60, null, true, false, 'Jars stay put until they are cold. Do not move them early.'),
-  (2026, 24, 'DAY', '22:00', 'Group photo', 'Matt', 'All', 'A phone and a timer',
+  (2026, 370, 'DAY', '22:00', 'Group photo', 'Matt', 'All', 'A phone and a timer',
    'camera', 15, null, true, false, 'Goes straight into the Photobook'),
-  (2026, 25, 'DAY', '22:15', 'Count jars, log fallen soldiers, divide the sauce', 'Matt', 'All', 'Notebook',
+  (2026, 380, 'DAY', '22:15', 'Count jars, log fallen soldiers, divide the sauce', 'Matt', 'All', 'Notebook',
    null, 15, null, false, false, 'Enter the count on the History tab'),
-  (2026, 26, 'DAY', '22:30', 'Sauce Day complete', 'Matt', 'All', 'This workbook',
+  (2026, 390, 'DAY', '22:30', 'Sauce Day complete', 'Matt', 'All', 'This workbook',
    'check', null, null, true, true, 'Settle up, then bed. Settlement says who pays whom.');
 
 -- ---------------------------------------------------------------- menu
