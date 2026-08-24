@@ -61,8 +61,10 @@ insert into public.items
   -- it off the Buy list and out of the readiness count. How to commit it is on
   -- the run sheet task that does the committing.
   (2026, 'toolkit', 'Wash & Prep', 70, 'Outdoor sink', 'Prospect', '1', 279.99, null, null, 'Maybe', 'Preferred: 1 m stainless sink station — half countertop, half bowl, 304 restaurant steel, $279.99 on Amazon, in stock, 4.8/5. No faucet in the listing — plan on a hose tap. Budget option: PDG folding table with sink & tap, $124.99 at Canadian Tire. Prices read 17 Aug 2026.', 'https://www.amazon.ca/dp/B0H397TB3K'),
-  (2026, 'toolkit', 'Wash & Prep', 80, 'Buckets (Canadian Tire)', 'Owned', '6', 0, 'David', 'Canadian Tire', 'Buy', null, null),
-  (2026, 'toolkit', 'Wash & Prep', 90, 'Buckets (Home Depot)', 'Owned', '7', 0, 'David (5) / Matt (2)', 'Home Depot', 'Yes', null, null),
+  -- One row: they are the same buckets, counted twice because they were bought
+  -- in two shops. Owned kit needs no store — a store is what puts a row on the
+  -- Buy list, and these two were sitting there as things to go and get.
+  (2026, 'toolkit', 'Wash & Prep', 80, 'Buckets', 'Owned', '13', 0, 'David (11) / Matt (2)', null, 'Yes', '6 from Canadian Tire, 7 from Home Depot.', null),
   (2026, 'toolkit', 'Wash & Prep', 100, 'Cutting boards', 'Owned', '5', 0, 'Matt', null, 'Yes', null, null),
   (2026, 'toolkit', 'Wash & Prep', 110, 'Knives', 'Owned', '5', 0, 'BYOK / Matt', null, 'Yes', null, null),
   (2026, 'toolkit', 'Wash & Prep', 120, 'Measuring pitcher', 'Owned', '1', 0, 'Matt', null, 'Yes', null, null),

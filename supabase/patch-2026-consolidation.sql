@@ -16,6 +16,8 @@
 --  3. One word per state: 'Have' becomes 'Owned'.
 --  4. The menu's "qty -" placeholder becomes empty, so the row shows what it
 --     actually knows.
+--  5. The buckets were one pile counted twice, split by the shop they came
+--     from. Thirteen buckets, one row.
 --
 --  Run this in the Supabase SQL editor. It touches only the rows it names and
 --  is safe to re-run.
@@ -126,3 +128,21 @@ where year = 2026;
 -- never had a quantity to give.
 update public.menu set qty = null
 where year = 2026 and qty = '-';
+
+-- ---------------------------------------------------------------- buckets
+-- Same buckets, counted twice because they were bought in two shops. Thirteen
+-- of them: David has eleven, Matt two. Owned kit needs no store — a store is
+-- what puts a row on the Buy list, and these two were sitting there as things
+-- to go and get, which they are not.
+update public.items set
+  name        = 'Buckets',
+  qty         = '13',
+  assigned_to = 'David (11) / Matt (2)',
+  store       = null,
+  repeat_next = 'Yes',
+  comments    = '6 from Canadian Tire, 7 from Home Depot.',
+  locked      = true
+where year = 2026 and name in ('Buckets (Canadian Tire)', 'Buckets');
+
+delete from public.items
+where year = 2026 and name = 'Buckets (Home Depot)';
