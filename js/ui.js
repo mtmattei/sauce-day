@@ -2,7 +2,7 @@
 //  Tiny DOM helpers and the bound-field editors every screen uses.
 // ============================================================================
 import { update, insert, remove, state, flash } from "./db.js";
-import { crewNames } from "./calc.js";
+import { crewNames, EVERYONE } from "./calc.js";
 
 export function h(tag, attrs = {}, ...kids) {
   const e = document.createElement(tag);
@@ -61,12 +61,21 @@ export function field(table, row, col, opts = {}) {
   return inp;
 }
 
-/** Dropdown bound to one column. */
+/** Dropdown bound to one column.
+ *
+ *  A stored value the list does not offer still has to show. Half the ledger
+ *  is assigned to more than one man — "Matt / David / Nate", "David (11) /
+ *  Matt (2)" — and a select with no matching option reports itself empty, so
+ *  every one of those rows read "unassigned" while the Board counted them
+ *  against the right names. Worse, they were one careless tap from being
+ *  overwritten with a single name. Carry the odd value in as its own option. */
 export function select(table, row, col, options, opts = {}) {
+  const cur = row[col] ?? "";
+  const all = cur && !options.includes(cur) ? [...options, cur] : options;
   const s = h("select", { class: "f " + (opts.class || ""), "aria-label": opts.label || humanize(col) },
     h("option", { value: "" }, opts.blank || "—"),
-    ...options.map(o => h("option", { value: o, selected: (row[col] || "") === o }, o)));
-  s.value = row[col] ?? "";
+    ...all.map(o => h("option", { value: o, selected: cur === o }, o)));
+  s.value = cur;
   s.addEventListener("change", () =>
     update(table, row[opts.idCol || "id"], { [col]: s.value || null }, opts.idCol || "id"));
   return s;
@@ -85,8 +94,13 @@ export function check(table, row, col, label, opts = {}) {
   return h("label", { class: "chk" + (opts.disabled ? " off" : "") }, box, h("span", {}, label || ""));
 }
 
+// Some jobs belong to the whole crew — the wash, the run sheet's "All" leads —
+// and picking one man's name for those is a lie. `blank` stays "unassigned",
+// which means nobody has it yet; this means everybody has it. The word lives
+// in calc.js because that is where the code deciding whose list a row lands on
+// has to recognise it.
 export function personSelect(table, row, col) {
-  return select(table, row, col, crewNames(), { blank: "unassigned" });
+  return select(table, row, col, [EVERYONE, ...crewNames()], { blank: "unassigned" });
 }
 
 export function delButton(table, row, what) {

@@ -34,9 +34,21 @@ export const buyable = i =>
 // Food and drink live in `menu`, the kit and the ingredients in `items`, so the
 // person responsible is `who` on one and `assigned_to` on the other.
 export const ownerOf = r => r.assigned_to ?? r.who ?? null;
-// That field is free text ("Matt / David", "David (4) / Matt (2)"), so
-// membership is a substring test, not equality.
-export const assignedTo = (r, name) => !!name && !!ownerOf(r) && ownerOf(r).includes(name);
+
+// A job the whole crew owns. "All" is what the run sheet has said since the
+// first year; "Crew" turns up in the bushels. All three mean the same thing and
+// all three land on every man's list.
+export const EVERYONE = "Everyone";
+const EVERYONE_WORDS = new Set([EVERYONE, "All", "Crew"]);
+
+// The field is free text ("Matt / David", "David (4) / Matt (2)"), so
+// membership is a substring test, not equality — and a job that belongs to
+// everyone belongs to you too, or it sits on nobody's list at all.
+export const assignedTo = (r, name) => {
+  const owner = ownerOf(r);
+  if (!name || !owner) return false;
+  return EVERYONE_WORDS.has(owner.trim()) || owner.includes(name);
+};
 
 // ---------------------------------------------------------------- money
 export function budgetByCat() {
