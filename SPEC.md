@@ -1,18 +1,23 @@
-# SPEC — The Board: a dashboard for the homies
+# SPEC — The tally: counting jars as they come out of the bath
 
-Sauce Day's home screen today is the live run-of-day timeline. That is the
-right screen *on* sauce day and the wrong one for the seventeen days before
-it: it answers "how is the day going" when the crew is asking "what do I need
-to do, what do I owe, are we ready". This spec replaces the home route with a
-context-aware dashboard — the **Board** — and runs a density pass over the
-shell so the app reads as an instrument a friend built, not a corporate
-tracker.
+Sauce day is 29 August. Between about 15:00 and 22:15 the crew fills, caps and
+bathes something like a hundred and eight jars, and the number of them is
+written on nothing until Matt types a total into the History screen at the end
+of the night. The app draws a jar wall that knows exactly how many jars were
+*bought* and nothing about how many got *filled* — the one number the day is
+actually about.
 
-Design constitution stays **Counter** (see styles.css header): one typeface,
-zero radii, zero shadows, hairlines, tomato-means-something. "Fun" is earned
-through drawn objects (the jar wall, the existing icon family, the pixel
-loader precedent), personal address ("you owe", "your three things"), and
-motion — never through rounded-corner gloss, gradients, or mascots.
+This spec adds the live count. A fat counter bar on the timeline, one tap per
+jar, every phone showing the same total a second later, per-man credit, and the
+jar wall filling in real time. It is the follow-up deliberately deferred from
+the Board. That spec shipped in August; it is in git history as SPEC.md at
+commit 4041654, and a working copy sits in the (untracked) `_backup/` folder.
+
+Design constitution stays **Counter** (see the styles.css header): one typeface,
+zero radii, zero shadows, hairlines, tomato-means-something. The one licence
+this feature takes is size — the primary target is the biggest interactive
+element in the app, because it is used with wet hands, in the dark, next to a
+propane burner.
 
 ---
 
@@ -20,181 +25,235 @@ motion — never through rounded-corner gloss, gradients, or mascots.
 
 **Module structure** (no framework, ES modules, no build step — unchanged):
 
-- `js/home.js` — NEW. `viewHome()`, the Board. Composes existing calc
-  functions; owns no data.
-- `js/jars.js` — NEW. `jarWall(host, opts)` — renders the mason-jar grid
-  SVG. Pure function of numbers in → SVG out, same philosophy as
-  `charts.js`. Reused by the Board and by `viewSauce()`.
-- `js/timeline.js` — unchanged. `viewSauceDay()` keeps existing route
-  behavior on the day itself (see navigation).
-- `js/views.js` — `viewSauce()` swaps its numeric jar tiles for the jar
-  wall; otherwise untouched this pass.
-- `js/app.js` — route table change only.
+- `js/tally.js` — NEW. `tallyBar(day)` renders the counter bar; `logJar()` /
+  `logFallen()` / `undoLast()` own the writes. Presentation plus its three
+  writes, the same shape `timeline.js` already has for `toggleStep`.
+- `js/calc.js` — NEW export `jarTally()`. The single reader of `state.jarLog`.
+  Returns `{ filled, fallen, byPerson, live, lastByMe }`.
+- `js/timeline.js` — mounts the bar above `.sdstrip`; `paintStrip`'s Jars cell
+  reads `jarTally()` instead of `history.jars_filled`.
+- `js/home.js` — the jar wall's mode decision reads the tally before it reads
+  the closed-out history row.
+- `js/jars.js` — unchanged shape. It already takes `{ total, full, fallen,
+  mode }` and already draws tipped jars; one addition, a delta-animation gate
+  so a realtime bump animates only the jars that changed.
+- `js/db.js` — one `KEY` entry, one `TABLES` entry, `jar_log` added to
+  `AUTHORED`. Realtime subscribes automatically: `startRealtime()` iterates
+  `Object.keys(KEY)`.
+- `js/views.js` — History close-out prefills `jars_filled` / `fallen_soldiers`
+  from the tally instead of leaving them null.
+- `js/demo.js` — a `jar_log` array so demo mode exercises every state.
+- `index.html` — one importmap line for `./js/tally.js`.
 
-**State model**: unchanged. The Board is a pure projection of `state` via
-`calc.js` (`yieldPlan`, `settlement`, `readiness`, `daysToGo`,
-`grappaRecord`, `spentByPerson`) plus `state.me` for personalization. No new
-tables, no new columns, no schema change.
+**State model**: one new table, append-only.
 
-**Navigation model**:
+```sql
+create table public.jar_log (
+  id         uuid primary key default gen_random_uuid(),
+  year       int  not null,
+  person     text not null,            -- display_name, matching the rest of the app
+  kind       text not null check (kind in ('filled','fallen')),
+  delta      int  not null default 1,  -- +1, +12, or negative for an undo
+  at         timestamptz not null default now(),
+  created_by text
+);
+create index jar_log_year_idx on public.jar_log (year, at);
+```
 
-- `#/` → `viewHome` (the Board) — **except** when `buildDay().isToday`
-  (or the settings date is past and jars aren't counted), when `#/` renders
-  the existing timeline. The dashboard is "what matters right now"; on the
-  day, what matters is the timeline. One route, context decides.
-- The Board links deep: every card is a door into the screen that owns the
-  data. Section label "Sauce Day" stays; the graduated rule is untouched.
-- Before the day, the timeline stays reachable: the Board's countdown card
-  carries a "see the run of the day" link that renders the timeline via a
-  `state.ui.peekDay` flag (no new route, back = tap the brand or the link
-  again).
+Append-only is the whole point. Five phones incrementing one integer column is
+a read-modify-write race and taps get eaten; five phones inserting rows cannot
+collide. It also carries per-man credit and a timestamp per jar for free —
+enough for a pace line later, though not this pass.
 
-**Data flow**: unchanged — `onChange(render)`; realtime reloads a table, the
-Board re-renders. The Board must render correctly from partial state (demo
-mode and mid-load).
+No `updated_at` / `updated_by`, so `jar_log` stays **out** of `STAMPED` in
+db.js and goes **into** `AUTHORED` (`created_by`). Sending `updated_by` to a
+table without the column is the PGRST204 failure that once left the ledger
+silently empty — the comment in db.js already says so; obey it.
 
-**Dependencies**: none added. Jar SVG is hand-rolled in `jars.js` exactly as
-`icons.js` hand-rolls bottles. No icon pack, no chart lib, no CSS framework.
+`state.jarLog` is the cache key. `jarTally()` sums deltas:
 
-**Platform constraints**: GitHub Pages static hosting; ES modules straight
-from source; must work on the crew's phones (the primary device). Chrome +
-Safari iOS. Pages caches JS for 10 min — ship the whole redesign as one
-push so nobody sees a half-updated app.
+```
+filled = sum of delta where kind = 'filled'   (undo rows carry a negative delta)
+fallen = sum of delta where kind = 'fallen'
+byPerson[name] = { filled, fallen }           sorted desc by filled
+live   = rows.length > 0
+```
 
-**Testing/validation**: demo mode (`?demo`) for every state permutation
-(fresh year, mid-prep, day-of, post-day); live site smoke via browser MCP;
-`buildDay().isToday` forced via a temporary settings-date override in the
-console, never by editing live data.
+**Navigation model**: unchanged. No new route. The bar lives inside the
+existing timeline view, which already owns `#/` on the day (`daysToGo() <= 1`)
+and is reachable before then through the Board's "see the run of the day" peek.
+
+**Data flow**: tap → `insert("jar_log", …)` → `reloadTable` on the writer's
+phone, realtime `postgres_changes` → `reloadTable("jar_log")` on everyone
+else's → `emit()` → the timeline's `onChange(render)` repaint. The count is
+never held in module state; it is always `jarTally()` read fresh, so a
+reconnect after a dead zone reconciles by itself.
+
+**Reconciliation with close-out**: the tally is the live truth for the current
+year; `history.jars_filled` is the permanent record. Close-out copies the tally
+in (it currently writes neither field). After close-out both agree, and
+`jarTally()` still wins for the current year, so re-opening the app on Sunday
+shows the same number it showed at midnight. Editing the History cell by hand
+afterwards is still allowed and still the final word — for a *past* year, which
+is the only year that cell is ever edited for.
+
+**Dependencies**: none added.
+
+**Platform constraints**: GitHub Pages static hosting, ES modules from source,
+the crew's phones (Chrome Android + Safari iOS) as the primary device, mostly
+one-handed, often at arm's length on a propped phone. Pages caches for ten
+minutes and the importmap stamp makes each deploy atomic — so run the schema
+patch *before* pushing code. A phone on new code reading a table that does not
+exist yet is the only ordering that breaks.
+
+**Testing/validation**: demo mode (`?demo`) for every permutation — no rows,
+mid-count, over-count, undo, fallen only. Live smoke on the real project after
+the patch runs. Concurrency check: two browsers tapping at once must land two
+rows and one total.
 
 ---
 
 ## Design Brief
 
-**Visual direction**: Counter, applied at lower density. The current shell
-shows ~30 numbers on load; the Board shows **five big ones** and lets
-everything else sit one tap away. Graphite field, hairline dividers, tomato
-only where it already has meaning. The Board is allowed one drawn signature
-element: the jar wall.
+**Visual direction**: Counter, at maximum size. The bar is a hairline-ruled
+band, not a card, not a floating pill. Tomato is the fill and the count; the
+fallen control is `--fg-3` and stays quiet until it is used.
 
-**Layout structure** (mobile-first, single column; two columns ≥ 900px):
+**Layout structure** — the bar, pinned above the strip on the timeline:
 
-1. **Countdown hero** — "17 days". The biggest type in the app (clamp to
-   ~5rem). Under it, one line: date, first-pot time. This is the only card
-   with no action.
-2. **You** — addressed to `state.me.display_name`. Your balance (owed/owing,
-   green/tomato), your unbought items count, your unconfirmed menu dishes.
-   Each line is the fact + a deep link. If everything's clear: "You're
-   square. Nothing on your list." — the empty state is the reward.
-3. **The jar wall** — see below. Header: "108 jars" / subline "9 packs to
-   buy · $180 with lids".
-4. **Crew pulse** — one row per member: name, items outstanding, balance
-   sign. Tomato dot = has stuff to do; no dot = clear. Tap → Buy filtered
-   view (existing screen, existing filter if present; else just Buy).
-5. **The record** — grappa card: record price as the dashed line figure,
-   this year's status ("not bought yet · beat $135"). Tap → Grappa.
-6. **Readiness strip** — three thin meters (Buy x/y, Menu x/y, Run x/y)
-   in one row, each a link. Replaces nothing — this is the rail's "Bought"
-   number given two friends.
+```
++----------------------------------------------------+
+| JARS FILLED                               undo +12  |
+|                                                     |
+|   74           +--------------+   +------+          |
+|   of 108       |      +1      |   | +12  |          |
+|   3 lost       +--------------+   +------+          |
+|                                                     |
+| ==============================------------  lost one |
++----------------------------------------------------+
+```
 
-**The jar wall** (`jars.js`):
+- **The count** is the largest number in the app after the Board's countdown —
+  `clamp(3.5rem, 14vw, 5rem)`, Chivo at the weight the countdown uses. Under it
+  "of 108" in the `.k` caps style, and the fallen count only once it is
+  non-zero.
+- **+1** is the primary: minimum 96px tall, at least half the bar's width, full
+  tomato. **+12** sits beside it at the same height, half the width, hairline
+  outline — a rack out of the canner, and not a mis-tap risk next to the big
+  one.
+- **lost one** is a text-weight control on the bottom rule, deliberately small
+  and deliberately not next to +1.
+- **undo** appears top-right only while this crew member's own last row is
+  under 90 seconds old, and names what it undoes ("undo +12").
+- The **progress rule** under the buttons is the existing meter treatment from
+  the Board's readiness strip — the same `.track` / `i` hairline pair, not a
+  new component.
 
-- A grid of small mason-jar silhouettes, **12 per row — one row is one
-  pack**, which is literally how they're bought. Row count =
-  `ceil(jarsRequired / 12)`.
-- Jar states: **full** (filled tomato body + lid) = on hand;
-  **empty** (hairline outline) = still to buy. Pre-day the wall shows
-  `onHand.jars` full out of `jarsRequired`.
-- During and after the day the same wall represents **actual yield** —
-  filled = jars filled, plus **fallen soldiers** drawn tipped over with a
-  hairline crack, because the crew tracks those and it should sting a
-  little. After close-out this reads from `history[YEAR].jars_filled`.
-  During the day there is currently no live filled-count column — see
-  Unresolved; v1 may switch to yield mode only once the count is entered
-  at the 22:15 "count jars" runsheet step.
-- Jar glyph: single `<symbol>`/`<use>`, ~18×24px viewBox, mouth + band +
-  shoulder + straight body — recognizably a Mason jar in 6 path segments,
-  drawn in the same hand as `icons.js` bottles.
-- At 108 jars this is ~9 rows; cap the wall's height and let it be the
-  card's whole body. If `jarsRequired` exceeds 240, fall back to one row
-  per pack (12-jar chunk = one glyph + count) — don't render 400 nodes.
+**Typography**: Chivo, existing scale, one new size token for the count
+(`--tally-num`). Button labels are the existing button type at 1.5× — no new
+weights.
 
-**Typography**: Chivo, existing scale. Hero number gets the one new size.
-Card headers are the existing `.k` caps style. No new fonts, no new weights.
+**Spacing**: `--pad` rhythm. The bar is separated from the strip below it by
+the same hairline every section uses. Thumb reach beats balance: the buttons
+sit at the bar's bottom edge, the number above them.
 
-**Spacing**: cards separated by hairlines, not boxes — the Board is a
-ruled sheet, not a card grid. `--pad` rhythm unchanged.
+**Component hierarchy**: `.tally` › `.tallynum` / `.tallybtns` / `.tallytrack`
+/ `.tallyfoot`. One new section in styles.css (`/* THE TALLY */`), tokens only.
 
-**Theme usage**: tokens only; both themes; jar fill uses `--tomato`,
-empty uses `--hair`; fallen soldier uses `--fg-3`. No new colors.
+**Theme usage**: `--tomato` fill, `--hair` rules, `--fg-3` for the fallen and
+the undo. Both themes; no new colours.
 
-**Responsive**: single column below 900px; the rail already collapses on
-mobile (verify — if the readout rail hides on phones, the Board must carry
-its numbers, which it does by design). Jar wall scales via viewBox width.
-
-**Density pass (shell-wide, this spec's second half)**:
-
-- Rail: keep six numbers but demote sublabels to one line each.
-- Buy/Menu/Run screens: collapse completed groups by default ("32 owned —
-  show"), keeping the fold state in `state.ui` (session-only). All data
-  stays; nothing is removed, it's folded.
-- Kill duplicate figures: the readout rail already shows share/owed — the
-  Spend screen's split table stays, but its header stat tiles go.
-- Tables → rows: anywhere a `<table>`-like grid shows on mobile narrower
-  than 400px, it becomes stacked rows (Spend split, History columns).
+**Responsive**: single column always. Below 380px the +12 drops under the +1
+rather than either shrinking below 96px. Above 900px the bar caps at the
+timeline's content width and the number moves left of the buttons instead of
+above them.
 
 ---
 
 ## Interaction Brief
 
+**When the bar exists.** It arms when jarring starts and never disarms:
+
+1. the first `DAY`-section run-sheet step with `icon = 'jar'` ("Jarring
+   begins", 15:00) has status `current` or `done`, **or**
+2. any `jar_log` row exists for the year (someone started early, or the step
+   was never ticked).
+
+Before that it is not rendered at all. There is no reason to show a zero on a
+Tuesday, and the Board already answers Tuesday's questions.
+
 **User flows**:
 
-- Crew member opens app → Board → sees countdown, their own status, jar
-  wall. Taps their items line → Buy screen, does their ticking there.
-- Day-of: opens app → timeline (automatic). No navigation relearning.
-- Matt (admin) closes the year on History → next open, jar wall shows
-  yield + fallen soldiers.
+- A man seals a jar, taps **+1**, sees the number move on his phone and on
+  everyone else's. That is the whole flow, a hundred times.
+- A rack of twelve comes out of the bath → **+12**.
+- A jar cracks in the bath → **lost one** → the count of lost rises, the wall
+  tips one over, filled is untouched. A fallen jar is its own tally, not a
+  subtraction.
+- Fat-fingered → **undo** within 90 seconds, which appends a compensating
+  negative row rather than deleting, so per-man credit stays honest and there
+  is no delete race.
+- 22:15, the count step: the number is already there. Matt ticks the step.
+- Close-out on the History screen carries the tally into the record.
 
-**Input behavior**: the Board is read-mostly. Two exceptions:
-- Readiness meters and crew rows are links, full-row tap targets ≥ 44px.
-- The jar wall is **not** an input this pass (see Unresolved).
+**Input behavior**: every control is a real `<button>`. Taps are optimistic —
+the number moves on the writer's phone the instant it is tapped, before the
+insert resolves, and reconciles on the reload. A phone in a dead zone at the
+bottom of the yard must not feel broken. A failed insert falls back to the
+existing `flash(…, true)` + sync-bar path, and the optimistic number rolls back
+with a "not saved" line under the count.
 
-**Empty states**: fresh year (no bushels row) → jar wall shows a single
-ghost row of 12 with "set the bushel count" link to Sauce. No member match
-(`state.me` null can't happen post-gate, but demo defaults to Matt).
+**Empty states**: armed with no rows → the number reads `0`, "of 108", no
+fallen line, no undo, empty track. The bar looks exactly as it will at jar one.
 
-**Loading states**: Board renders from cache instantly on repeat visits
-(existing behavior); first paint with empty tables must not NaN — every
-calc call already guards, verify on Board copy ("— days" never "NaN days").
+**Loading states**: the bar renders from cache instantly like every other
+screen; `jarTally()` on empty state returns zeroes, never NaN. A tally that has
+not loaded yet must not draw an empty wall over a full one — the wall keeps its
+prep reading until `state.jarLog` has been fetched at least once.
 
-**Error states**: sync bar unchanged and sits above the Board like every
-screen.
+**Error states**: insert failure as above. A count that exceeds `jarsRequired`
+is **not** an error — the plan was a forecast, the day is the fact. The wall
+grows to `max(jarsRequired, filled + fallen)` and the sub-line reads "12 over
+the plan", which is a good problem and should read like one.
 
-**Animations** (respect `prefers-reduced-motion`, all ≤ 300ms, `--e`):
-- Jar wall fills left-to-right, row by row, 8ms stagger per jar, on first
-  mount only (not on every realtime re-render — key off a module flag).
-- Countdown hero: no animation. It's a number, not a firework.
-- Card entrance: none. The ruled sheet is just there.
+**Animations** (`prefers-reduced-motion` respected, all <= 300ms, `--e`):
 
-**Feedback states**: realtime change to any table re-renders the Board
-silently (existing `emit()` path). A jar count change animates only the
-delta jars.
+- Tap: the existing press treatment (scale 0.98, no bounce).
+- The number counts up rather than jumping — a 180ms tween, and only when the
+  delta is >= 12, because a +1 that animates reads as lag.
+- The jar wall fills **only the delta jars**, 8ms stagger, keyed off a module
+  flag the way `jars.js` already gates its first-mount wave.
+- The fallen jar tips over on arrival: 240ms rotate to 90°, and that is the one
+  animation allowed to be slightly slow, because it should register.
 
-**Accessibility**: jar wall gets `role="img"` + `aria-label="72 of 108
-jars on hand"`; individual jars `aria-hidden`. Countdown is live text.
-Row-links are real `<a>` elements. Contrast: empty-jar hairline on
-graphite must pass at the glyph scale — if not, bump to `--fg-4`.
+**Feedback states**: no toast on a successful tap — the number moving *is* the
+receipt, and a hundred toasts in an evening is a hundred taps' worth of noise.
+Realtime arrivals from another phone move the number silently.
+
+**Accessibility**: the count is `aria-live="polite"` and reads "74 jars filled
+of 108". Buttons carry real labels ("Count one jar", "Count a rack of twelve",
+"Log a broken jar"). Targets are >= 96px, far past the 44px floor. The jar wall
+keeps `role="img"` with its sentence updated for live mode. Contrast on the
+tomato button is the existing primary-button pair, already checked.
 
 **Runtime verification steps**:
-1. `python -m http.server 8080` → `?demo` → Board renders, all five cards,
-   no console errors, both themes (emulate via devtools).
-2. Console-force `state.settings.sauce_date` to today → reload route →
-   timeline appears at `#/`.
-3. Demo: set `jar_inventory` counts to partial → wall shows mixed
-   full/empty; set `history` row with `jars_filled` + `fallen_soldiers` →
-   yield mode with tipped jars.
-4. Mobile viewport (390×844): single column, tap targets, no horizontal
-   scroll.
-5. Live site: sign-in intact, Board reads real data, deep links land.
+
+1. `python -m http.server 8080` → `?demo` → force the jarring step current
+   (mark the 14:00 demo `runsheet` row done) → the bar appears; before that it
+   does not.
+2. Tap +1 ten times, +12 twice → 34; the wall shows 34 filled; the strip's Jars
+   cell reads 34.
+3. Tap **lost one** → fallen 1, a tipped jar on the wall, filled unchanged.
+4. Undo inside 90s → back to 33; the undo control disappears after 90s.
+5. Over-count past `jarsRequired` → the wall grows, the sub-line reads "over
+   the plan", nothing clips.
+6. Mobile viewport 390×844: +1 >= 96px tall, no horizontal scroll, the number
+   readable at arm's length.
+7. Both themes; `prefers-reduced-motion: reduce` → no count-up, no fill wave.
+8. Live: two browsers signed in as two members, tapping at the same time → two
+   rows, one agreed total, both phones showing it inside a second.
+9. Close out the year in demo → `jars_filled` / `fallen_soldiers` prefilled
+   from the tally; the wall still reads the same number afterwards.
 
 ---
 
@@ -202,35 +261,41 @@ graphite must pass at the glyph scale — if not, bump to `--fg-4`.
 
 Fresh session, reading this spec cold. Order:
 
-1. `js/jars.js` — jar symbol + `jarWall()`; verify standalone in demo on
-   the Sauce screen first (lowest-risk host).
-2. `js/home.js` — the Board, five cards + readiness strip, all deep links.
-3. `js/app.js` — route swap with the `isToday` branch + `peekDay` flag.
-4. Density pass — rail sublabels, fold-completed groups on Buy/Menu/Run,
-   Spend header tiles removal, mobile row conversion.
-5. Styles — one new section in styles.css (`/* THE BOARD */`), tokens only.
-6. Verify per Interaction Brief; commit per step (conventional messages);
-   single push at the end.
+1. `supabase/patch-2026-jar-log.sql` — create table, RLS (the same four crew
+   policies every table gets), realtime publication. Mirror the same block into
+   `schema.sql` (drop line, create, RLS array, realtime array) so a clean run
+   includes it. **Run the patch on the live project before pushing code.**
+2. `js/db.js` — `KEY.jar_log = "jarLog"`, a `TABLES` entry filtered to `YEAR`
+   ordered by `at`, `jar_log` into `AUTHORED`, `state.jarLog = []`.
+   `js/demo.js` — a `jar_log` array and the `pushDemo()` line.
+3. `js/calc.js` — `jarTally()`. Verify against demo rows before any UI exists.
+4. `js/tally.js` + the styles section — the bar, its three writes, the arming
+   rule. Mount it in `timeline.js`; repoint `paintStrip`'s Jars cell.
+5. `js/home.js` + `js/jars.js` — live mode on the wall, delta animation.
+6. `js/views.js` — close-out prefill.
+7. `index.html` importmap line; `.\tools\Bump-Version.ps1` (or let the
+   pre-commit hook do it).
+8. Verify per the Interaction Brief; commit per step, one push at the end.
 
-Estimated: 3–4 commits, one session.
+Estimated: 3–4 commits, one session. **It has to be live and smoke-tested
+before Friday 28 August** — the Friday prep evening is the last moment anyone
+can find a problem without it costing the day.
 
 ## Unresolved Questions
 
-All resolved with Matt, 2026-08-12. Recorded as decisions:
+All resolved with Matt, 2026-08-24. Recorded as decisions:
 
-- **Live yield during the day**: no schema change. The wall shows prep
-  status until the jar count is entered at the 22:15 close-out step, then
-  flips to yield mode. A live tap-to-count interaction is a candidate
-  follow-up spec before the day — not this pass.
-- **Jar wall input**: read-only instrument face. Counts stay editable on
-  the Sauce screen only.
-- **Buy personal filter**: yes — add a one-tap "mine" filter to viewBuy
-  (matches `assigned_to` containing the member's display name); the
-  Board's "your items" line deep-links to it.
-- **Rail on the Board**: the readout rail hides on `#/` only and stays on
-  every other screen. The Board carries its numbers full-width.
-- **Day-of takeover** (accepted proposal): timeline takes over `#/` when
-  `daysToGo() ≤ 1`, so Friday-evening prep already shows the run of the day.
-- **Crew pulse privacy** (accepted proposal): the Board shows balance
-  *direction* per member only (owed / owing / square); amounts stay on
-  Spend and Ledger.
+- **Credit model**: per-man append log (`jar_log`), not a shared integer.
+  Concurrency safety is the reason; per-man credit is the bonus.
+- **Placement**: pinned bar at the top of the timeline, armed when jarring
+  starts, not tucked inside the 22:15 count step.
+- **Tap unit**: +1 primary, +12 beside it, undo within 90 seconds.
+- **Fallen soldiers**: logged live, second smaller control, same bar.
+- **Accepted risk**: the arming rule keys off `icon = 'jar'` on a `DAY` step
+  rather than a new column. If that row's icon is ever changed the bar falls
+  back to rule 2 (rows exist), and the first tap then has to come from
+  somewhere — in practice, ticking the step. Cheap to fix with a `tally`
+  boolean later; not worth a schema column five days out.
+- **Not in scope**: a pace chart from the `at` timestamps, a per-man
+  leaderboard on the Board, and jar-wall tap-to-count (the wall stays an
+  instrument face, as decided in the Board spec).
