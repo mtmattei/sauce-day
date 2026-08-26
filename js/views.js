@@ -708,11 +708,13 @@ export function viewGrappa() {
   const bought = !!thisYear?.price;
   const pick = PICK && PICK.year === YEAR ? PICK : null;
   const clears = bought && Number(thisYear.price) > record;
-  const pending = h("div", { class: "bottlecard" + (pick ? " chosen" : " pending")
+  const pending = h("div", { class: "bottlecard" + (pick ? "" : " pending")
                                                  + (clears ? " clears" : "") },
+    // The photograph is cut out of the black it was shot on, so it hangs on
+    // the same pale ground as the SAQ shots and needs none of their exceptions.
     h("div", { class: "shot" }, pick
-      ? h("img", { class: "photo", src: pick.photo,
-                   alt: `${pick.producer} ${pick.name}`, decoding: "async" })
+      ? h("img", { src: pick.photo, alt: `${pick.producer} ${pick.name}`,
+                   decoding: "async" })
       : bottle(0.92, 2, { min: 60, max: 190, empty: true,
                           label: `${YEAR} — not chosen yet` })),
     h("div", { class: "bmeta" },

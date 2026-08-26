@@ -125,7 +125,7 @@ export const PICK = {
   region: "Silvano d'Orba, Piemonte, Italy",
   size: "700 ml",
   abv: 42,
-  photo: "img/grappa/gualco-grappa-di-barbera.jpg",
+  photo: "img/grappa/gualco-grappa-di-barbera.webp",
   note: "Pure vinaccia, distilled in a bain-marie alembic and rested about six "
       + "months. Wax seal, corded cork. The first bottle since 2020 that is not "
       + "from the Veneto."

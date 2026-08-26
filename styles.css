@@ -766,17 +766,6 @@ main.panel:has(.sday) { max-width: none; }
   .bottlecard .shot { background: oklch(97% 0.004 75); }
   .bottlecard .shot img { mix-blend-mode: normal; }
 }
-/* The crew's own photograph of this year's bottle, not an SAQ cut-out on
-   white: it carries its own ground, so it is shown whole against that ground
-   rather than multiplied onto the panel, which would black it out. */
-.bottlecard .shot img.photo {
-  inset: 0; width: 100%; height: 100%; object-fit: contain; mix-blend-mode: normal;
-}
-/* The one pure black in the stylesheet, and it is not a colour choice: the
-   photograph's own corners are #000, so the frame continues the photograph
-   instead of drawing a box around it. Same in both themes, for the same reason. */
-.bottlecard.chosen .shot { background: #000; }
-
 .bottlecard.clears .shot { border-bottom-color: var(--tomato); }
 .bmeta { padding: .7rem .8rem .8rem; display: grid; gap: .2rem; align-content: start; }
 .bprice { font-size: 1.5rem; font-weight: 200; letter-spacing: -.03em; line-height: 1; }
