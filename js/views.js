@@ -11,7 +11,7 @@ import { h, frag, field, select, check, personSelect, delButton, card, stat,
          sectionBar, empty, addRow, nextSort, me, pressable } from "./ui.js";
 import { stackedBars, bars, line } from "./charts.js";
 import { bottle, icon } from "./icons.js";
-import { SHORTLIST, SUGGESTION, perLitre } from "./grappas.js";
+import { SHORTLIST, SUGGESTION, PICK, perLitre } from "./grappas.js";
 import { mountStack } from "./stack.js";
 import { jarWall } from "./jars.js";
 
@@ -702,19 +702,37 @@ export function viewGrappa() {
           h("a", { class: "btn", href: g.url, target: "_blank", rel: "noopener" }, "SAQ ↗")));
     });
 
-  // 2026's slot: an empty silhouette holding the place the next bottle takes,
-  // with the suggestion from the SAQ sweep sitting under it
+  // 2026's slot. Empty, it is a silhouette holding the place and the SAQ
+  // suggestion under it. Once the bottle is in the house it is the crew's own
+  // photograph of it — and the suggestion has nothing left to suggest.
   const bought = !!thisYear?.price;
-  const pending = h("div", { class: "bottlecard pending" },
-    h("div", { class: "shot" }, bottle(0.92, 2, { min: 60, max: 190, empty: true,
-      label: `${YEAR} — not chosen yet` })),
+  const pick = PICK && PICK.year === YEAR ? PICK : null;
+  const clears = bought && Number(thisYear.price) > record;
+  const pending = h("div", { class: "bottlecard" + (pick ? " chosen" : " pending")
+                                                 + (clears ? " clears" : "") },
+    h("div", { class: "shot" }, pick
+      ? h("img", { class: "photo", src: pick.photo,
+                   alt: `${pick.producer} ${pick.name}`, decoding: "async" })
+      : bottle(0.92, 2, { min: 60, max: 190, empty: true,
+                          label: `${YEAR} — not chosen yet` })),
     h("div", { class: "bmeta" },
       h("div", { class: "byr" }, String(YEAR)),
       h("div", { class: "bprice" }, bought ? money(thisYear.price) : "?"),
-      h("div", { class: "bname" }, thisYear?.bottle || "To be chosen"),
-      h("div", { class: "brange" }, "David's pick · SAQ"),
-      h("div", { class: "bverdict hot" }, `has to beat ${money0(record)}`),
-      bought ? null : h("div", { class: "bsuggest" },
+      h("div", { class: "bname" }, pick?.name || thisYear?.bottle || "To be chosen"),
+      h("div", { class: "brange" }, pick
+        ? `${pick.size} · ${pick.abv}%` : "David's pick · SAQ"),
+      pick ? h("div", { class: "bsub bprod" }, `${pick.producer} — ${pick.region}`) : null,
+      h("div", { class: "bverdict" + (clears ? " good" : " hot") },
+        clears ? `clears the record by ${money(Number(thisYear.price) - record)}`
+               : bought ? `${money(record - Number(thisYear.price))} short of the record`
+               : `has to beat ${money0(record)}`),
+      // One note, not two: the cards share ten subgrid rows and the note has
+      // one of them, so a second paragraph would land in the same cell.
+      // The price is the one thing a label cannot say and the only number the
+      // record is settled on, so an unpriced bottle asks for it here.
+      pick ? h("p", { class: "bnote" }, pick.note
+        + (bought ? "" : " Put what it cost in the form below and the shelf takes it from there.")) : null,
+      pick || bought ? null : h("div", { class: "bsuggest" },
         h("div", { class: "byr" }, "The suggestion"),
         h("div", { class: "bname" }, `${SUGGESTION.range} ${SUGGESTION.name}`),
         h("div", { class: "brange" }, `${money(SUGGESTION.price)} · ${SUGGESTION.size} · ${SUGGESTION.abv}%`),

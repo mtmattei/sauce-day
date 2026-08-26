@@ -57,11 +57,10 @@ insert into public.items
   (2026, 'toolkit', 'Setup & Workspace', 68, 'TV', 'Owned', '1', 0, 'Matt', null, 'Yes', 'Set up Friday with the work area. Extension cord and a spot out of the splash zone.', null),
 
   -- Toolkit · Wash & Prep
-  -- The prospect landed: bought 26 Aug 2026, $275 for the stainless station.
-  -- Matt paid the lot and takes half of it himself, so the crew's half is what
-  -- the other four settle — two receipts on the Spend screen, one split his
-  -- way and one split theirs.
-  (2026, 'toolkit', 'Wash & Prep', 70, 'Utility sink', 'Need', '1', 275.00, 'Matt', null, 'Yes', 'Stainless station — half countertop, half bowl. $275 the lot: Matt pays half, the other four $34.38 each.', 'https://www.amazon.ca/dp/B0H397TB3K'),
+  -- The prospect landed: bought 26 Aug 2026, and Matt is not putting the whole
+  -- price on the crew. The sheet carries $150, five ways at $30 a man, and the
+  -- rest of it is Matt's out of pocket and off the books on purpose.
+  (2026, 'toolkit', 'Wash & Prep', 70, 'Utility sink', 'Need', '1', 150.00, 'Matt', null, 'Yes', 'Stainless station — half countertop, half bowl. $150 on the sheet, $30 a man; Matt covers the rest out of pocket.', 'https://www.amazon.ca/dp/B0H397TB3K'),
   -- One row: they are the same buckets, counted twice because they were bought
   -- in two shops. Owned kit needs no store — a store is what puts a row on the
   -- Buy list, and these two were sitting there as things to go and get.
@@ -202,7 +201,7 @@ insert into public.runsheet
   -- so these carry no scheduled time and never become the current step. They
   -- are the decisions that have to land before Friday can happen at all.
   (2026,  10, 'PREP', 'This week', 'Order the utility sink/counter', 'Matt', 'David', null,
-   null, null, null, false, false, 'Done — bought 26 Aug for $275. Matt paid; his half and the crew''s half are two receipts on the Spend screen.'),
+   null, null, null, false, false, 'Done — bought 26 Aug. Matt paid; the crew''s $150 is one receipt on the Spend screen, $30 a man.'),
   (2026,  20, 'PREP', 'This week', 'Confirm Chris is bringing his table', 'Matt', 'Chris', null,
    null, null, null, false, false, 'The Tables row counts two: Matt''s plastic one and Chris''s.'),
   (2026,  30, 'PREP', 'This week', 'Sort out the grappa', 'David', null, null,
@@ -333,7 +332,9 @@ insert into public.grappa (year, bottle, producer, region, price, bought_by, rat
   (2023, null, null, null, 0.0, null, null, 'No grappa recorded'),
   (2024, null, null, null, 82.25, 'David', null, 'Bottle not named on the sheet'),
   (2025, null, null, null, 135.0, 'David', null, 'SAQ product 11849106 - https://www.saq.com/en/11849106'),
-  (2026, null, null, null, null, 'David', null, 'Not bought yet.');
+  -- The bottle is in the house; the price is the one thing the label cannot
+  -- say, so it stays null until whoever paid puts it in on the Grappa screen.
+  (2026, 'Grappa di Barbera', 'Distilleria Gualco', 'Silvano d''Orba, Piemonte, Italy', null, 'David', null, 'Pure vinaccia, bain-marie alembic, about six months rested. 700 ml at 42%. First bottle since 2020 that is not from the Veneto. Price still to go in.');
 
 -- ---------------------------------------------------------------- history
 insert into public.history

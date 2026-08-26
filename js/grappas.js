@@ -115,6 +115,22 @@ export const SUGGESTION = {
   note: "Aged in Sassicaia barriques, 5/5 on the SAQ. In store only — check stock before David drives out."
 };
 
+// This year's bottle, once it is in the house. The price, who bought it and
+// what it scored are crew data and live in Supabase — this is the catalogue
+// half: the photograph, and what is printed on the label.
+export const PICK = {
+  year: 2026,
+  name: "Grappa di Barbera",
+  producer: "Distilleria Gualco",
+  region: "Silvano d'Orba, Piemonte, Italy",
+  size: "700 ml",
+  abv: 42,
+  photo: "img/grappa/gualco-grappa-di-barbera.jpg",
+  note: "Pure vinaccia, distilled in a bain-marie alembic and rested about six "
+      + "months. Wax seal, corded cork. The first bottle since 2020 that is not "
+      + "from the Veneto."
+};
+
 /** Price per litre — the five bottles are not all the same size. */
 export const perLitre = g => g.price / (parseInt(g.size, 10) / 1000);
 

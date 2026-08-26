@@ -629,12 +629,12 @@ export const DEMO_DATA = {
       "name": "Utility sink",
       "kind": "Need",
       "qty": "1",
-      "budget": 275.0,
+      "budget": 150.0,
       "assigned_to": "Matt",
       "store": null,
       "obtained": true,
       "repeat_next": "Yes",
-      "comments": "Stainless station — half countertop, half bowl. $275 the lot: Matt pays half, the other four $34.38 each.",
+      "comments": "Stainless station — half countertop, half bowl. $150 on the sheet, $30 a man; Matt covers the rest out of pocket.",
       "link": "https://www.amazon.ca/dp/B0H397TB3K"
     },
     {
@@ -1001,21 +1001,9 @@ export const DEMO_DATA = {
       "year": 2026,
       "category": "toolkit",
       "paid_by": "Matt",
-      "amount": 137.5,
-      "label": "Utility sink — Matt's half",
-      "shared_by": "Matt",
-      "spent_on": "2026-08-26",
-      "created_by": "admin@change-me.invalid",
-      "created_at": "2026-08-26T17:05:00Z"
-    },
-    {
-      "id": "demo-0213",
-      "year": 2026,
-      "category": "toolkit",
-      "paid_by": "Matt",
-      "amount": 137.5,
-      "label": "Utility sink — the crew's half",
-      "shared_by": "David / Nate / Chris / Mike",
+      "amount": 150.0,
+      "label": "Utility sink — the crew's share",
+      "shared_by": null,
       "spent_on": "2026-08-26",
       "created_by": "admin@change-me.invalid",
       "created_at": "2026-08-26T17:05:00Z"
@@ -2462,13 +2450,13 @@ export const DEMO_DATA = {
     },
     {
       "year": 2026,
-      "bottle": null,
-      "producer": null,
-      "region": null,
+      "bottle": "Grappa di Barbera",
+      "producer": "Distilleria Gualco",
+      "region": "Silvano d'Orba, Piemonte, Italy",
       "price": null,
       "bought_by": "David",
       "rating": null,
-      "notes": "Not bought yet. It has to beat $135.00."
+      "notes": "Pure vinaccia, bain-marie alembic, about six months rested. 700 ml at 42%. First bottle since 2020 that is not from the Veneto. Price still to go in."
     }
   ],
   "history": [
