@@ -43,8 +43,10 @@ export const brokenOutDishes = () => new Set(
 export const shoppable = (m, broken = brokenOutDishes()) => !broken.has(m.dish);
 
 // Food and drink live in `menu`, the kit and the ingredients in `items`, so the
-// person responsible is `who` on one and `assigned_to` on the other.
-export const ownerOf = r => r.assigned_to ?? r.who ?? null;
+// person responsible is `who` on one and `assigned_to` on the other. A receipt
+// names the men it is split between in `shared_by`, which reads the same way,
+// so one membership test serves all three.
+export const ownerOf = r => r.assigned_to ?? r.who ?? r.shared_by ?? null;
 
 // A job the whole crew owns. "All" is what the run sheet has said since the
 // first year; "Crew" turns up in the bushels. All three mean the same thing and
@@ -86,13 +88,40 @@ export function spentByPerson() {
   return out;
 }
 
-/** Even split, then the smallest set of transfers that clears it. */
+/**
+ * Who a receipt is split between. `shared_by` empty means the whole crew,
+ * which is the ordinary case and stays the default: a receipt nobody has
+ * carved up is everybody's. A name nobody recognises falls back to the crew
+ * rather than to nobody, because money that belongs to no one is money lost.
+ */
+export function sharersOf(e, names) {
+  const named = names.filter(n => assignedTo(e, n));
+  return named.length ? named : names;
+}
+
+/**
+ * Each receipt split between the men it names, then the smallest set of
+ * transfers that clears the lot. Most receipts are the whole crew's, so most
+ * years this is the even split it has always been — but a man can pay half of
+ * something himself and leave the rest to the other four, and the arithmetic
+ * has to survive that.
+ */
 export function settlement() {
   const paid = spentByPerson();
   const names = Object.keys(paid);
+  const owed = {};
+  names.forEach(n => { owed[n] = 0; });
+  let evenSplit = true;
+  state.expenses.forEach(e => {
+    const amount = Number(e.amount) || 0;
+    const sharers = sharersOf(e, names);
+    if (sharers.length !== names.length) evenSplit = false;
+    sharers.forEach(n => { owed[n] += amount / sharers.length; });
+  });
   const total = names.reduce((a, n) => a + paid[n], 0);
   const share = names.length ? total / names.length : 0;
-  const net = names.map(n => ({ name: n, paid: paid[n], share, net: paid[n] - share }));
+  const net = names.map(n => ({ name: n, paid: paid[n], share: owed[n],
+                                net: paid[n] - owed[n] }));
 
   const credits = net.filter(p => p.net > 0.005);
   const debts   = net.filter(p => p.net < -0.005);
@@ -102,7 +131,8 @@ export function settlement() {
     const amt = -d.net * (c.net / (totalCredit || 1));
     if (amt > 0.005) transfers.push({ from: d.name, to: c.name, amount: amt });
   }));
-  return { net, total, share, transfers, balanced: Math.abs(net.reduce((a, p) => a + p.net, 0)) < 0.01 };
+  return { net, total, share, evenSplit, transfers,
+           balanced: Math.abs(net.reduce((a, p) => a + p.net, 0)) < 0.01 };
 }
 
 // ---------------------------------------------------------------- the sauce

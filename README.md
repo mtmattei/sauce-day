@@ -40,9 +40,10 @@ three things: money going out, something still to buy, or the record to beat.
 Dark and light are both designed; it follows whatever your phone is set to.
 
 **The rail** down the left holds six numbers on every screen — days out, what
-*you* owe or are owed, the even share, jars still to buy, the grappa record,
+*you* owe or are owed, the share per man, jars still to buy, the grappa record,
 and how much of the buy list is done. An instrument that hides its reading is
-useless.
+useless. (Split a receipt unevenly and the third one turns into *your* share,
+because a per-man average nobody owes is not a reading.)
 
 **The grappa screen** draws every year since 2020 as a bottle whose height is
 what it cost, with the standing record dashed across as the line to clear, then
@@ -169,7 +170,7 @@ they can sign in immediately.
 |---|---|
 | **Today** | Countdown, what you owe, budget vs actual, how ready we are |
 | **Buy** | Kit, ingredients and dishes in one list, grouped by store. Claim it, tick it |
-| **Spend** | Log your own receipts. The split recalculates for everyone |
+| **Spend** | Log your own receipts, and who each one is split between. The split recalculates for everyone |
 | **Sauce** | Bushels → litres → jars, bands and lids to buy |
 | **Menu** | Who's bringing or making what, by service. Ingredients live in the Ledger |
 | **Run** | The order the day happens in, tick as you go |

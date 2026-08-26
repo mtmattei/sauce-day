@@ -57,10 +57,11 @@ insert into public.items
   (2026, 'toolkit', 'Setup & Workspace', 68, 'TV', 'Owned', '1', 0, 'Matt', null, 'Yes', 'Set up Friday with the work area. Extension cord and a spot out of the splash zone.', null),
 
   -- Toolkit · Wash & Prep
-  -- The sink is a prospect, not a purchase: kind 'Prospect' and no store keep
-  -- it off the Buy list and out of the readiness count. How to commit it is on
-  -- the run sheet task that does the committing.
-  (2026, 'toolkit', 'Wash & Prep', 70, 'Outdoor sink', 'Prospect', '1', 279.99, null, null, 'Maybe', 'Preferred: 1 m stainless sink station — half countertop, half bowl, 304 restaurant steel, $279.99 on Amazon, in stock, 4.8/5. No faucet in the listing — plan on a hose tap. Budget option: PDG folding table with sink & tap, $124.99 at Canadian Tire. Prices read 17 Aug 2026.', 'https://www.amazon.ca/dp/B0H397TB3K'),
+  -- The prospect landed: bought 26 Aug 2026, $275 for the stainless station.
+  -- Matt paid the lot and takes half of it himself, so the crew's half is what
+  -- the other four settle — two receipts on the Spend screen, one split his
+  -- way and one split theirs.
+  (2026, 'toolkit', 'Wash & Prep', 70, 'Utility sink', 'Need', '1', 275.00, 'Matt', null, 'Yes', 'Stainless station — half countertop, half bowl. $275 the lot: Matt pays half, the other four $34.38 each.', 'https://www.amazon.ca/dp/B0H397TB3K'),
   -- One row: they are the same buckets, counted twice because they were bought
   -- in two shops. Owned kit needs no store — a store is what puts a row on the
   -- Buy list, and these two were sitting there as things to go and get.
@@ -201,7 +202,7 @@ insert into public.runsheet
   -- so these carry no scheduled time and never become the current step. They
   -- are the decisions that have to land before Friday can happen at all.
   (2026,  10, 'PREP', 'This week', 'Order the utility sink/counter', 'Matt', 'David', null,
-   null, null, null, false, false, 'Toolkit → Wash & Prep holds both options. Committing = set that row from Prospect to Need and give it a store. Order early enough to ship.'),
+   null, null, null, false, false, 'Done — bought 26 Aug for $275. Matt paid; his half and the crew''s half are two receipts on the Spend screen.'),
   (2026,  20, 'PREP', 'This week', 'Confirm Chris is bringing his table', 'Matt', 'Chris', null,
    null, null, null, false, false, 'The Tables row counts two: Matt''s plastic one and Chris''s.'),
   (2026,  30, 'PREP', 'This week', 'Sort out the grappa', 'David', null, null,

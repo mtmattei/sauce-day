@@ -182,8 +182,13 @@ function renderReadout() {
       mine.net >= 0 ? "good" : "hot"));
   }
 
-  host.appendChild(ro("Share per man", money0(st.share),
-    `${money0(st.total)} logged, ${st.net.length} ways`));
+  // Once a receipt is split unevenly, "per man" is an average nobody owes, so
+  // the rail switches to the only share that is yours to settle: your own.
+  host.appendChild(st.evenSplit || !mine
+    ? ro("Share per man", money0(st.share),
+        `${money0(st.total)} logged, ${st.net.length} ways`)
+    : ro("Your share", money0(mine.share),
+        `${money0(st.total)} logged, split by receipt`));
 
   host.appendChild(ro("Jars to buy", String(y.jarsToBuy),
     y.jarsToBuy ? `${y.jarPacks} pack${y.jarPacks === 1 ? "" : "s"} · ${money0(y.cost)} with lids`

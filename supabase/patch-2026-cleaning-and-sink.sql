@@ -2,6 +2,10 @@
 --  SAUCE DAY · 2026 patch: sponges + Dawn become this year's buys, and the
 --  outdoor sink joins the toolkit as a prospect.
 --
+--  Superseded for the sink row by patch-2026-utility-sink.sql, which turns the
+--  prospect into the thing that was bought. If you ever re-run this file, run
+--  that one after it.
+--
 --  Run this in the Supabase SQL editor INSTEAD of re-running seed.sql —
 --  seed.sql wipes the year's expenses and obtained ticks; this touches only
 --  the rows it names. Safe to re-run.

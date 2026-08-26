@@ -100,11 +100,17 @@ create table public.expenses (
   paid_by    text not null,
   amount     numeric not null check (amount >= 0),
   label      text,
+  shared_by  text,                       -- who it is split between; null = the whole crew
   spent_on   date not null default current_date,
   created_at timestamptz not null default now(),
   created_by text
 );
 create index expenses_year_idx on public.expenses (year, created_at desc);
+comment on column public.expenses.shared_by is
+  'The men this receipt is split between, written the way assigned_to is '
+  '("David / Nate / Chris / Mike"). Null means the whole crew, which is the '
+  'ordinary case — store null rather than every name, so a receipt is never '
+  'left split between a crew that has since changed.';
 
 -- ---------------------------------------------------------------- the sauce
 create table public.bushels (

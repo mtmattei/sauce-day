@@ -626,15 +626,15 @@ export const DEMO_DATA = {
       "year": 2026,
       "category": "toolkit",
       "sort_index": 36,
-      "name": "Outdoor sink",
-      "kind": "Prospect",
+      "name": "Utility sink",
+      "kind": "Need",
       "qty": "1",
-      "budget": 279.99,
-      "assigned_to": null,
+      "budget": 275.0,
+      "assigned_to": "Matt",
       "store": null,
-      "obtained": false,
-      "repeat_next": "Maybe",
-      "comments": "Preferred: 1 m stainless sink station — half countertop, half bowl, 304 restaurant steel, $279.99 on Amazon, in stock, 4.8/5. No faucet in the listing — plan on a hose tap. Budget option: PDG folding table with sink & tap, $124.99 at Canadian Tire. Prices read 17 Aug 2026.",
+      "obtained": true,
+      "repeat_next": "Yes",
+      "comments": "Stainless station — half countertop, half bowl. $275 the lot: Matt pays half, the other four $34.38 each.",
       "link": "https://www.amazon.ca/dp/B0H397TB3K"
     },
     {
@@ -995,6 +995,30 @@ export const DEMO_DATA = {
       "spent_on": "2026-08-26",
       "created_by": "admin@change-me.invalid",
       "created_at": "2026-08-26T16:40:00Z"
+    },
+    {
+      "id": "demo-0212",
+      "year": 2026,
+      "category": "toolkit",
+      "paid_by": "Matt",
+      "amount": 137.5,
+      "label": "Utility sink — Matt's half",
+      "shared_by": "Matt",
+      "spent_on": "2026-08-26",
+      "created_by": "admin@change-me.invalid",
+      "created_at": "2026-08-26T17:05:00Z"
+    },
+    {
+      "id": "demo-0213",
+      "year": 2026,
+      "category": "toolkit",
+      "paid_by": "Matt",
+      "amount": 137.5,
+      "label": "Utility sink — the crew's half",
+      "shared_by": "David / Nate / Chris / Mike",
+      "spent_on": "2026-08-26",
+      "created_by": "admin@change-me.invalid",
+      "created_at": "2026-08-26T17:05:00Z"
     }
   ],
   "bushels": [

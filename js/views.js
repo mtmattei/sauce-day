@@ -324,9 +324,16 @@ export function viewSpend() {
     // items, so a dish logs its receipt without one and gets ticked on its
     // own table instead.
     const [table, id] = (f.get("item_id") || "").split(":");
+    // Everyone is the ordinary case, so it is what an untouched form says, and
+    // it is stored as null rather than as five names — a roster that changes
+    // would otherwise leave old receipts split between last year's crew.
+    const sharers = f.getAll("shared_by");
+    if (!sharers.length) { flash("Somebody has to be in on it", true); return; }
+    const everyone = sharers.length === crewNames().length;
     await insert("expenses", {
       category: f.get("category"), paid_by: f.get("paid_by"),
       amount, label: f.get("label") || null,
+      shared_by: everyone ? null : sharers.join(" / "),
       item_id: table === "items" ? id : null,
       spent_on: f.get("spent_on") || new Date().toISOString().slice(0, 10),
       created_by: state.session?.user?.email || null
@@ -336,6 +343,9 @@ export function viewSpend() {
     if (table === "menu")  await update("menu", id, { confirmed: true });
     e.target.reset();
     e.target.querySelector('[name=paid_by]').value = me() || "";
+    // reset() clears the split boxes — they are checked by property, not by
+    // attribute — and an empty split is the one state the form cannot submit.
+    e.target.querySelectorAll('[name=shared_by]').forEach(c => { c.checked = true; });
     flash(table ? "Logged " + money(amount) + " and ticked it off"
                 : "Logged " + money(amount));
   } },
@@ -362,12 +372,21 @@ export function viewSpend() {
     lbl("What for", h("input", { name: "label", class: "f", placeholder: "e.g. 7 bushels at the market" })),
     lbl("Date", h("input", { name: "spent_on", class: "f", type: "date",
       value: new Date().toISOString().slice(0, 10) })),
+    // Untick yourself and you have paid for something the other four share;
+    // untick everyone but yourself and you have bought it for the crew out of
+    // your own pocket. Two halves of the same receipt say "I pay half".
+    lbl("Split between", h("div", { class: "btnrow" },
+      ...crewNames().map(n => h("label", { class: "chk" },
+        h("input", { type: "checkbox", name: "shared_by", value: n, checked: true }),
+        h("span", {}, n))))),
     h("button", { class: "btn primary wide", type: "submit" }, "Log it"));
 
-  // No Share column: an even split means it is the same number in every row,
-  // so it was five identical cells. It is stated once in the card subtitle.
+  // An even split is the same number in every row, so it is stated once in the
+  // card subtitle instead of five identical cells. The moment a receipt is
+  // split unevenly the numbers differ, and then the column is the whole point.
   const netRows = st.net.map(p => h("tr", { class: p.name === me() ? "mine" : "" },
     h("td", {}, p.name), h("td", {}, money(p.paid)),
+    st.evenSplit ? null : h("td", {}, money(p.share)),
     h("td", { class: p.net >= 0 ? "good" : "warn" },
       (p.net >= 0 ? "gets back " : "owes ") + money(Math.abs(p.net)))));
 
@@ -383,6 +402,7 @@ export function viewSpend() {
           h("div", { class: "rowtitle" }, e.label || CATS.find(c => c.key === e.category)?.label),
           h("div", { class: "rowsub" },
             [e.paid_by, CATS.find(c => c.key === e.category)?.short, e.spent_on,
+             e.shared_by ? "split between " + e.shared_by : null,
              e.item_id ? "ticked off " + (state.items.find(i => String(i.id) === String(e.item_id))?.name || "an item") : null
             ].filter(Boolean).join(" · "))),
         h("div", { class: "rowend" }, h("span", { class: "mono" }, money(e.amount)),
@@ -391,10 +411,12 @@ export function viewSpend() {
 
   return frag(
     card("Log what you paid", "Only your own receipts. The split updates for everyone the moment you hit the button.", form),
-    card("The split", `${money(st.total)} in, split ${st.net.length} ways — ${money(st.share)} each`,
+    card("The split", st.evenSplit
+      ? `${money(st.total)} in, split ${st.net.length} ways — ${money(st.share)} each`
+      : `${money(st.total)} in, split receipt by receipt — ${money(st.share)} a man if it were even`,
       h("table", { class: "grid" },
         h("thead", {}, h("tr", {}, h("th", {}, "Person"), h("th", {}, "Paid"),
-          h("th", {}, "Standing"))),
+          st.evenSplit ? null : h("th", {}, "Share"), h("th", {}, "Standing"))),
         h("tbody", {}, ...netRows))),
     card("Who pays whom", "Settle up at the end of the night.", transfers),
     card("Receipts", state.expenses.length + " logged", ...log));
