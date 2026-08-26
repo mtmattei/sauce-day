@@ -78,6 +78,9 @@ insert into public.items
   (2026, 'toolkit', 'Cooking & Heat', 180, 'Stainless deep dish pan', 'Owned', null, 0, 'Matt', null, 'Yes', null, null),
   (2026, 'toolkit', 'Cooking & Heat', 190, 'Metal bowl', 'Owned', '1', 0, 'Matt', null, 'Yes', null, null),
   (2026, 'toolkit', 'Cooking & Heat', 200, 'Wooden stirring paddle', 'Owned', '1', 0, 'Matt', null, 'Yes', null, null),
+  -- Bought 26 Aug 2026, the pair for $10 — one for the boil, one for the
+  -- sterilising, so neither is guessed at. Owned from next year on.
+  (2026, 'toolkit', 'Cooking & Heat', 205, 'Timers', 'Need', '2', 10.00, 'Matt', null, 'Yes', 'Two of them: one on the pot, one on the jars.', null),
 
   -- Toolkit · Milling & Straining
   (2026, 'toolkit', 'Milling & Straining', 210, 'Food mill', 'Owned', '1', 0, 'Matt', null, 'Yes', '2025 note: consider a new mill', null),

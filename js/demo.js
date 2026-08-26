@@ -638,6 +638,22 @@ export const DEMO_DATA = {
       "link": "https://www.amazon.ca/dp/B0H397TB3K"
     },
     {
+      "id": "demo-0210",
+      "year": 2026,
+      "category": "toolkit",
+      "sort_index": 37,
+      "name": "Timers",
+      "kind": "Need",
+      "qty": "2",
+      "budget": 10.0,
+      "assigned_to": "Matt",
+      "store": null,
+      "obtained": true,
+      "repeat_next": "Yes",
+      "comments": "Two of them: one on the pot, one on the jars.",
+      "link": null
+    },
+    {
       "id": "demo-0035",
       "year": 2026,
       "category": "ingredients",
@@ -968,6 +984,17 @@ export const DEMO_DATA = {
       "spent_on": "2026-08-26",
       "created_by": "admin@change-me.invalid",
       "created_at": "2026-08-26T11:05:00Z"
+    },
+    {
+      "id": "demo-0211",
+      "year": 2026,
+      "category": "toolkit",
+      "paid_by": "Matt",
+      "amount": 10.0,
+      "label": "Timers x2",
+      "spent_on": "2026-08-26",
+      "created_by": "admin@change-me.invalid",
+      "created_at": "2026-08-26T16:40:00Z"
     }
   ],
   "bushels": [
