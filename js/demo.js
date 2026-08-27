@@ -2382,9 +2382,21 @@ export const DEMO_DATA = {
       "dish": "Sparkling water",
       "who": null,
       "source": "Costco",
-      "qty": null,
+      "qty": "24",
       "confirmed": false,
-      "notes": null
+      "notes": "Sparkling water for the day — a case of 24."
+    },
+    {
+      "id": "demo-0214",
+      "year": 2026,
+      "sort_index": 29,
+      "service": "Drinks",
+      "dish": "Still water",
+      "who": null,
+      "source": "Costco",
+      "qty": "24",
+      "confirmed": false,
+      "notes": "Flat water for the day — a case of 24."
     }
   ],
   "grappa": [

@@ -321,7 +321,10 @@ insert into public.menu (year, sort_index, service, dish, who, source, qty, note
   (2026, 220, 'Drinks', 'Aperol', 'David', 'SAQ', null, 'For spritzes'),
   (2026, 230, 'Drinks', 'Italian red wine', 'David', 'SAQ', '3', 'Chianti, Montepulciano or similar'),
   (2026, 240, 'Drinks', 'Italian lager', null, 'Depanneur', null, 'Peroni, Moretti or similar'),
-  (2026, 250, 'Drinks', 'San Pellegrino', null, 'Costco', '12', 'Sparkling water for the day'),
+  -- A case each, flat and bubbly. Five men outdoors all day in August drink
+  -- more water than beer, and only one of the two was ever on the list.
+  (2026, 250, 'Drinks', 'San Pellegrino', null, 'Costco', '24', 'Sparkling water for the day — a case of 24.'),
+  (2026, 252, 'Drinks', 'Still water', null, 'Costco', '24', 'Flat water for the day — a case of 24.'),
   (2026, 255, 'Drinks', 'Ice', 'David', 'Depanneur', '4 bags', 'Friday chill-down needs it and every party forgets it.');
 
 -- ---------------------------------------------------------------- grappa
