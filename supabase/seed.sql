@@ -60,18 +60,21 @@ insert into public.items
   -- The sink is a prospect, not a purchase: kind 'Prospect' and no store keep
   -- it off the Buy list and out of the readiness count. How to commit it is on
   -- the run sheet task that does the committing.
-  (2026, 'toolkit', 'Wash & Prep', 70, 'Outdoor sink', 'Prospect', '1', 279.99, null, null, 'Maybe', 'Preferred: 1 m stainless sink station — half countertop, half bowl, 304 restaurant steel, $279.99 on Amazon, in stock, 4.8/5. No faucet in the listing — plan on a hose tap. Budget option: PDG folding table with sink & tap, $124.99 at Canadian Tire. Prices read 17 Aug 2026.', 'https://www.amazon.ca/dp/B0H397TB3K'),
+  (2026, 'toolkit', 'Wash & Prep', 70, 'Outdoor sink', 'Prospect', '1', 279.99, null, null, 'Maybe', 'NOT for 2026 — never ordered, and there was no lead time left. Revisit next year. Preferred: 1 m stainless sink station — half countertop, half bowl, 304 restaurant steel, $279.99 on Amazon, in stock, 4.8/5. No faucet in the listing — plan on a hose tap. Budget option: PDG folding table with sink & tap, $124.99 at Canadian Tire. Prices read 17 Aug 2026.', 'https://www.amazon.ca/dp/B0H397TB3K'),
   -- One row: they are the same buckets, counted twice because they were bought
   -- in two shops. Owned kit needs no store — a store is what puts a row on the
   -- Buy list, and these two were sitting there as things to go and get.
   (2026, 'toolkit', 'Wash & Prep', 80, 'Buckets', 'Owned', '13', 0, 'David (11) / Matt (2)', null, 'Yes', '6 from Canadian Tire, 7 from Home Depot.', null),
+  -- The two David is going to get are their own Need row, so they show on the
+  -- Buy list and go grey when he has them.
+  (2026, 'toolkit', 'Wash & Prep', 81, 'Buckets', 'Need', '2', 0, 'David', 'Canadian Tire', 'Yes', 'Two more on top of the thirteen we own.', null),
   (2026, 'toolkit', 'Wash & Prep', 100, 'Cutting boards', 'Owned', '5', 0, 'Matt', null, 'Yes', null, null),
   (2026, 'toolkit', 'Wash & Prep', 110, 'Knives', 'Owned', '5', 0, 'BYOK / Matt', null, 'Yes', null, null),
   (2026, 'toolkit', 'Wash & Prep', 120, 'Measuring pitcher', 'Owned', '1', 0, 'Matt', null, 'Yes', null, null),
 
   -- Toolkit · Cooking & Heat
   (2026, 'toolkit', 'Cooking & Heat', 130, 'Cauldrons', 'Owned', '3', 0, 'Matt (2) / David (1) / Chris (2)', null, 'Yes', null, null),
-  (2026, 'toolkit', 'Cooking & Heat', 140, 'Burners', 'Owned', '3', 0, 'Matt', 'Home Depot', 'Buy', null, 'https://www.homedepot.ca/product/martin-r65-propane-burner/1000751079'),
+  (2026, 'toolkit', 'Cooking & Heat', 140, 'Burners', 'Owned', '3', 0, 'Matt', null, 'Buy', null, 'https://www.homedepot.ca/product/martin-r65-propane-burner/1000751079'),
   (2026, 'toolkit', 'Cooking & Heat', 150, 'Propane', 'Refill', '4', 40.0, 'Matt (3) / Chris (1)', null, 'Yes', 'Recurring every year. 3 sauce burners + 1 BBQ.', null),
   (2026, 'toolkit', 'Cooking & Heat', 160, 'Ladle', 'Owned', '1', 0, 'Matt', null, 'Yes', null, null),
   (2026, 'toolkit', 'Cooking & Heat', 170, 'Spider ladle', 'Owned', '1', 0, 'Matt / Mike', null, 'Yes', null, null),
@@ -82,14 +85,14 @@ insert into public.items
   -- Toolkit · Milling & Straining
   (2026, 'toolkit', 'Milling & Straining', 210, 'Food mill', 'Owned', '1', 0, 'Matt', null, 'Yes', '2025 note: consider a new mill', null),
   (2026, 'toolkit', 'Milling & Straining', 220, 'Cheesecloth', 'Need', '4', 0, 'Matt', 'Market', 'No', null, null),
-  (2026, 'toolkit', 'Milling & Straining', 230, 'Cloth to strain water', 'Owned', null, 0, 'Matt', 'Amazon', 'Yes', 'David to check Amazon', null),
+  (2026, 'toolkit', 'Milling & Straining', 230, 'Cloth to strain water', 'Owned', null, 0, 'Matt', null, 'Yes', 'Owned. David was checking Amazon for more, but nothing ships in time — off the buy list.', null),
   (2026, 'toolkit', 'Milling & Straining', 240, 'Strainer for sauce pot', 'Need', '1', 0, null, null, 'Buy', 'Carried over from 2025 notes', null),
 
   -- Toolkit · Jarring & Canning
-  (2026, 'toolkit', 'Jarring & Canning', 250, 'Mason jars', 'Owned', null, 39.98, 'Chris', 'Canadian Tire', 'Yes', 'Chris brings the difference — whatever the Yield & Jars tab still shows to buy.', null),
+  (2026, 'toolkit', 'Jarring & Canning', 250, 'Mason jars', 'Owned', '8 packs', 159.92, 'Chris', 'Canadian Tire', 'Yes', 'Chris brings the difference — whatever the Yield & Jars tab still shows to buy. Ten bushels: 154 jars needed against 64 on hand.', null),
   (2026, 'toolkit', 'Jarring & Canning', 260, 'Funnel (wide mouth)', 'Owned', '3', 0, 'Matt', null, 'Yes', null, null),
-  (2026, 'toolkit', 'Jarring & Canning', 270, 'Rims', 'Need', null, 0, 'David / Matt', 'Canadian Tire', 'No', 'All new sets of rims', null),
-  (2026, 'toolkit', 'Jarring & Canning', 280, 'Lids', 'Need', '2', 14.97, 'David', 'Canadian Tire', 'No', 'See Yield & Jars tab', null),
+  (2026, 'toolkit', 'Jarring & Canning', 270, 'Rims', 'Need', null, 0, 'David / Matt', 'Canadian Tire', 'No', 'All new sets of rims, if we want them — 66 bands on hand plus 96 in the jar packs already covers 154, so nothing here is short.', null),
+  (2026, 'toolkit', 'Jarring & Canning', 280, 'Lids', 'Need', '5 packs', 24.95, 'David', 'Canadian Tire', 'No', 'See Yield & Jars. 58 short once the jar packs are counted.', null),
   (2026, 'toolkit', 'Jarring & Canning', 290, 'Mason jar lifters', 'Owned', '2', 0, 'Matt', null, 'Yes', null, null),
 
   -- Toolkit · Cleaning & Sanitation
@@ -107,13 +110,13 @@ insert into public.items
   (2026, 'toolkit', 'Serving & Extras', 370, 'Napkins', 'Owned', null, 0, 'Matt', null, 'Yes', null, null),
 
   -- Ingredients
-  (2026, 'ingredients', null, 1, 'Bushels of tomatoes', 'Need', null, 175.0, 'Matt / David / Nate', 'Market', 'Yes', 'Pickup Fri Aug 28 at the market. Count and budget live on the Yield & Jars tab.', null),
+  (2026, 'ingredients', null, 1, 'Bushels of tomatoes', 'Need', null, 250.0, 'Matt / David / Nate', 'Market', 'Yes', 'Pickup Fri Aug 28 at the market. Ten bushels at $25. Count and budget live on the Yield & Jars tab.', null),
   (2026, 'ingredients', null, 2, 'Basil', 'Need', null, 0, 'Matt / David / Nate', 'Market', 'Yes', 'Matt potentially has', null),
   (2026, 'ingredients', null, 3, 'Parsley', 'Need', null, 0, 'Matt / David / Nate', 'Market', 'Yes', 'Matt potentially has', null),
-  (2026, 'ingredients', null, 4, 'Onions', 'Need', '5 kg (~20)', 0, 'Matt / David / Nate', 'Market', 'Yes', 'Soffritto — roughly one per 5 L of sauce.', null),
-  (2026, 'ingredients', null, 5, 'Garlic', 'Need', '12 heads', 0, 'Matt / David / Nate', 'Market', 'Yes', 'Soffritto — a head per 8 L of sauce.', null),
-  (2026, 'ingredients', null, 6, 'Carrots', 'Need', '2 kg (~15)', 0, 'Matt / David / Nate', 'Market', 'Yes', 'Soffritto — one per 7 L of sauce.', null),
-  (2026, 'ingredients', null, 7, 'Celery', 'Need', '2 bunches', 0, 'Matt / David / Nate', 'Market', 'Yes', 'Soffritto — a stalk per 7 L of sauce.', null),
+  (2026, 'ingredients', null, 4, 'Onions', 'Need', '7 kg (~28)', 0, 'Matt / David / Nate', 'Market', 'Yes', 'Soffritto — roughly one per 5 L of sauce.', null),
+  (2026, 'ingredients', null, 5, 'Garlic', 'Need', '18 heads', 0, 'Matt / David / Nate', 'Market', 'Yes', 'Soffritto — a head per 8 L of sauce.', null),
+  (2026, 'ingredients', null, 6, 'Carrots', 'Need', '3 kg (~20)', 0, 'Matt / David / Nate', 'Market', 'Yes', 'Soffritto — one per 7 L of sauce.', null),
+  (2026, 'ingredients', null, 7, 'Celery', 'Need', '3 bunches', 0, 'Matt / David / Nate', 'Market', 'Yes', 'Soffritto — a stalk per 7 L of sauce. Twenty stalks at ten bushels.', null),
   (2026, 'ingredients', null, 8, 'Salt', 'Owned', null, 0, 'Matt / David / Nate', null, 'Yes', null, null),
   (2026, 'ingredients', null, 9, 'Sugar', 'Owned', null, 0, 'Matt / David / Nate', null, 'Yes', null, null),
 
@@ -128,15 +131,11 @@ insert into public.items
   (2026, 'food', 'Breakfast Sandwiches', 30, 'Breakfast sausage', 'Need', '1 kg', 0, null, 'Butcher', 'Yes', null, null),
   (2026, 'food', 'Breakfast Sandwiches', 40, 'Sliced cheese', 'Need', '500 g', 0, null, 'Grocery', 'Yes', 'Provolone or cheddar, whatever the sandwich wants.', null),
   (2026, 'food', 'Breakfast Sandwiches', 50, 'English muffins', 'Need', '12', 0, null, 'Bakery', 'Yes', null, null),
-  (2026, 'food', 'Blood orange juice / mimosas', 60, 'Blood orange juice', 'Need', '3 L', 0, null, 'Grocery', 'Yes', 'The prosecco is its own line under Drinks.', null),
 
   -- Antipasto
   (2026, 'food', 'Parm & Balsamic glaze', 70, 'Parmigiano Reggiano', 'Need', '1 kg wedge', 0, null, 'Italian Market', 'Yes', 'The same wedge grates over the bresaola.', null),
   (2026, 'food', 'Parm & Balsamic glaze', 80, 'Balsamic glaze', 'Need', '1 bottle', 0, null, 'Italian Market', 'Yes', null, null),
   (2026, 'food', 'Parm & Balsamic glaze', 90, 'Good olive oil', 'Need', '500 ml', 0, null, 'Italian Market', 'Yes', 'Also dresses the mushrooms and both salads. The cooking oil is a separate bottle.', null),
-  (2026, 'food', 'Grilled artichokes', 100, 'Artichokes', 'Need', '10', 0, null, 'Market', 'Yes', null, null),
-  (2026, 'food', 'Grilled artichokes', 110, 'Lemons', 'Need', '6', 0, null, 'Market', 'Yes', 'The bresaola wants one too.', null),
-  (2026, 'food', 'Marinated mushrooms', 120, 'Cremini mushrooms', 'Need', '1 kg', 0, 'Chris', 'Market', 'Yes', 'Garlic, parsley and oil come off the sauce table.', null),
   (2026, 'food', 'Bresaola', 130, 'Bresaola', 'Need', '400 g', 0, null, 'Italian Market', 'Yes', 'Sliced thin, and not the day before.', null),
   (2026, 'food', 'Bresaola', 140, 'Arugula', 'Need', '2 bunches', 0, null, 'Market', 'Yes', null, null),
 
@@ -148,13 +147,12 @@ insert into public.items
   (2026, 'food', 'Steak, Pepperoni & Capicollo Subs', 190, 'Frying peppers', 'Need', '6', 0, null, 'Market', 'Yes', 'The rolls are their own line under Lunch.', null),
   (2026, 'food', 'Melon and prosciutto', 200, 'Cantaloupe', 'Need', '2', 0, null, 'Market', 'Yes', null, null),
   (2026, 'food', 'Melon and prosciutto', 210, 'Prosciutto', 'Need', '400 g', 0, null, 'Italian Market', 'Yes', 'Two stores, which is why the dish is two lines.', null),
-  (2026, 'food', 'Fennel and orange salad', 220, 'Fennel', 'Need', '3 bulbs', 0, null, 'Market', 'Yes', null, null),
+  (2026, 'food', 'Fennel and orange salad', 220, 'Fennel', 'Need', '3 bulbs', 0, null, 'Market', 'Yes', 'The oranges keep this dish broken out, so the fennel has to be on the list itself.', null),
   (2026, 'food', 'Fennel and orange salad', 230, 'Oranges', 'Need', '6', 0, null, 'Market', 'Yes', null, null),
 
   -- Dinner
   (2026, 'food', 'Braciole', 240, 'Beef top round, sliced thin', 'Need', '2 kg', 0, null, 'Butcher', 'Yes', 'Ask for the braciole cut and he will do the slicing.', null),
   (2026, 'food', 'Braciole', 250, 'Breadcrumbs', 'Need', '1 bag', 0, null, 'Italian Market', 'Yes', null, null),
-  (2026, 'food', 'Braciole', 260, 'Pecorino', 'Need', '300 g', 0, null, 'Italian Market', 'Yes', null, null),
   (2026, 'food', 'Braciole', 270, 'Butcher''s twine', 'Need', '1 roll', 0, null, 'Butcher', 'Yes', null, null),
 
   -- Dessert
@@ -173,7 +171,7 @@ where year = 2026
 -- number that matters is the total. calc.js sums every row in this table, so
 -- adding rows back later still works if that ever changes.
 insert into public.bushels (year, person, count) values
-  (2026, 'Crew', 7);
+  (2026, 'Crew', 10);
 
 -- ---------------------------------------------------------------- jars on hand
 insert into public.jar_inventory (year, person, jars, bands, lids) values
@@ -206,7 +204,7 @@ insert into public.runsheet
 
   -- Friday
   (2026,  40, 'PREP', 'Fri 28', 'Pick up bushels from the market', 'Nate', 'David', 'Truck, buckets',
-   'bushel', 90, '7 bushels of San Marzano', true, false, 'Get there early, best tomatoes go first'),
+   'bushel', 90, '10 bushels of San Marzano', true, false, 'Get there early, best tomatoes go first'),
   (2026,  50, 'PREP', 'Fri AM', 'Wash every mason jar', 'Matt', 'All', 'Jars, dishwasher, Dawn, sponges',
    'jar', 120, null, true, false, 'Count as you go. Sterilising happens Saturday, close to canning.'),
   (2026,  60, 'PREP', 'Fri AM', 'Wash the tomato mill', 'Matt', null, 'Food mill, cleaning brush, Barkeepers Friend',
@@ -244,7 +242,7 @@ insert into public.runsheet
   (2026, 220, 'DAY', '07:30', 'Fire up the burners', 'Matt', 'Mike', '3 burners, cauldrons, propane',
    'flame', 30, 'Propane', true, false, 'Wash water on at the same time'),
   (2026, 230, 'DAY', '08:00', 'Wash tomatoes', 'All', 'All', 'Buckets, strainer',
-   null, 60, '7 bushels', false, false, 'Two-stage rinse'),
+   null, 60, '10 bushels', false, false, 'Two-stage rinse'),
   (2026, 240, 'DAY', '09:00', 'First batch cooking', 'Nate', 'David', 'Cauldrons, spider ladle',
    'cauldron', 90, 'Washed tomatoes', true, false, 'Blanch and cook'),
   (2026, 250, 'DAY', '10:30', 'Coffee break', 'David', 'All', 'Moka, cornetti',
@@ -316,7 +314,7 @@ insert into public.menu (year, sort_index, service, dish, who, source, qty, note
   (2026, 200, 'Drinks', 'Grappa - the annual bottle', 'David', 'SAQ', '1', 'Must beat last year'),
   (2026, 210, 'Drinks', 'Prosecco', 'David', 'SAQ', null, 'Morning mimosas and aperitivo'),
   (2026, 220, 'Drinks', 'Aperol', 'David', 'SAQ', null, 'For spritzes'),
-  (2026, 230, 'Drinks', 'Italian red wine', 'David', 'SAQ', '3', 'Chianti, Montepulciano or similar'),
+  (2026, 230, 'Drinks', 'Italian white wine', 'David', 'SAQ', '3', 'Pinot Grigio, Soave or similar'),
   (2026, 240, 'Drinks', 'Italian lager', null, 'Depanneur', null, 'Peroni, Moretti or similar'),
   (2026, 250, 'Drinks', 'San Pellegrino', null, 'Costco', '12', 'Sparkling water for the day'),
   (2026, 255, 'Drinks', 'Ice', 'David', 'Depanneur', '4 bags', 'Friday chill-down needs it and every party forgets it.');
