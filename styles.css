@@ -1133,6 +1133,19 @@ svg { display: block; width: 100%; height: auto; overflow: visible; }
 .bottlecard.pending .shot .btl { color: var(--fg-4); }
 .bottlecard.pending .shot .btl-body { stroke-dasharray: 3 3; }
 .bottlecard.pending .byr, .bottlecard.pending .bprice { color: var(--fg-3); }
+/* This year's bottle, once one is chosen. The six shortlist shots are SAQ
+   product photography on white, which is why .shot paints a white panel and
+   multiplies in light mode. This one is a studio shot on black, so it gets the
+   opposite treatment: a black panel in both themes, and no blend. The panel is
+   pure black to meet the photograph's own edges without a seam. */
+/* back to the block box the other six use: `display: grid` was for centring a
+   drawn silhouette, and it stops the panel filling its subgrid row once there
+   is a real photograph in it. */
+.bottlecard.pending.chosen .shot { display: block; background: oklch(0% 0 0); }
+.bottlecard.pending.chosen .shot img { mix-blend-mode: normal; }
+.bottlecard.pending.chosen .byr,
+.bottlecard.pending.chosen .bprice { color: var(--fg); }
+
 .bsuggest { margin-top: .6rem; padding-top: .55rem; border-top: 1px solid var(--hair-2);
             display: grid; gap: .2rem; }
 .bsuggest .btn { margin-top: .45rem; justify-self: start; text-decoration: none; }

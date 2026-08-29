@@ -97,6 +97,33 @@ export const SHORTLIST = [
   }
 ];
 
+// ---------------------------------------------------------------- the pick
+//  This year's bottle, once the crew has settled on one. Catalogue data, same
+//  as the shortlist: the name, the shape and the photograph are facts about a
+//  product. What it cost, who carried it home and what it scored are crew
+//  facts and live in the `grappa` row for the year — the card reads the price
+//  from there, not from here.
+//
+//  Set this to null and the 2026 slot goes back to an empty silhouette with
+//  the suggestion under it.
+//
+//  No SAQ number: this one did not come off the shortlist sweep. Leave `url`
+//  null rather than guessing a product code.
+export const CHOSEN = {
+  id: "gualco-barbera",
+  name: "Grappa di Barbera",
+  range: "Distilleria Gualco",
+  producer: "Distilleria Gualco",
+  region: "Silvano d'Orba, Piemonte, Italia",
+  size: "700 ml",
+  abv: 42,
+  colour: "clear",
+  photo: "img/grappa/gualco-grappa-di-barbera.png",
+  url: null,
+  note: "Pure vinaccia, bagnomaria still, about six months' rest. Piemonte — "
+      + "the first year off the Veneto and the first off the Poli line."
+};
+
 // The suggestion for this year's empty slot. Read off the SAQ on 2026-08-13:
 // the only in-stock grappas clearing the 1898's $144.75 were this, the Villa
 // de Varda Sherry Cask ($164.50, non-Poli), the Cornelissen MunJebel ($228)

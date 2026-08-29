@@ -11,7 +11,7 @@ import { h, frag, field, select, check, personSelect, delButton, card, stat,
          sectionBar, empty, addRow, nextSort, me, pressable } from "./ui.js";
 import { stackedBars, bars, line } from "./charts.js";
 import { bottle, icon } from "./icons.js";
-import { SHORTLIST, SUGGESTION, perLitre } from "./grappas.js";
+import { SHORTLIST, SUGGESTION, CHOSEN, perLitre } from "./grappas.js";
 import { mountStack } from "./stack.js";
 import { jarWall } from "./jars.js";
 
@@ -680,19 +680,39 @@ export function viewGrappa() {
           h("a", { class: "btn", href: g.url, target: "_blank", rel: "noopener" }, "SAQ ↗")));
     });
 
-  // 2026's slot: an empty silhouette holding the place the next bottle takes,
-  // with the suggestion from the SAQ sweep sitting under it
+  // 2026's slot. Three states, not two: nothing chosen yet (an empty
+  // silhouette with the SAQ suggestion under it), a bottle chosen but not yet
+  // priced, and a bottle bought. The photograph comes from the catalogue — the
+  // `grappa` row holds no image — and the price comes from the row, because a
+  // catalogue cannot know what David actually paid.
   const bought = !!thisYear?.price;
-  const pending = h("div", { class: "bottlecard pending" },
-    h("div", { class: "shot" }, bottle(0.92, 2, { min: 60, max: 190, empty: true,
-      label: `${YEAR} — not chosen yet` })),
+  const chosen = CHOSEN || null;
+  const price  = bought ? Number(thisYear.price) : null;
+  const clears = price != null ? price - record : null;
+
+  const pending = h("div", { class: "bottlecard pending" + (chosen ? " chosen" : "") },
+    h("div", { class: "shot" }, chosen
+      ? h("img", { src: chosen.photo, alt: `${chosen.range} ${chosen.name}`, decoding: "async" })
+      : bottle(0.92, 2, { min: 60, max: 190, empty: true, label: `${YEAR} — not chosen yet` })),
     h("div", { class: "bmeta" },
       h("div", { class: "byr" }, String(YEAR)),
-      h("div", { class: "bprice" }, bought ? money(thisYear.price) : "?"),
-      h("div", { class: "bname" }, thisYear?.bottle || "To be chosen"),
-      h("div", { class: "brange" }, "David's pick · SAQ"),
-      h("div", { class: "bverdict hot" }, `has to beat ${money0(record)}`),
-      bought ? null : h("div", { class: "bsuggest" },
+      h("div", { class: "bprice" }, bought ? money(price) : "?"),
+      h("div", { class: "bname" }, thisYear?.bottle || chosen?.name || "To be chosen"),
+      h("div", { class: "brange" }, chosen
+        ? `${chosen.range} · ${chosen.size} · ${chosen.abv}%`
+        : "David's pick · SAQ"),
+      chosen ? h("div", { class: "bsub bprod" },
+        `${thisYear?.producer || chosen.producer} — ${thisYear?.region || chosen.region}`) : null,
+      h("div", { class: "bverdict " + (clears == null ? "hot" : clears > 0 ? "good" : "hot") },
+        clears == null ? `has to beat ${money0(record)}`
+          : clears > 0 ? `clears the record by ${money(clears)}`
+          : `${money(-clears)} short of the record`),
+      bought && chosen
+        ? h("div", { class: "bsub blitre" }, `${money(price / (parseInt(chosen.size, 10) / 1000))} per litre`)
+        : null,
+      // the suggestion is for an empty slot. Once a bottle is chosen, telling
+      // the crew to go and buy a different one is just noise.
+      chosen || bought ? null : h("div", { class: "bsuggest" },
         h("div", { class: "byr" }, "The suggestion"),
         h("div", { class: "bname" }, `${SUGGESTION.range} ${SUGGESTION.name}`),
         h("div", { class: "brange" }, `${money(SUGGESTION.price)} · ${SUGGESTION.size} · ${SUGGESTION.abv}%`),
@@ -702,7 +722,14 @@ export function viewGrappa() {
             : "no longer clears the record — resweep the SAQ"),
         h("p", { class: "bnote" }, SUGGESTION.note),
         h("a", { class: "btn", href: SUGGESTION.url, target: "_blank", rel: "noopener" }, "SAQ ↗")),
-      bought ? h("p", { class: "bnote" }, "Entered below — the shelf already shows it.") : null));
+      // one note, not two: the card's shared row map gives .bnote a single row,
+      // and a second one lands beside it in the same track rather than under it
+      chosen ? h("p", { class: "bnote" },
+        [chosen.note, bought ? null : "Put the price in below and the shelf draws it."]
+          .filter(Boolean).join(" ")) : null,
+      chosen?.url
+        ? h("a", { class: "btn", href: chosen.url, target: "_blank", rel: "noopener" }, "SAQ ↗")
+        : null));
 
   const shortlist = card("The hall of fame",
     "One bottle a year, each dearer than the last. Prices read off the SAQ on 5 August 2026.",
