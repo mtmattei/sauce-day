@@ -39,16 +39,22 @@ shadows, hairline rules. Tomato is the only colour and it always means one of
 three things: money going out, something still to buy, or the record to beat.
 Dark and light are both designed; it follows whatever your phone is set to.
 
-**The rail** down the left holds six numbers on every screen — days out, what
-*you* owe or are owed, the even share, jars still to buy, the grappa record,
-and how much of the buy list is done. An instrument that hides its reading is
-useless.
+**The rail** down the left holds six numbers on every screen — the season and
+the hours to the first pot, what *you* owe or are owed, the even share, jars
+still to buy, the grappa record, and how much of the buy list is done. An
+instrument that hides its reading is useless.
+
+The app knows three days: **before** (the Board), **the day itself** (the run
+sheet takes the home screen and holds the phone awake), and **after** (the
+Board again, reading in the past tense, with the year waiting to be closed out
+on History).
 
 **The grappa screen** draws every year since 2020 as a bottle whose height is
-what it cost, with the standing record dashed across as the line to clear, then
-lists the shortlist with real photographs and tells you plainly whether any of
-them beats it. (Right now none of them do — the Torcolato is the closest, and
-it is still $27.50 short.)
+what it cost, with the standing record dashed across as the line to clear. That
+shelf is the history. Under it the shortlist lists candidates with real
+photographs, each measured against the record — the Barrique 1898 is the only
+one on the list that clears $135, by $9.75. The year's own bottle sits first,
+and shows its photograph once there is one to show.
 
 ## Try it before you set anything up
 
@@ -167,7 +173,7 @@ they can sign in immediately.
 
 | Screen | What it's for |
 |---|---|
-| **Today** | Countdown, what you owe, budget vs actual, how ready we are |
+| **Today** | The Board: countdown, what you owe, budget vs actual, how ready we are. Becomes the live run of the day on the day itself, then comes back in the past tense |
 | **Buy** | Kit, ingredients and dishes in one list, grouped by store. Claim it, tick it |
 | **Spend** | Log your own receipts. The split recalculates for everyone |
 | **Sauce** | Bushels → litres → jars, bands and lids to buy |

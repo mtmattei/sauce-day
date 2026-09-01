@@ -1,12 +1,13 @@
 // ============================================================================
 //  The Board. What the crew needs to know right now, and nothing else —
 //  every number here is a door into the screen that owns it. The run-of-day
-//  timeline takes this route over when the day is close enough to matter
-//  (app.js decides); until then the Board answers the three questions people
-//  actually open the app with: how long, what do I owe, are we ready.
+//  timeline takes this route over for the day itself (app.js decides); either
+//  side of it the Board answers the three questions people actually open the
+//  app with. Before: how long, what do I owe, are we ready. After: what did it
+//  cost, who owes whom, what did we make — the same doors, past tense.
 // ============================================================================
 import { state, YEAR } from "./db.js";
-import { money0, settlement, yieldPlan, readiness, daysToGo, grappaRecord,
+import { money0, settlement, yieldPlan, readiness, daysToGo, dayPhase, grappaRecord,
          buyable, assignedTo } from "./calc.js";
 import { h, frag, me } from "./ui.js";
 import { icon } from "./icons.js";
@@ -24,25 +25,33 @@ export function viewBoard() {
   const days = daysToGo();
   const record = grappaRecord();
   const g = state.grappa.find(x => x.year === YEAR);
-  const closed = state.history.find(x => x.year === YEAR && x.jars_filled != null);
+  const phase = dayPhase();
+  // Closed means the year has been written into the permanent record at all.
+  // Keying this off jars_filled meant close-out could never satisfy it: the
+  // button does not write that column, so the Board sat in prep for ever.
+  const closed = state.history.find(x => x.year === YEAR);
 
   // ---- 1 · the countdown: the one card with no job but the date
   const date = state.settings?.sauce_date
     ? new Date(state.settings.sauce_date + "T00:00:00")
         .toLocaleDateString("en-CA", { weekday: "long", day: "numeric", month: "long" })
     : null;
-  const hero = section("bhero",
+  const hero = section("bhero" + (phase === "after" ? " is-done" : ""),
     h("div", { class: "bdays" },
       days === null ? "—"
         : days === 0 ? "today"
+        : days < 0 ? "done"
         : h("span", {}, h("b", {}, String(days)), h("small", {}, days === 1 ? "day" : "days"))),
     h("div", { class: "bwhen" },
-      date ? `${date} · first pot at 07:00` : "no date set yet"),
+      !date ? "no date set yet"
+        : phase === "after"
+          ? `${date} · ${days === -1 ? "yesterday" : `${-days} days ago`}`
+          : `${date} · first pot at 07:00`),
     h("a", { class: "bpeek", href: "#/", onClick: e => {
       e.preventDefault();
       state.ui = { ...(state.ui || {}), peekDay: true };
       render();
-    } }, "see the run of the day →"));
+    } }, phase === "after" ? "see how the day went →" : "see the run of the day →"));
 
   // ---- 2 · you: addressed by name, one fact per line, each line a door
   const mine = st.net.find(p => p.name === name);
@@ -100,21 +109,28 @@ export function viewBoard() {
     : null;
 
   // ---- 4 · the jar wall: prep until the year is counted, then yield
-  const wallHead = closed
+  // Closed and counted are two different things: the year can be in the record
+  // with nobody having written down how many jars came out of the bath.
+  const counted = closed && closed.jars_filled != null;
+  const wallHead = counted
     ? `${closed.jars_filled} jars filled`
     : y.jarsRequired ? `${y.jarsRequired} jars` : "the jar plan";
-  const wallSub = closed
+  const wallSub = counted
     ? (closed.fallen_soldiers ? `${closed.fallen_soldiers} fallen soldier${closed.fallen_soldiers === 1 ? "" : "s"}` : "not one lost")
-    : y.jarsRequired
-      ? (y.jarsToBuy ? `${y.jarsToBuy} to buy · ${y.jarPacks} pack${y.jarPacks === 1 ? "" : "s"} · ${money0(y.cost)} with lids`
-                     : "all in hand")
-      : "set the bushel count and the wall draws itself";
+    : closed
+      ? "nobody wrote the count down — fill it in on History"
+      : phase === "after"
+        ? "close the year out on the History screen"
+        : y.jarsRequired
+          ? (y.jarsToBuy ? `${y.jarsToBuy} to buy · ${y.jarPacks} pack${y.jarPacks === 1 ? "" : "s"} · ${money0(y.cost)} with lids`
+                         : "all in hand")
+          : "set the bushel count and the wall draws itself";
   const wall = section("bjars",
     h("h2", { class: "vh" }, "The jars"),
-    h("a", { class: "bhead", href: "#/sauce" },
+    h("a", { class: "bhead", href: phase === "after" ? "#/history" : "#/sauce" },
       h("span", { class: "k" }, "The jars"),
       h("b", {}, wallHead), h("span", { class: "bsub" }, wallSub), arrow()),
-    jarWall(closed
+    jarWall(counted
       ? { total: Math.max(y.jarsRequired, (closed.jars_filled || 0) + (closed.fallen_soldiers || 0)),
           full: closed.jars_filled || 0, fallen: closed.fallen_soldiers || 0, mode: "yield" }
       : { total: y.jarsRequired, full: y.onHand.jars }));

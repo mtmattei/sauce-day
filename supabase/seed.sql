@@ -65,6 +65,7 @@ insert into public.items
   -- in two shops. Owned kit needs no store — a store is what puts a row on the
   -- Buy list, and these two were sitting there as things to go and get.
   (2026, 'toolkit', 'Wash & Prep', 80, 'Buckets', 'Owned', '13', 0, 'David (11) / Matt (2)', null, 'Yes', '6 from Canadian Tire, 7 from Home Depot.', null),
+  (2026, 'toolkit', 'Wash & Prep', 81, 'Buckets', 'Need', '2', 0, 'David', 'Canadian Tire', 'Yes', 'Two more on top of the thirteen we own.', null),
   (2026, 'toolkit', 'Wash & Prep', 100, 'Cutting boards', 'Owned', '5', 0, 'Matt', null, 'Yes', null, null),
   (2026, 'toolkit', 'Wash & Prep', 110, 'Knives', 'Owned', '5', 0, 'BYOK / Matt', null, 'Yes', null, null),
   (2026, 'toolkit', 'Wash & Prep', 120, 'Measuring pitcher', 'Owned', '1', 0, 'Matt', null, 'Yes', null, null),
@@ -128,15 +129,11 @@ insert into public.items
   (2026, 'food', 'Breakfast Sandwiches', 30, 'Breakfast sausage', 'Need', '1 kg', 0, null, 'Butcher', 'Yes', null, null),
   (2026, 'food', 'Breakfast Sandwiches', 40, 'Sliced cheese', 'Need', '500 g', 0, null, 'Grocery', 'Yes', 'Provolone or cheddar, whatever the sandwich wants.', null),
   (2026, 'food', 'Breakfast Sandwiches', 50, 'English muffins', 'Need', '12', 0, null, 'Bakery', 'Yes', null, null),
-  (2026, 'food', 'Blood orange juice / mimosas', 60, 'Blood orange juice', 'Need', '3 L', 0, null, 'Grocery', 'Yes', 'The prosecco is its own line under Drinks.', null),
 
   -- Antipasto
   (2026, 'food', 'Parm & Balsamic glaze', 70, 'Parmigiano Reggiano', 'Need', '1 kg wedge', 0, null, 'Italian Market', 'Yes', 'The same wedge grates over the bresaola.', null),
   (2026, 'food', 'Parm & Balsamic glaze', 80, 'Balsamic glaze', 'Need', '1 bottle', 0, null, 'Italian Market', 'Yes', null, null),
   (2026, 'food', 'Parm & Balsamic glaze', 90, 'Good olive oil', 'Need', '500 ml', 0, null, 'Italian Market', 'Yes', 'Also dresses the mushrooms and both salads. The cooking oil is a separate bottle.', null),
-  (2026, 'food', 'Grilled artichokes', 100, 'Artichokes', 'Need', '10', 0, null, 'Market', 'Yes', null, null),
-  (2026, 'food', 'Grilled artichokes', 110, 'Lemons', 'Need', '6', 0, null, 'Market', 'Yes', 'The bresaola wants one too.', null),
-  (2026, 'food', 'Marinated mushrooms', 120, 'Cremini mushrooms', 'Need', '1 kg', 0, 'Chris', 'Market', 'Yes', 'Garlic, parsley and oil come off the sauce table.', null),
   (2026, 'food', 'Bresaola', 130, 'Bresaola', 'Need', '400 g', 0, null, 'Italian Market', 'Yes', 'Sliced thin, and not the day before.', null),
   (2026, 'food', 'Bresaola', 140, 'Arugula', 'Need', '2 bunches', 0, null, 'Market', 'Yes', null, null),
 
@@ -148,13 +145,11 @@ insert into public.items
   (2026, 'food', 'Steak, Pepperoni & Capicollo Subs', 190, 'Frying peppers', 'Need', '6', 0, null, 'Market', 'Yes', 'The rolls are their own line under Lunch.', null),
   (2026, 'food', 'Melon and prosciutto', 200, 'Cantaloupe', 'Need', '2', 0, null, 'Market', 'Yes', null, null),
   (2026, 'food', 'Melon and prosciutto', 210, 'Prosciutto', 'Need', '400 g', 0, null, 'Italian Market', 'Yes', 'Two stores, which is why the dish is two lines.', null),
-  (2026, 'food', 'Fennel and orange salad', 220, 'Fennel', 'Need', '3 bulbs', 0, null, 'Market', 'Yes', null, null),
   (2026, 'food', 'Fennel and orange salad', 230, 'Oranges', 'Need', '6', 0, null, 'Market', 'Yes', null, null),
 
   -- Dinner
   (2026, 'food', 'Braciole', 240, 'Beef top round, sliced thin', 'Need', '2 kg', 0, null, 'Butcher', 'Yes', 'Ask for the braciole cut and he will do the slicing.', null),
   (2026, 'food', 'Braciole', 250, 'Breadcrumbs', 'Need', '1 bag', 0, null, 'Italian Market', 'Yes', null, null),
-  (2026, 'food', 'Braciole', 260, 'Pecorino', 'Need', '300 g', 0, null, 'Italian Market', 'Yes', null, null),
   (2026, 'food', 'Braciole', 270, 'Butcher''s twine', 'Need', '1 roll', 0, null, 'Butcher', 'Yes', null, null),
 
   -- Dessert
@@ -173,7 +168,7 @@ where year = 2026
 -- number that matters is the total. calc.js sums every row in this table, so
 -- adding rows back later still works if that ever changes.
 insert into public.bushels (year, person, count) values
-  (2026, 'Crew', 7);
+  (2026, 'Crew', 10);
 
 -- ---------------------------------------------------------------- jars on hand
 insert into public.jar_inventory (year, person, jars, bands, lids) values
@@ -206,7 +201,7 @@ insert into public.runsheet
 
   -- Friday
   (2026,  40, 'PREP', 'Fri 28', 'Pick up bushels from the market', 'Nate', 'David', 'Truck, buckets',
-   'bushel', 90, '7 bushels of San Marzano', true, false, 'Get there early, best tomatoes go first'),
+   'bushel', 90, '10 bushels of San Marzano', true, false, 'Get there early, best tomatoes go first'),
   (2026,  50, 'PREP', 'Fri AM', 'Wash every mason jar', 'Matt', 'All', 'Jars, dishwasher, Dawn, sponges',
    'jar', 120, null, true, false, 'Count as you go. Sterilising happens Saturday, close to canning.'),
   (2026,  60, 'PREP', 'Fri AM', 'Wash the tomato mill', 'Matt', null, 'Food mill, cleaning brush, Barkeepers Friend',
@@ -244,7 +239,7 @@ insert into public.runsheet
   (2026, 220, 'DAY', '07:30', 'Fire up the burners', 'Matt', 'Mike', '3 burners, cauldrons, propane',
    'flame', 30, 'Propane', true, false, 'Wash water on at the same time'),
   (2026, 230, 'DAY', '08:00', 'Wash tomatoes', 'All', 'All', 'Buckets, strainer',
-   null, 60, '7 bushels', false, false, 'Two-stage rinse'),
+   null, 60, '10 bushels', false, false, 'Two-stage rinse'),
   (2026, 240, 'DAY', '09:00', 'First batch cooking', 'Nate', 'David', 'Cauldrons, spider ladle',
    'cauldron', 90, 'Washed tomatoes', true, false, 'Blanch and cook'),
   (2026, 250, 'DAY', '10:30', 'Coffee break', 'David', 'All', 'Moka, cornetti',
@@ -316,7 +311,7 @@ insert into public.menu (year, sort_index, service, dish, who, source, qty, note
   (2026, 200, 'Drinks', 'Grappa - the annual bottle', 'David', 'SAQ', '1', 'Must beat last year'),
   (2026, 210, 'Drinks', 'Prosecco', 'David', 'SAQ', null, 'Morning mimosas and aperitivo'),
   (2026, 220, 'Drinks', 'Aperol', 'David', 'SAQ', null, 'For spritzes'),
-  (2026, 230, 'Drinks', 'Italian red wine', 'David', 'SAQ', '3', 'Chianti, Montepulciano or similar'),
+  (2026, 230, 'Drinks', 'Italian white wine', 'David', 'SAQ', '3', 'Pinot Grigio, Soave or similar'),
   (2026, 240, 'Drinks', 'Italian lager', null, 'Depanneur', null, 'Peroni, Moretti or similar'),
   (2026, 250, 'Drinks', 'San Pellegrino', null, 'Costco', '12', 'Sparkling water for the day'),
   (2026, 255, 'Drinks', 'Ice', 'David', 'Depanneur', '4 bags', 'Friday chill-down needs it and every party forgets it.');

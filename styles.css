@@ -766,6 +766,17 @@ main.panel:has(.sday) { max-width: none; }
   .bottlecard .shot { background: oklch(97% 0.004 75); }
   .bottlecard .shot img { mix-blend-mode: normal; }
 }
+/* A real photograph, not an SAQ cutout on white: it fills the frame and keeps
+   its own background, so the multiply blend that flattens the catalogue shots
+   is off and the inset margin that letterboxes them goes with it. */
+.bottlecard .shot.photo img {
+  inset: 0; width: 100%; height: 100%;
+  object-fit: cover; mix-blend-mode: normal;
+}
+@media (prefers-color-scheme: dark) {
+  /* the white plate is for cutouts; a photograph brings its own light */
+  .bottlecard .shot.photo { background: var(--bg-2); }
+}
 .bottlecard.clears .shot { border-bottom-color: var(--tomato); }
 .bmeta { padding: .7rem .8rem .8rem; display: grid; gap: .2rem; align-content: start; }
 .bprice { font-size: 1.5rem; font-weight: 200; letter-spacing: -.03em; line-height: 1; }
@@ -996,7 +1007,14 @@ svg { display: block; width: 100%; height: auto; overflow: visible; }
 
 .bhero { text-align: left; padding-top: calc(var(--pad) * 1.2); }
 .bdays { font-variant-numeric: tabular-nums; line-height: .9; letter-spacing: -.04em; }
+/* "today" and "done" stand where the number stands, so they take a display
+   size too — bare text in here was rendering at body size and the hero lost
+   its one job on the two days it matters most. A shade under the numeral:
+   a word at 15vw is a shout, and the number has earned the shout. */
+.bdays:not(:has(b)) { font-size: clamp(2.5rem, 9vw, 4.25rem); font-weight: 200; }
 .bdays b { font-size: clamp(4.5rem, 15vw, 7.5rem); font-weight: 200; }
+/* it happened: the hero states a fact instead of counting toward one */
+.bhero.is-done .bdays { color: var(--fg-2); }
 .bdays small {
   font-size: .8125rem; font-weight: 400; letter-spacing: .3em; text-transform: uppercase;
   color: var(--fg-3); margin-left: .6rem;
@@ -1129,7 +1147,7 @@ svg { display: block; width: 100%; height: auto; overflow: visible; }
 /* The year tag on each bottle, and the empty slot the next bottle will take. */
 .byr { font-family: var(--m); font-size: .625rem; letter-spacing: .16em; color: var(--fg-3); }
 .bverdict.hot { color: var(--tomato); }
-.bottlecard.pending .shot { display: grid; place-items: center; }
+.bottlecard.pending:not(.shot-real) .shot { display: grid; place-items: center; }
 .bottlecard.pending .shot .btl { color: var(--fg-4); }
 .bottlecard.pending .shot .btl-body { stroke-dasharray: 3 3; }
 .bottlecard.pending .byr, .bottlecard.pending .bprice { color: var(--fg-3); }

@@ -5,22 +5,26 @@ import { state, DEMO, YEAR, loadAll, startRealtime, onChange, currentSession,
          sendCode, verifyCode, signInWithPassword, sb, flash } from "./db.js";
 import { h, me } from "./ui.js";
 import { icon } from "./icons.js";
-import { money0, settlement, yieldPlan, grappaRecord, daysToGo, readiness } from "./calc.js";
+import { money0, settlement, yieldPlan, grappaRecord, daysToGo, dayPhase, readiness } from "./calc.js";
 import { viewSauceDay, stopTimeline } from "./timeline.js";
 import * as V from "./views.js";
 import * as H from "./home.js";
 import { openGuide, maybeFirstRun } from "./guide.js";
 
 /**
- * The home route is context-aware. Seventeen days out the crew is asking
- * "what do I owe, are we ready" — that is the Board. From the Friday prep
- * evening (one day out) the only question is "how is the day going", so the
- * timeline takes the route over. Before then it stays a peek away.
+ * The home route is context-aware, in three tenses. Seventeen days out the crew
+ * is asking "what do I owe, are we ready" — that is the Board. From the Friday
+ * prep evening (one day out) the only question is "how is the day going", so
+ * the timeline takes the route over. Once the day has passed the Board comes
+ * back to answer "what did it cost and who owes whom", which is the question
+ * that outlives the day by a fortnight. Either side of the day the timeline is
+ * a peek away.
  */
 function viewHome() {
-  const d = daysToGo();
-  const takeover = d !== null && d <= 1;
-  if (takeover) return viewSauceDay();
+  // Only the day itself takes the route. Before, the Board is the question;
+  // after, the Board is the answer — and it was unreachable for as long as the
+  // countdown could not go negative, because this is the only route to it.
+  if (dayPhase() === "during") return viewSauceDay();
   if (state.ui?.peekDay) {
     const back = h("button", { class: "bback", onClick: () => {
       state.ui = { ...(state.ui || {}), peekDay: false };
@@ -127,7 +131,8 @@ function toGo() {
 }
 
 const toGoValue = c =>
-  c.past ? "under way" : `${c.hours}<small>h ${String(c.mins).padStart(2, "0")}m</small>`;
+  c.past ? (dayPhase() === "after" ? "done" : "under way")
+         : `${c.hours}<small>h ${String(c.mins).padStart(2, "0")}m</small>`;
 
 /** One readout, rendered by the rail. */
 function ro(label, value, sub, tone) {
@@ -147,7 +152,6 @@ function renderReadout() {
   host.innerHTML = "";
 
   const st = settlement(), y = yieldPlan(), r = readiness();
-  const days = daysToGo();
   const record = grappaRecord();
   const g = state.grappa.find(x => x.year === YEAR);
   const mine = st.net.find(p => p.name === me());
@@ -169,8 +173,9 @@ function renderReadout() {
 
   // The day count is already in the masthead, so the rail counts down the hours
   const c = toGo();
-  host.appendChild(ro("To the first pot", c ? toGoValue(c) : "—",
-    c ? (c.past ? "started " + c.at.toLocaleTimeString("en-CA",
+  host.appendChild(ro(dayPhase() === "after" ? "The first pot" : "To the first pot",
+    c ? toGoValue(c) : "—",
+    c ? (c.past ? (dayPhase() === "after" ? "lit at " : "started ") + c.at.toLocaleTimeString("en-CA",
           { hour: "2-digit", minute: "2-digit", hour12: false })
        : "07:00, " + c.at.toLocaleDateString("en-CA",
           { weekday: "long", day: "numeric", month: "long" }))
@@ -260,9 +265,13 @@ function renderHead() {
   if (sig && !sig.firstChild) sig.appendChild(icon("cut"));
   if (ed) ed.textContent = String(YEAR);
   const d = daysToGo();
+  const when = d === null ? ""
+    : d > 0  ? ` · T MINUS <b>${d}</b> DAY${d === 1 ? "" : "S"}`
+    : d === 0 ? " · <b>TODAY</b>"
+    : d === -1 ? " · <b>YESTERDAY</b>"
+    : ` · <b>${-d}</b> DAYS AGO`;
   if (now) now.innerHTML = state.settings?.sauce_date
-    ? `SAUCE DAY <b>${state.settings.sauce_date}</b>` +
-      (d === null ? "" : ` · T MINUS <b>${d}</b> DAY${d === 1 ? "" : "S"}`)
+    ? `SAUCE DAY <b>${state.settings.sauce_date}</b>` + when
     : "";
 }
 

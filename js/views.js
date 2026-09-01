@@ -1,45 +1,25 @@
 // ============================================================================
 //  Every screen. Each render function returns a DocumentFragment.
 // ============================================================================
-import { sb, state, YEAR, update, insert, remove, upsert, flash, signOut } from "./db.js";
+import { state, YEAR, update, insert, remove, upsert, flash, signOut } from "./db.js";
 import {
   CATS, money, money0, num, crewNames, buyable, assignedTo, spentByCat,
-  brokenOutDishes, shoppable,
-  settlement, yieldPlan, seriesData, grappaRecord, daysToGo
+  buyEntries,
+  settlement, yieldPlan, seriesData, grappaRecord, dayPhase
 } from "./calc.js";
 import { h, frag, field, select, check, personSelect, delButton, card, stat,
          sectionBar, empty, addRow, nextSort, me, pressable } from "./ui.js";
 import { stackedBars, bars, line } from "./charts.js";
 import { bottle, icon } from "./icons.js";
-import { SHORTLIST, SUGGESTION, perLitre } from "./grappas.js";
+import { SHORTLIST, SUGGESTION, perLitre, winnerOf } from "./grappas.js";
 import { mountStack } from "./stack.js";
 import { jarWall } from "./jars.js";
 
 const SERIES_COLORS = ["var(--series-1)", "var(--series-2)", "var(--series-3)"];
 
 // ============================================================ BUY LIST
-// Two tables, one shopping trip. The kit and the ingredients are `items`; food
-// and drink are `menu`, which owns the dish, who is bringing it and where it
-// comes from. Only the grouping by store is shared, and that is the part that
-// makes the list worth carrying into a shop.
-const CAT_RANK = { toolkit: 0, ingredients: 1, food: 2 };
-
-/** Everything on the shopping list, from whichever table it lives in. */
-function buyEntries() {
-  const broken = brokenOutDishes();
-  return [
-    ...state.items.filter(buyable).map(i => ({
-      table: "items", row: i, store: i.store, rank: CAT_RANK[i.category] ?? 3,
-      sort: i.sort_index, got: i.obtained, budget: Number(i.budget) || 0
-    })),
-    ...state.menu.filter(m => shoppable(m, broken)).map(m => ({
-      table: "menu", row: m, store: m.source, rank: CAT_RANK.food,
-      sort: m.sort_index, got: m.confirmed, budget: 0
-    }))
-  ].sort((a, b) => (a.store || "zzz").localeCompare(b.store || "zzz")
-    || a.rank - b.rank || a.sort - b.sort);
-}
-
+// `buyEntries()` lives in calc.js — the meters on the Board and the rail quote
+// a fraction of this same list, and they have to be quoting these rows.
 const entryRow = e => e.table === "menu" ? dishRow(e.row) : buyRow(e.row);
 
 export function viewBuy() {
@@ -569,9 +549,9 @@ export function viewRun() {
     const todo = list.filter(r => !r.done);
     const donel = list.filter(r => r.done);
     // the run sheet keeps its order sacred on the day itself — done steps fold
-    // only while the day is still ahead, because during the day the sequence
-    // (step 12 after step 11) is the whole reading
-    const foldable = (daysToGo() ?? 99) > 1;
+    // either side of it, because during the day the sequence (step 12 after
+    // step 11) is the whole reading, and afterwards it is a record again
+    const foldable = dayPhase() !== "during";
     blocks.push(h("div", { class: "store" },
       sectionBar(section),
       h("div", { class: "storemeta" }, `${donel.length} of ${list.length} done`),
@@ -613,7 +593,9 @@ export function viewGrappa() {
   const thisYear = rows.find(g => g.year === YEAR);
   const beat = thisYear?.price ? (Number(thisYear.price) > record ? "YES" : "No") : "Not bought yet";
 
-  const editor = thisYear ? card("This year's bottle", "Fill this in when David gets back from the SAQ.",
+  const editor = thisYear ? card("This year's bottle",
+    thisYear.price ? "The bottle of record. Correct anything that is wrong."
+                   : `Fill this in when ${thisYear.bought_by || "David"} gets back from the SAQ.`,
     h("div", { class: "fgrid" },
       lbl("Bottle", field("grappa", thisYear, "bottle", { idCol: "year" })),
       lbl("Producer", field("grappa", thisYear, "producer", { idCol: "year" })),
@@ -648,19 +630,21 @@ export function viewGrappa() {
             g.price == null ? "no record" : price === 0 ? "none" : money0(price)));
       })));
 
-  // ---- the hall of fame: the bottles themselves, photographed, one a year.
-  // Every year buys a dearer bottle than the last, so price order IS year
-  // order: the cheapest was the first year, the 1898 is the reigning champion,
-  // and the leftmost slot stands empty for the bottle 2026 hasn't chosen yet.
-  const byPrice = [...SHORTLIST].sort((a, b) => a.price - b.price);
-  const yearOf = new Map(byPrice.map((g, i) => [g.id, YEAR - byPrice.length + i]));
-
+  // ---- the shortlist: bottles in the running, dearest first, each measured
+  // against the record.
+  //
+  // This used to hand each shortlist bottle a year — cheapest 2020, dearest
+  // 2025 — on the theory that every year buys dearer than the last, and call
+  // the top one "the standing record". It read as a photographed history and
+  // it was nothing of the kind: these are current SAQ candidates, and the
+  // grappa table says 2025 was a $135 bottle nobody wrote the name of. The
+  // screen was showing two different records at once, one of them invented.
+  // The shelf above is the history. This is the shopping.
   const cards = SHORTLIST
     .slice().sort((a, b) => b.price - a.price)
     .map(g => {
-      const year = yearOf.get(g.id);
-      const reigning = year === YEAR - 1;
-      return h("div", { class: "bottlecard" + (reigning ? " clears" : "") },
+      const clears = g.price > record;
+      return h("div", { class: "bottlecard" + (clears ? " clears" : "") },
         // No loading="lazy" here. These <img>s are built detached and inserted
         // by a full innerHTML swap; Chrome then never registers them with the
         // intersection observer, so they sit at currentSrc="" forever even when
@@ -668,13 +652,14 @@ export function viewGrappa() {
         h("div", { class: "shot" },
           h("img", { src: g.photo, alt: `${g.range} ${g.name}`, decoding: "async" })),
         h("div", { class: "bmeta" },
-          h("div", { class: "byr" }, String(year)),
+          h("div", { class: "byr" }, g.colour.toUpperCase()),
           h("div", { class: "bprice" }, money(g.price)),
           h("div", { class: "bname" }, g.name),
           h("div", { class: "brange" }, `${g.range} · ${g.size} · ${g.abv}%`),
           h("div", { class: "bsub bprod" }, `${g.producer} — ${g.region}`),
-          h("div", { class: "bverdict" + (reigning ? " good" : "") },
-            reigning ? "the standing record" : `topped in ${year + 1}`),
+          h("div", { class: "bverdict" + (clears ? " good" : "") },
+            clears ? `clears the record by ${money(g.price - record)}`
+                   : `${money(record - g.price)} short`),
           h("div", { class: "bsub blitre" }, `${money(perLitre(g))} per litre`),
           g.note ? h("p", { class: "bnote" }, g.note) : null,
           h("a", { class: "btn", href: g.url, target: "_blank", rel: "noopener" }, "SAQ ↗")));
@@ -683,15 +668,27 @@ export function viewGrappa() {
   // 2026's slot: an empty silhouette holding the place the next bottle takes,
   // with the suggestion from the SAQ sweep sitting under it
   const bought = !!thisYear?.price;
-  const pending = h("div", { class: "bottlecard pending" },
-    h("div", { class: "shot" }, bottle(0.92, 2, { min: 60, max: 190, empty: true,
-      label: `${YEAR} — not chosen yet` })),
+  // A bottle nobody chose off the shortlist still gets its portrait: WINNERS
+  // carries the photograph, the crew table carries everything else.
+  const win = winnerOf(YEAR);
+  const buyer = thisYear?.bought_by || "David";
+  const pending = h("div", { class: "bottlecard pending" + (win?.photo ? " shot-real" : "") },
+    h("div", { class: "shot" + (win?.shot === "photo" ? " photo" : "") },
+      win?.photo
+        ? h("img", { src: win.photo, decoding: "async",
+            alt: thisYear?.bottle ? `${thisYear.bottle}, ${YEAR}` : `The ${YEAR} bottle` })
+        : bottle(0.92, 2, { min: 60, max: 190, empty: true,
+            label: `${YEAR} — not chosen yet` })),
     h("div", { class: "bmeta" },
       h("div", { class: "byr" }, String(YEAR)),
       h("div", { class: "bprice" }, bought ? money(thisYear.price) : "?"),
       h("div", { class: "bname" }, thisYear?.bottle || "To be chosen"),
-      h("div", { class: "brange" }, "David's pick · SAQ"),
-      h("div", { class: "bverdict hot" }, `has to beat ${money0(record)}`),
+      h("div", { class: "brange" }, `${buyer}'s pick · ${win ? "not off the shortlist" : "SAQ"}`),
+      h("div", { class: "bverdict" + (bought && Number(thisYear.price) > record ? " good" : " hot") },
+        !bought ? `has to beat ${money0(record)}`
+          : Number(thisYear.price) > record
+            ? `beat it by ${money(Number(thisYear.price) - record)}`
+            : `${money(record - Number(thisYear.price))} short of the record`),
       bought ? null : h("div", { class: "bsuggest" },
         h("div", { class: "byr" }, "The suggestion"),
         h("div", { class: "bname" }, `${SUGGESTION.range} ${SUGGESTION.name}`),
@@ -704,8 +701,9 @@ export function viewGrappa() {
         h("a", { class: "btn", href: SUGGESTION.url, target: "_blank", rel: "noopener" }, "SAQ ↗")),
       bought ? h("p", { class: "bnote" }, "Entered below — the shelf already shows it.") : null));
 
-  const shortlist = card("The hall of fame",
-    "One bottle a year, each dearer than the last. Prices read off the SAQ on 5 August 2026.",
+  const shortlist = card("The shortlist",
+    "Bottles in the running, dearest first, each against the record. "
+    + "Prices read off the SAQ on 5 August 2026 — they move.",
     h("div", { class: "bottles" }, pending, ...cards));
 
   return frag(
@@ -855,14 +853,29 @@ export function viewHistory() {
     if (!confirm(`Write ${YEAR} into the permanent record? You can still edit the numbers afterwards.`)) return;
     const g = state.grappa.find(x => x.year === YEAR);
     const y = yieldPlan();
-    const { error } = await sb.from("history").upsert({
-      year: YEAR, edition: state.settings?.edition, sauce_date: state.settings?.sauce_date,
+    // What is already in the record wins over what close-out can work out.
+    // Re-closing a year must never blank a jar count somebody typed in by
+    // hand, and it must not overwrite their note with a boilerplate one.
+    const prev = state.history.find(x => x.year === YEAR) || {};
+    const keep = (a, b) => (a ?? null) !== null ? a : b;
+    // through db.js, not the raw client: `sb` is null in demo mode, so this
+    // button used to throw on the one build anybody clicks it in for a look
+    const ok = await upsert("history", {
+      year: YEAR,
+      edition:    keep(prev.edition, state.settings?.edition ?? null),
+      sauce_date: keep(prev.sauce_date, state.settings?.sauce_date ?? null),
       toolkit: live.toolkit || 0, ingredients: live.ingredients || 0, food: live.food || 0,
-      crew_size: state.members.length, bushels: y.bushels, grappa: g?.price ?? null,
-      notes: "Closed out from the app."
-    }, { onConflict: "year" });
-    if (error) flash(error.message, true);
-    else { flash("Year closed out"); location.reload(); }
+      crew_size: state.settings?.crew_size ?? state.members.length,
+      bushels: y.bushels,
+      // measured on the night, never derived — a forecast in the permanent
+      // record is a lie that outlives everyone who could correct it
+      litres:          keep(prev.litres, null),
+      jars_filled:     keep(prev.jars_filled, null),
+      fallen_soldiers: keep(prev.fallen_soldiers, null),
+      grappa: keep(g?.price ?? null, prev.grappa ?? null),
+      notes: keep(prev.notes, "Closed out from the app.")
+    }, "year");
+    if (ok) { flash("Year closed out"); location.reload(); }
   } }, `Close out ${YEAR}`);
 
   return frag(
@@ -870,7 +883,9 @@ export function viewHistory() {
       h("div", { class: "scroll" }, table),
       h("div", { class: "btnrow" }, closeout),
       h("p", { class: "note" },
-        "Close-out copies this year's live totals into the permanent record. Do it after settling up.")),
+        "Close-out copies this year's live totals into the permanent record. Do it after settling up. "
+        + "Litres, jars and broken are measured on the night, not worked out — type them into the row above, "
+        + "before or after. Closing again keeps whatever is already there.")),
     ...charts);
 }
 

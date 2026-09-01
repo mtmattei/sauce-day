@@ -115,19 +115,37 @@ export const SUGGESTION = {
   note: "Aged in Sassicaia barriques, 5/5 on the SAQ. In store only — check stock before David drives out."
 };
 
+// ============================================================================
+//  The bottle that actually came home.
+//
+//  The shortlist above is a catalogue of candidates. This is the record of what
+//  was bought, for the years the winner was never on the shortlist at all —
+//  somebody walks in with a bottle and the catalogue has nothing to say about
+//  it. Supabase owns the facts (name, price, who bought it, the rating); this
+//  owns the photograph, because a picture of a product is reference data and
+//  reference data lives in the repo.
+//
+//  `shot: "photo"` means a real photograph rather than an SAQ cutout on white.
+//  It fills the frame and skips the multiply blend the catalogue shots use,
+//  which would otherwise turn a kitchen counter into mud.
+//
+//  Paths are RELATIVE, same rule as the shortlist.
+// ============================================================================
+export const WINNERS = {
+  // 2026 — Mike brought it. Drop the photo in img/grappa/ and uncomment:
+  // 2026: {
+  //   photo: "img/grappa/2026-mikes-bottle.jpg",
+  //   shot: "photo",
+  //   size: "700 ml",
+  //   abv: 40,
+  //   url: null,
+  //   note: "Mike brought it. Not off the shortlist."
+  // }
+};
+
+/** The photographed bottle for a year, or null to fall back to the silhouette. */
+export const winnerOf = year => WINNERS[year] || null;
+
 /** Price per litre — the five bottles are not all the same size. */
 export const perLitre = g => g.price / (parseInt(g.size, 10) / 1000);
 
-/** Everything the shortlist says about itself, against the standing record. */
-export function shortlistVerdict(record) {
-  const clears = SHORTLIST.filter(g => g.price > record);
-  const best = SHORTLIST.reduce((a, g) => (g.price > a.price ? g : a), SHORTLIST[0]);
-  return {
-    clears,
-    anyClears: clears.length > 0,
-    best,
-    gap: record - best.price,          // positive means the whole list falls short
-    count: SHORTLIST.length,
-    cheapest: SHORTLIST.reduce((a, g) => (g.price < a.price ? g : a), SHORTLIST[0])
-  };
-}

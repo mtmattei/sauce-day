@@ -167,20 +167,85 @@ export function grappaRecord() {
   return past.length ? Math.max(...past) : 0;
 }
 
+/**
+ * Days between today and sauce day, SIGNED. Negative once the day has passed.
+ *
+ * It used to clamp at zero, which meant the app had no way to know the day was
+ * over: the countdown read "T minus 0 days" forever, the home route handed
+ * itself to the run-of-day timeline forever, and the wake lock was never let
+ * go. A planner for an annual event spends 364 days a year not being the day,
+ * and two of those states are not the same state.
+ */
 export function daysToGo() {
   const d = state.settings?.sauce_date;
   if (!d) return null;
   const target = new Date(d + "T00:00:00");
   const today = new Date(); today.setHours(0, 0, 0, 0);
-  return Math.max(0, Math.round((target - today) / 86400000));
+  return Math.round((target - today) / 86400000);
 }
 
+/**
+ * The three days the app has to be, from one number.
+ *
+ *   before — planning. The Board answers everything.
+ *   during — the Friday prep evening and the day itself. The timeline takes
+ *            the home route, holds the screen awake, and stops folding steps,
+ *            because the sequence is the whole reading.
+ *   after  — it happened. The Board comes back, now reading in the past tense,
+ *            and the timeline stays reachable as the record of how it went.
+ *
+ * No date set at all reads as `before`: nothing has been scheduled, so nothing
+ * has passed.
+ */
+export const phaseOf = d =>
+  d === null ? "before" : d < 0 ? "after" : d <= 1 ? "during" : "before";
+
+export const dayPhase = () => phaseOf(daysToGo());
+
+// ---------------------------------------------------------------- the trip
+// Two tables, one shopping trip. The kit and the sauce ingredients are `items`;
+// food and drink are `menu`, which owns the dish, who is bringing it and where
+// it comes from. A dish broken into ingredients steps aside for them, so
+// nothing is on the list twice.
+//
+// This lives here rather than in views.js because the Buy screen is not the
+// only thing that needs to know what is on the list: the readiness meter and
+// the rail both quote a fraction of it, and for two refactors they quoted a
+// different set of rows than the screen they link to.
+const CAT_RANK = { toolkit: 0, ingredients: 1, food: 2 };
+
+export function buyEntries() {
+  const broken = brokenOutDishes();
+  return [
+    ...state.items.filter(buyable).map(i => ({
+      table: "items", row: i, store: i.store, rank: CAT_RANK[i.category] ?? 3,
+      sort: i.sort_index, got: i.obtained, budget: Number(i.budget) || 0
+    })),
+    ...state.menu.filter(m => shoppable(m, broken)).map(m => ({
+      table: "menu", row: m, store: m.source, rank: CAT_RANK.food,
+      sort: m.sort_index, got: m.confirmed, budget: 0
+    }))
+  ].sort((a, b) => (a.store || "zzz").localeCompare(b.store || "zzz")
+    || a.rank - b.rank || a.sort - b.sort);
+}
+
+/**
+ * Three meters, each matching the screen it is a door into.
+ *
+ * `buy` counts the shopping trip exactly as the Buy screen draws it — kit,
+ * ingredients, and the dishes bought whole. It used to count `items` alone,
+ * so the meter and the screen it links to disagreed by however many dishes
+ * were being bought rather than cooked.
+ *
+ * `menu` is a different question — is the menu settled — and so it counts
+ * every dish, including the ones the buy list hides behind their ingredients.
+ * The overlap is real and intended: a dish can be both a thing to buy and a
+ * thing to confirm.
+ */
 export function readiness() {
   const done = (arr, f) => ({ done: arr.filter(f).length, total: arr.length });
   return {
-    // kit and ingredients here; food and drink are the menu's tracker, so
-    // nothing is counted twice
-    buy: done(state.items.filter(buyable), i => i.obtained),
+    buy: done(buyEntries(), e => e.got),
     run: done(state.runsheet, r => r.done),
     menu: done(state.menu, m => m.confirmed)
   };

@@ -13,7 +13,7 @@
 import { state, YEAR, update, flash } from "./db.js";
 import { h, me } from "./ui.js";
 import { icon } from "./icons.js";
-import { money0, spentByCat, sum, yieldPlan } from "./calc.js";
+import { money0, spentByCat, sum, yieldPlan, phaseOf } from "./calc.js";
 
 const GRACE_MIN = 10;          // late by less than this is not "delayed"
 const TICK_MS   = 20000;
@@ -111,14 +111,20 @@ export function buildDay(now = new Date()) {
   const dayStart = steps.find(s => s.section === "DAY" && s.at)?.at || null;
   const dayEnd   = last?.at || null;
 
+  const daysOut = sauceDate
+    ? Math.ceil((new Date(sauceDate + "T00:00:00") - new Date(now.toDateString())) / 86400000)
+    : null;
+
   return {
     steps, groups, slipMin, projectedFinish, next, currentId, firstUndone,
     dayStart, dayEnd, sauceDate,
     done: steps.filter(s => s.done).length,
     total: steps.length,
     isToday: sauceDate ? new Date(sauceDate + "T00:00:00").toDateString() === now.toDateString() : false,
-    daysOut: sauceDate
-      ? Math.ceil((new Date(sauceDate + "T00:00:00") - new Date(now.toDateString())) / 86400000) : null
+    daysOut,
+    // one rule for which day it is, shared with calc.js, so the router, the
+    // wake lock and this head can never disagree about it again
+    phase: phaseOf(daysOut)
   };
 }
 
@@ -206,7 +212,7 @@ export function viewSauceDay() {
 
   // the prep evening counts: Friday night is jars and propane, also read off a
   // propped-up phone. Anything further out is planning, and planning can sleep.
-  wantWake = day.daysOut !== null && day.daysOut <= 1;
+  wantWake = day.phase === "during";
   if (wantWake) acquireWake(); else releaseWake();
 
   // ---- the head: clock, next up, how the day is running
@@ -228,15 +234,22 @@ export function viewSauceDay() {
   // weather arrives late; patch it in rather than blocking the render
   loadWeather().then(() => { if (document.body.contains(strip)) paintStrip(strip, buildDay()); });
 
-  // keep the clock honest without re-rendering the whole page
-  ticker = setInterval(() => {
-    if (!document.body.contains(root)) { clearInterval(ticker); ticker = null; return; }
-    retick(root);
-  }, TICK_MS);
+  // keep the clock honest without re-rendering the whole page. Only while the
+  // day is actually running: retick does nothing off the day, so a ticker in
+  // February — or in September — is a timer rebuilding the day for no reader.
+  if (day.phase === "during") {
+    ticker = setInterval(() => {
+      if (!document.body.contains(root)) { clearInterval(ticker); ticker = null; return; }
+      retick(root);
+    }, TICK_MS);
+  }
 
   queueMicrotask(() => retick(root));
   return root;
 }
+
+const agoLabel = d =>
+  d === null ? "" : d === -1 ? "yesterday" : `${-d} days ago`;
 
 function dayHead(day) {
   const now = new Date();
@@ -249,16 +262,23 @@ function dayHead(day) {
           : new Date(day.sauceDate + "T00:00:00").toLocaleDateString("en-CA",
               { weekday: "short", day: "numeric", month: "short" }))),
     h("div", { class: "sdnext" },
-      h("div", { class: "k" }, day.isToday ? "Next up" : "Starts in"),
+      h("div", { class: "k" },
+        day.isToday ? "Next up" : day.phase === "after" ? "Finished" : "Starts in"),
       h("div", { class: "v", "data-next": "1" },
         day.isToday
           ? (day.next ? day.next.activity : day.firstUndone ? day.firstUndone.activity : "Nothing left")
-          : `${day.daysOut} days`),
+          : day.phase === "after"
+            // a run sheet is never quite all ticked; say what was, not what is
+            ? `${day.done} of ${day.total} ticked`
+            : `${day.daysOut} day${day.daysOut === 1 ? "" : "s"}`),
       h("div", { class: "s", "data-nextin": "1" },
-        day.isToday && day.next?.at ? "in " + humanGap(mins(day.next.at - now)) : "")),
-    h("div", { class: "sdpace" + (behind ? " is-behind" : "") },
+        day.isToday && day.next?.at ? "in " + humanGap(mins(day.next.at - now))
+          : day.phase === "after" ? agoLabel(day.daysOut) : "")),
+    h("div", { class: "sdpace" + (behind && day.isToday ? " is-behind" : "") },
       h("div", { class: "k" }, "Pace"),
       h("div", { class: "v", "data-pace": "1" },
+        // every unticked step is days overdue once the day has passed, so the
+        // slip is arithmetic about a day nobody is running any more
         !day.isToday ? "—" : behind ? humanGap(day.slipMin) + " behind" : "On time"),
       h("div", { class: "s", "data-finish": "1" },
         day.projectedFinish && day.isToday ? "finishing about " + fmtFinish(day.projectedFinish, now) : "")),
