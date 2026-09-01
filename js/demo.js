@@ -942,7 +942,7 @@ export const DEMO_DATA = {
       "category": "ingredients",
       "paid_by": "Nate",
       "amount": 175.0,
-      "label": "7 bushels at the market",
+      "label": "10 bushels at the market",
       "spent_on": "2026-08-28",
       "created_by": "nate@change-me.invalid",
       "created_at": "2026-08-28T14:00:00Z"
@@ -975,7 +975,7 @@ export const DEMO_DATA = {
       "id": "demo-0076",
       "year": 2026,
       "person": "Crew",
-      "count": 7
+      "count": 10
     }
   ],
   "jar_inventory": [
@@ -1046,7 +1046,7 @@ export const DEMO_DATA = {
 
       "duration_min": 90,
 
-      "ingredients": "7 bushels of San Marzano",
+      "ingredients": "10 bushels of San Marzano",
 
       "milestone": true,
 
@@ -1388,7 +1388,7 @@ export const DEMO_DATA = {
 
       "duration_min": 60,
 
-      "ingredients": "7 bushels",
+      "ingredients": "10 bushels",
 
       "milestone": false,
 

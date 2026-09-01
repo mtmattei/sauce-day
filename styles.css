@@ -429,6 +429,11 @@ main.panel { padding: var(--pad) var(--pad) 5rem; min-width: 0; max-width: 88rem
 
 /* ---------------------------------------------------------------- cards */
 .card { border: 1px solid var(--hair); padding: 0; margin-bottom: -1px; background: none; }
+/* Bad news about money. Tomato is already the app's word for money going the
+   wrong way, so the card borrows it for one rule and its heading rather than
+   growing a second alarm vocabulary. */
+.card.is-warn { border-color: var(--tomato); }
+.card.is-warn > h2 { color: var(--tomato); }
 .card > h2 {
   font-size: .6875rem; letter-spacing: .21em; text-transform: uppercase; color: var(--fg-3);
   font-weight: 500; padding: .55rem .85rem; background: var(--bg-2); border-bottom: 1px solid var(--hair);

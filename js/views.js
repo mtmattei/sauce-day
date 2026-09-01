@@ -4,7 +4,7 @@
 import { state, YEAR, update, insert, remove, upsert, flash, signOut } from "./db.js";
 import {
   CATS, money, money0, num, crewNames, buyable, assignedTo, spentByCat,
-  buyEntries,
+  buyEntries, strayPayers,
   settlement, yieldPlan, seriesData, grappaRecord, dayPhase
 } from "./calc.js";
 import { h, frag, field, select, check, personSelect, delButton, card, stat,
@@ -21,6 +21,13 @@ const SERIES_COLORS = ["var(--series-1)", "var(--series-2)", "var(--series-3)"];
 // `buyEntries()` lives in calc.js — the meters on the Board and the rail quote
 // a fraction of this same list, and they have to be quoting these rows.
 const entryRow = e => e.table === "menu" ? dishRow(e.row) : buyRow(e.row);
+
+/** A card that has bad news. Same component, one rule turned tomato. */
+const warnCard = (title, sub, ...body) => {
+  const c = card(title, sub, ...body);
+  c.className = "card is-warn";
+  return c;
+};
 
 export function viewBuy() {
   const byStore = new Map();
@@ -369,8 +376,20 @@ export function viewSpend() {
           e.paid_by === me() || state.me?.is_admin ? delButton("expenses", e, e.label || "this expense") : null)))
     : [empty("No receipts logged yet.")];
 
+  // A share that is wrong by a fifth looks exactly like a share that is right.
+  const strays = strayPayers();
+  const strayWarning = strays.length
+    ? warnCard("This split is being cut too many ways",
+        `${strays.map(n => `"${n}"`).join(", ")} ${strays.length === 1 ? "is" : "are"} not on the crew list, `
+        + `so the total is being divided ${st.net.length} ways instead of ${crewNames().length}. `
+        + "Either the name is a misspelling of a crew member — fix it on the receipt below — or he belongs on the Crew screen.",
+        h("p", { class: "note" },
+          "Names are matched exactly. The Spend form above cannot produce this; a receipt loaded straight into the database can."))
+    : null;
+
   return frag(
     card("Log what you paid", "Only your own receipts. The split updates for everyone the moment you hit the button.", form),
+    strayWarning,
     card("The split", `${money(st.total)} in, split ${st.net.length} ways — ${money(st.share)} each`,
       h("table", { class: "grid" },
         h("thead", {}, h("tr", {}, h("th", {}, "Person"), h("th", {}, "Paid"),

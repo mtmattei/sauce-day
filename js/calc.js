@@ -86,6 +86,22 @@ export function spentByPerson() {
   return out;
 }
 
+/**
+ * Payers in `expenses` who are not on the crew list.
+ *
+ * settlement() splits by the number of distinct payers it finds, seeded from
+ * the crew but extended by anyone it meets. That is right — a man who paid is
+ * owed whether or not somebody has added him yet — but it means one misspelt
+ * name ("Nathan" for Nate, "mike" for Mike) invents a sixth man and drops
+ * every share by a fifth, silently, with no error anywhere. Nothing in the app
+ * can type a wrong name: the Spend form is a dropdown of the crew. A receipt
+ * loaded by SQL can, so the app has to be able to say so.
+ */
+export function strayPayers() {
+  const crew = new Set(crewNames());
+  return [...new Set(state.expenses.map(e => e.paid_by).filter(n => n && !crew.has(n)))];
+}
+
 /** Even split, then the smallest set of transfers that clears it. */
 export function settlement() {
   const paid = spentByPerson();
