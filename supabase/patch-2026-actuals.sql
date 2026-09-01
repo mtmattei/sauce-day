@@ -12,8 +12,10 @@
 --  Run in the Supabase SQL editor. Safe to re-run: each receipt is deleted by
 --  its label before it is inserted, so nothing doubles up.
 --
---  !! BEFORE RUNNING: set the payer on the bushels receipt below. It is the
---  !! one field with no default, and the settlement is wrong if it is wrong.
+--  Every `paid_by` here must match members.display_name exactly. settlement()
+--  in calc.js seeds its split from the crew list but adds anyone it meets in
+--  expenses, so "Nathan" would not be Nate — it would be a sixth man, and
+--  every share in the app would quietly drop by a fifth.
 -- ============================================================================
 
 -- ---------------------------------------------------------------- 1. bushels
@@ -27,10 +29,10 @@ select
     where year = 2026 and category = 'ingredients' and name = 'Bushels of tomatoes'
     limit 1),
   'ingredients',
-  'TODO-WHO-PAID',            -- <<< Matt / David / Nate / Chris / Mike
+  'Nate',                     -- must match members.display_name exactly
   280.00,
   '10 bushels at the market',
-  date '2026-08-29';
+  date '2026-08-28';          -- Friday pickup, per the run sheet
 
 -- The receipt is also the proof it is in the truck.
 update public.items
